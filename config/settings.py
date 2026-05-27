@@ -21,12 +21,13 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.ngrok-free.app",
     "https://*.ngrok.io",
     "https://*.devtunnels.ms",
+    "https://*.onrender.com",
 ]
 
-# Cookie settings for ngrok/tunneling compatibility
-CSRF_COOKIE_SECURE = False
+# Cookie settings
+CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SAMESITE = "Lax"
-SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_SAMESITE = "Lax"
 
 # Application definition
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "whitenoise.runserver_nostatic",
     # Local apps
     "apps.core",
     "apps.gods",
@@ -48,6 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -84,6 +87,13 @@ DATABASES = {
     }
 }
 
+if os.getenv("DATABASE_URL"):
+    import dj_database_url
+    DATABASES["default"] = dj_database_url.config(
+        conn_max_age=600,
+        ssl_require=True,
+    )
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -97,10 +107,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Internationalization
-LANGUAGE_CODE = "en"
+LANGUAGE_CODE = "es"
 LANGUAGES = [
-    ("en", "English"),
     ("es", "Español"),
+    ("en", "English"),
 ]
 LOCALE_PATHS = [BASE_DIR / "locale"]
 TIME_ZONE = "UTC"
@@ -111,6 +121,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media files
 MEDIA_URL = "media/"
