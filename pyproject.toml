@@ -1,0 +1,52 @@
+[project]
+name = "immortal-gods"
+version = "0.1.0"
+description = "RPG Gacha Game with gods from five pantheons"
+requires-python = ">=3.11"
+dependencies = [
+    "django>=5.2.14",
+    "python-dotenv>=1.0",
+    "pillow>=10.0",
+    "babel>=2.18.0",
+    "polib>=1.2.0",
+    "requests>=2.34.2",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+exclude = ["**/migrations/*.py", ".venv", "node_modules", "**/management/commands/seed_data.py"]
+
+[tool.ruff.lint.per-file-ignores]
+"apps/gods/models.py" = ["E501"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+exclude = [".*migrations/.*"]
+plugins = ["mypy_django_plugin.main"]
+
+[tool.django-stubs]
+django_settings_module = "config.settings"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=src --cov-report=term-missing --cov-fail-under=80"
+pythonpath = ["."]
+
+[dependency-groups]
+dev = [
+    "django-stubs>=6.0.5",
+    "mypy>=2.1.0",
+    "pre-commit>=4.6.0",
+    "pytest>=9.0.3",
+    "ruff>=0.15.14",
+]
