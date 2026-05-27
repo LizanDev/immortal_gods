@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Insufficient Gems - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>Insufficient Gems</h1>
+<p>You don't have enough gems for this pull.</p>
+<p>Complete campaign levels to earn more gems!</p>
+
+<a href="{% url 'gacha:pull' %}">Back to Gacha</a>
+<a href="{% url 'campaign:list' %}">Go to Campaign</a>
+{% endblock %}

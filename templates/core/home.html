@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>Bienvenido a Immortal Gods</h1>
+
+<div class="resources">
+    <div class="resource resource-gems">
+        <span class="resource-icon">💎</span>
+        <span class="resource-value">{% if user.is_superuser %}∞{% else %}{{ profile.gems }}{% endif %}</span>
+    </div>
+    <div class="resource resource-gold">
+        <span class="resource-icon"></span>
+        <span class="resource-value">{% if user.is_superuser %}∞{% else %}{{ profile.gold }}{% endif %}</span>
+    </div>
+    <div class="resource resource-energy">
+        <span class="resource-icon"></span>
+        <span class="resource-value">{% if user.is_superuser %}∞{% else %}{{ profile.energy }}/{{ profile.max_energy }}{% endif %}</span>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Estadísticas</h2>
+    <p>Dioses obtenidos: {{ god_count }}</p>
+    <p>Equipos: {{ team_count }}</p>
+    <p>Progreso de campaña: Nivel {{ profile.campaign_progress }}</p>
+    <p>Puntuación de ranking: {{ profile.rank_score }}</p>
+</div>
+
+<h2 style="margin-top: 2rem;">Escaleras de Facción</h2>
+<p style="color: #aaa; margin-bottom: 1rem;">
+    Desafía a cada facción. Solo se pueden usar sus dioses. Sin recompensas, solo gloria.
+</p>
+
+<div class="grid">
+    {% for item in ladder_data %}
+    <div class="card faction-card" style="border-top: 3px solid {{ item.ladder.color }};">
+        <h3 style="color: {{ item.ladder.color }}; margin: 0;">{{ item.ladder.name }}</h3>
+        <p style="margin: 0.5rem 0 0; font-size: 0.85rem; color: #aaa;">
+            Piso más alto: <strong>{{ item.progress.highest_floor }}</strong>
+        </p>
+        <a href="{% url 'campaign:faction_ladder_detail' item.ladder.id %}" class="btn" style="margin-top: 0.75rem; background: {{ item.ladder.color }};">
+            Entrar
+        </a>
+    </div>
+    {% empty %}
+    <p>No hay escaleras de facción disponibles.</p>
+    {% endfor %}
+</div>
+
+<div style="margin-top: 2rem;">
+    <h2>Acciones Rápidas</h2>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="{% url 'gacha:pull' %}" class="btn">💎 Tirada Gacha</a>
+        <a href="{% url 'campaign:list' %}" class="btn btn-secondary">⚔️ Campaña</a>
+        <a href="{% url 'core:inventory' %}" class="btn btn-secondary">🎒 Inventario</a>
+        <a href="{% url 'gods:my_gods' %}" class="btn btn-secondary"> Mis Dioses</a>
+        <a href="{% url 'items:my_items' %}" class="btn btn-secondary">🗡️ Mis Objetos</a>
+        <a href="{% url 'teams:list' %}" class="btn btn-secondary"> Equipos</a>
+        <a href="{% url 'core:leaderboard' %}" class="btn btn-secondary">🏅 Clasificación</a>
+    </div>
+</div>
+
+<style>
+.faction-card { transition: transform 0.2s; }
+.faction-card:hover { transform: translateY(-4px); }
+</style>
+{% endblock %}

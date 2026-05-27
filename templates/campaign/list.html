@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}Campaña - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>Campaña</h1>
+
+{% if teams|length > 1 %}
+<div class="team-selector">
+    <span class="selector-label">Equipo activo:</span>
+    <div class="team-tabs">
+        {% for team in teams %}
+        <a href="{% url 'campaign:select_team' team.id %}" class="team-tab {% if team.id == selected_team.id %}active{% endif %}">
+            <span class="team-name">{{ team.name }}</span>
+            <span class="team-power">{{ team.power }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="team-power-banner">
+    <div class="power-label">Poder de tu equipo</div>
+    <div class="power-value">{{ team_power }}</div>
+    {% if selected_team %}
+    <div class="power-team-name">{{ selected_team.name }}</div>
+    {% endif %}
+</div>
+
+<div class="campaign-grid">
+    {% for level in levels %}
+    {% if level.order <= max_visible %}
+    <a href="{% url 'campaign:battle' level.id %}" class="level-card rank-{{ level.get_difficulty_display }} {% if level.is_boss_level %}is-boss{% endif %}">
+        <div class="level-order">{{ level.order }}</div>
+        <div class="level-info">
+            <div class="level-name-row">
+                <span class="level-name">{{ level.name }}</span>
+                {% if level.is_boss_level %}
+                <span class="boss-icon">👹</span>
+                {% endif %}
+            </div>
+            <div class="level-meta">
+                <span class="difficulty-tag">{{ level.get_difficulty_display }}</span>
+                <span class="level-power">
+                    <span style="color: #ffd700;">⚔️</span> {{ level.required_power }}
+                </span>
+            </div>
+        </div>
+        <div class="level-rewards">
+            <span class="reward-item">&#9889; {{ level.energy_cost }}</span>
+            <span class="reward-item">&#9734; {{ level.gold_reward }}</span>
+            <span class="reward-item">&#9830; {{ level.gems_reward }}</span>
+        </div>
+        <div class="level-action">
+            {% if level.order <= profile.campaign_progress %}
+            <span class="btn battle-btn">Batallar</span>
+            {% else %}
+            <span class="btn battle-btn btn-gold">Desbloquear</span>
+            {% endif %}
+        </div>
+    </a>
+    {% endif %}
+    {% empty %}
+    <p>No hay niveles de campaña disponibles.</p>
+    {% endfor %}
+</div>
+
+<style>
+.team-selector {
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.selector-label {
+    font-size: 0.85rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.team-tabs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.team-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+
+.team-tab:hover {
+    background: rgba(255,255,255,0.12);
+}
+
+.team-tab.active {
+    border-color: #4a9eff;
+    background: rgba(74,158,255,0.15);
+}
+
+.team-name {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.team-power {
+    font-size: 0.8rem;
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.team-power-banner {
+    background: linear-gradient(135deg, #1a1a3e 0%, #2d2d5a 100%);
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 12px;
+    padding: 1.25rem 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.power-label {
+    font-size: 0.9rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.power-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255,215,0,0.4);
+}
+
+.power-team-name {
+    margin-left: auto;
+    font-size: 1rem;
+    color: #4a9eff;
+    font-weight: bold;
+}
+
+.campaign-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.level-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    border-left: 4px solid #333;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+    gap: 1rem;
+}
+
+.level-card:hover {
+    background: rgba(255,255,255,0.08);
+    transform: translateX(4px);
+}
+
+.level-card.is-boss {
+    background: rgba(255,107,107,0.08);
+    border-left-color: #ff6b6b;
+}
+
+.level-card.rank-Easy { border-left-color: #51cf66; }
+.level-card.rank-Normal { border-left-color: #4a9eff; }
+.level-card.rank-Hard { border-left-color: #ffa500; }
+.level-card.rank-Hell { border-left-color: #ff4444; }
+
+.level-order {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.level-card .level-order {
+    background: linear-gradient(135deg, #4a9eff, #2d7dd2);
+    color: #fff;
+}
+
+.level-card.is-boss .level-order {
+    background: linear-gradient(135deg, #ff6b6b, #cc4444);
+    color: #fff;
+}
+
+.level-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.level-name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.level-name {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.boss-icon {
+    font-size: 1.2rem;
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+.level-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+}
+
+.difficulty-tag {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.rank-Easy .difficulty-tag { background: rgba(81,207,102,0.2); color: #51cf66; }
+.rank-Normal .difficulty-tag { background: rgba(74,158,255,0.2); color: #4a9eff; }
+.rank-Hard .difficulty-tag { background: rgba(255,165,0,0.2); color: #ffa500; }
+.rank-Hell .difficulty-tag { background: rgba(255,68,68,0.2); color: #ff4444; }
+
+.level-power {
+    color: #aaa;
+    font-size: 0.8rem;
+}
+
+.level-rewards {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.reward-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.level-action {
+    width: 120px;
+    text-align: right;
+}
+
+.battle-btn {
+    padding: 0.5rem 1.25rem;
+    font-size: 0.85rem;
+    border-radius: 8px;
+}
+</style>
+{% endblock %}

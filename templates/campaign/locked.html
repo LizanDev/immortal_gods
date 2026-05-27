@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Level Locked - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>Level Locked</h1>
+<p>You need to complete previous levels to unlock this stage.</p>
+<p>Current Progress: Level {{ profile.campaign_progress }}</p>
+
+<a href="{% url 'campaign:list' %}">Back to Campaign</a>
+{% endblock %}

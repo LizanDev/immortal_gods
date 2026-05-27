@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Immortal Gods - Welcome{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 3rem 0;">
+    <h1 style="font-size: 3rem; margin-bottom: 1rem;">Immortal Gods</h1>
+    <p style="font-size: 1.2rem; margin-bottom: 2rem;">Collect powerful gods from five pantheons and build your ultimate team!</p>
+
+    <div style="display: flex; gap: 1rem; justify-content: center;">
+        <a href="{% url 'core:login' %}" class="btn">Login</a>
+        <a href="{% url 'core:register' %}" class="btn btn-secondary">Register</a>
+    </div>
+
+    <div style="margin-top: 3rem;">
+        <h2>Pantheons</h2>
+        <p>Greek | Zodiac | Chinese | Egyptian | Nordic</p>
+    </div>
+
+    <div style="margin-top: 2rem;">
+        <h2>Roles</h2>
+        <p>Assassin | Tank | Support | Mage | Archer</p>
+    </div>
+</div>
+{% endblock %}

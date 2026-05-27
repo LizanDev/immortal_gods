@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Gods - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>All Gods</h1>
+
+<div class="grid">
+    {% for god in gods %}
+    <div class="god-card rarity-{{ god.rarity }}">
+        <div class="god-card-image" style="background: #1a1a3e;">
+            <img src="{{ god.image_url }}" alt="{{ god.name }}"
+                 style="width: 100%; height: 100%; object-fit: cover; object-position: center;"
+                 onerror="this.style.display='none'">
+        </div>
+        <div class="god-card-body">
+            <div class="god-card-name">{{ god.name }}</div>
+            <div class="god-card-info">
+                {{ god.get_pantheon_display }} | {{ god.get_role_display }} | {{ god.get_rarity_display }}
+            </div>
+            <div style="margin-top: 0.5rem; font-size: 0.75rem;">
+                <div class="stat-bar"><span class="stat-label">ATK</span><span class="stat-value" style="color: #ff6b6b;">{{ god.base_attack }}</span></div>
+                <div class="stat-bar"><span class="stat-label">DEF</span><span class="stat-value" style="color: #4a9eff;">{{ god.base_defense }}</span></div>
+                <div class="stat-bar"><span class="stat-label">HP</span><span class="stat-value" style="color: #51cf66;">{{ god.base_hp }}</span></div>
+                <div class="stat-bar"><span class="stat-label">SPD</span><span class="stat-value" style="color: #ffd700;">{{ god.base_speed }}</span></div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>No gods available yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,379 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #0a0a1a; color: #eee; min-height: 100vh; }
+a { color: #e94560; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Nav */
+nav { background: linear-gradient(135deg, #16213e, #1a1a3e); padding: 1rem; display: flex; gap: 1rem; align-items: center; border-bottom: 2px solid #e94560; }
+nav a { color: #eee; font-weight: bold; padding: 0.3rem 0.8rem; border-radius: 4px; transition: background 0.2s; }
+nav a:hover { background: rgba(233, 69, 96, 0.3); text-decoration: none; }
+nav .user { margin-left: auto; color: #ffd700; }
+
+/* Main */
+main { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+footer { text-align: center; padding: 2rem; color: #666; }
+
+/* Cards */
+.card { background: linear-gradient(145deg, #16213e, #1a1a3e); padding: 1.5rem; margin: 1rem 0; border-radius: 12px; border: 1px solid #333; }
+
+/* Buttons */
+.btn { display: inline-block; padding: 0.7rem 1.5rem; background: linear-gradient(135deg, #e94560, #c73650); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: transform 0.2s; }
+.btn:hover { transform: scale(1.05); text-decoration: none; }
+.btn-secondary { background: linear-gradient(135deg, #0f3460, #1a4a80); }
+.btn-gold { background: linear-gradient(135deg, #ffd700, #daa520); color: #000; }
+
+/* Messages */
+.error { color: #ff6b6b; background: rgba(255, 107, 107, 0.1); padding: 0.5rem; border-radius: 4px; margin: 0.5rem 0; }
+.success { color: #51cf66; background: rgba(81, 207, 102, 0.1); padding: 0.5rem; border-radius: 4px; margin: 0.5rem 0; }
+
+/* Forms */
+form { display: flex; flex-direction: column; gap: 1rem; max-width: 300px; }
+input, select { padding: 0.7rem; background: #0f3460; border: 1px solid #333; color: #eee; border-radius: 6px; }
+ul { list-style: none; }
+
+/* God Card */
+.god-card {
+    background: linear-gradient(145deg, #1a1a3e, #16213e);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #333;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 220px;
+}
+.god-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+.god-card-body { padding: 1rem; }
+.god-card-name { font-size: 1.1rem; font-weight: bold; margin-bottom: 0.3rem; }
+.god-card-info { font-size: 0.8rem; color: #aaa; }
+
+/* Rarity Colors */
+.rarity-common { border-color: #888; }
+.rarity-rare { border-color: #4a9eff; }
+.rarity-epic { border-color: #a855f7; }
+.rarity-legendary { border-color: #ffd700; }
+.rarity-mythic { border-color: #ff4444; box-shadow: 0 0 15px rgba(255, 68, 68, 0.3); }
+
+/* God Visual Cards */
+.god-card-image {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.god-card-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.3;
+    background-size: 100px 100px;
+}
+
+.god-card-image span {
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+    font-size: 6rem;
+}
+
+/* Pantheon backgrounds */
+.visual-greek { background: linear-gradient(135deg, #2a4a7f, #4a7fb5); }
+.visual-greek::before { background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='%23ffffff' fill-opacity='0.1'/%3E%3C/svg%3E"); }
+
+.visual-zodiac { background: linear-gradient(135deg, #1a1a4a, #3a2a6a); }
+.visual-zodiac::before { background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='2' fill='%23ffffff' fill-opacity='0.3'/%3E%3C/svg%3E"); }
+
+.visual-chinese { background: linear-gradient(135deg, #8b0000, #cc3333); }
+.visual-chinese::before { background-image: url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M25 5L30 20L45 25L30 30L25 45L20 30L5 25L20 20Z' fill='%23ffd700' fill-opacity='0.15'/%3E%3C/svg%3E"); }
+
+.visual-egyptian { background: linear-gradient(135deg, #8b6914, #d4a017); }
+.visual-egyptian::before { background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20Z' fill='%23000000' fill-opacity='0.1'/%3E%3C/svg%3E"); }
+
+.visual-nordic { background: linear-gradient(135deg, #1a3a4a, #2a5a6a); }
+.visual-nordic::before { background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 10L35 25L50 30L35 35L30 50L25 35L10 30L25 25Z' fill='%23ffffff' fill-opacity='0.1'/%3E%3C/svg%3E"); }
+
+/* Role overlays */
+.role-assassin::after {
+    content: '🗡️';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.role-tank::after {
+    content: '🛡️';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.role-support::after {
+    content: '💚';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.role-mage::after {
+    content: '🔮';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.role-archer::after {
+    content: '🏹';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+/* Pantheon icons */
+.visual-greek::after {
+    content: '🏛️';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.5rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.visual-zodiac::after {
+    content: '⭐';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.5rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.visual-chinese::after {
+    content: '🐉';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.5rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.visual-egyptian::after {
+    content: '🏺';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.5rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.visual-nordic::after {
+    content: '❄️';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.5rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.god-card-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.3;
+    background-size: 100px 100px;
+}
+
+.god-card-image span {
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+    font-size: 6rem;
+}
+
+/* Pantheon backgrounds */
+.visual-greek { background: linear-gradient(135deg, #2a4a7f, #4a7fb5); }
+.visual-greek::before { background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='%23ffffff' fill-opacity='0.1'/%3E%3C/svg%3E"); }
+
+.visual-zodiac { background: linear-gradient(135deg, #1a1a4a, #3a2a6a); }
+.visual-zodiac::before { background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='2' fill='%23ffffff' fill-opacity='0.3'/%3E%3C/svg%3E"); }
+
+.visual-chinese { background: linear-gradient(135deg, #8b0000, #cc3333); }
+.visual-chinese::before { background-image: url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M25 5L30 20L45 25L30 30L25 45L20 30L5 25L20 20Z' fill='%23ffd700' fill-opacity='0.15'/%3E%3C/svg%3E"); }
+
+.visual-egyptian { background: linear-gradient(135deg, #8b6914, #d4a017); }
+.visual-egyptian::before { background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20Z' fill='%23000000' fill-opacity='0.1'/%3E%3C/svg%3E"); }
+
+.visual-nordic { background: linear-gradient(135deg, #1a3a4a, #2a5a6a); }
+.visual-nordic::before { background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 10L35 25L50 30L35 35L30 50L25 35L10 30L25 25Z' fill='%23ffffff' fill-opacity='0.1'/%3E%3C/svg%3E"); }
+
+/* Role overlays */
+.role-assassin::after {
+    content: '🗡️';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.role-tank::after {
+    content: '🛡️';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.role-support::after {
+    content: '💚';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.role-mage::after {
+    content: '🔮';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.role-archer::after {
+    content: '🏹';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+/* Pantheon icons */
+.visual-greek::after {
+    content: '🏛️';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.5rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.visual-zodiac::after {
+    content: '⭐';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.5rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.visual-chinese::after {
+    content: '🐉';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.5rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.visual-egyptian::after {
+    content: '🏺';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.5rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.visual-nordic::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.5rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+/* Grid */
+.grid { display: flex; flex-wrap: wrap; gap: 1rem; }
+
+/* Stats */
+.stat-bar { display: flex; align-items: center; gap: 0.5rem; margin: 0.3rem 0; }
+.stat-label { width: 40px; font-size: 0.8rem; color: #aaa; }
+.stat-value { font-weight: bold; }
+
+/* Inventory Item */
+.item-card { background: linear-gradient(145deg, #1a1a3e, #16213e); padding: 1rem; border-radius: 8px; border: 1px solid #333; }
+.item-card.weapon { border-color: #ff6b6b; }
+.item-card.armor { border-color: #4a9eff; }
+.item-card.helmet { border-color: #ffd700; }
+.item-card.boots { border-color: #51cf66; }
+.item-card.accessory { border-color: #a855f7; }
+
+/* Campaign Level */
+.level-card { background: linear-gradient(145deg, #1a1a3e, #16213e); padding: 1.5rem; border-radius: 12px; border: 2px solid #333; margin: 1rem 0; }
+.level-card.easy { border-color: #51cf66; }
+.level-card.normal { border-color: #4a9eff; }
+.level-card.hard { border-color: #ff6b6b; }
+.level-card.hell { border-color: #ff4444; box-shadow: 0 0 10px rgba(255, 68, 68, 0.2); }
+.level-card.locked { opacity: 0.5; }
+.level-card.boss { background: linear-gradient(145deg, #3a1a1a, #2a1a2e); border-color: #ffd700; }
+
+/* Team */
+.team-member { display: flex; align-items: center; gap: 1rem; padding: 0.5rem; background: rgba(255,255,255,0.05); border-radius: 8px; margin: 0.5rem 0; }
+
+/* Gacha */
+.gacha-banner { background: linear-gradient(135deg, #1a1a3e, #2a1a4e); padding: 2rem; border-radius: 12px; text-align: center; margin: 1rem 0; border: 2px solid #a855f7; }
+.pull-result { text-align: center; padding: 2rem; }
+.pull-result .god-reveal { font-size: 4rem; margin: 1rem 0; }
+
+/* Resource Display */
+.resources { display: flex; gap: 2rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; margin: 1rem 0; }
+.resource { display: flex; align-items: center; gap: 0.5rem; }
+.resource-icon { font-size: 1.5rem; }
+.resource-value { font-size: 1.2rem; font-weight: bold; }
+.resource-gems .resource-value { color: #a855f7; }
+.resource-gold .resource-value { color: #ffd700; }
+.resource-energy .resource-value { color: #51cf66; }

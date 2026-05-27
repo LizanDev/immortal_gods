@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}{{ god.name }} - Immortal Gods{% endblock %}
+
+{% block content %}
+<div class="god-card rarity-{{ god.rarity }}" style="max-width: 500px; margin: 0 auto;">
+    <div class="god-card-image" style="height: 250px; background: #1a1a3e;">
+        <img src="{{ god.image_url }}" alt="{{ god.name }}"
+             style="width: 100%; height: 100%; object-fit: cover; object-position: center;"
+             onerror="this.style.display='none'">
+    </div>
+    <div class="god-card-body">
+        <h1>{{ god.name }}</h1>
+        <p>{{ god.description }}</p>
+        <p><strong>Pantheon:</strong> {{ god.get_pantheon_display }}</p>
+        <p><strong>Role:</strong> {{ god.get_role_display }}</p>
+        <p><strong>Rarity:</strong> {{ god.get_rarity_display }}</p>
+        <div style="margin-top: 1rem;">
+            <h3>Base Stats</h3>
+            <div class="stat-bar"><span class="stat-label">ATK</span><span class="stat-value" style="color: #ff6b6b;">{{ god.base_attack }}</span></div>
+            <div class="stat-bar"><span class="stat-label">DEF</span><span class="stat-value" style="color: #4a9eff;">{{ god.base_defense }}</span></div>
+            <div class="stat-bar"><span class="stat-label">HP</span><span class="stat-value" style="color: #51cf66;">{{ god.base_hp }}</span></div>
+            <div class="stat-bar"><span class="stat-label">SPD</span><span class="stat-value" style="color: #ffd700;">{{ god.base_speed }}</span></div>
+        </div>
+        <div style="margin-top: 1.5rem;">
+            <h3>Skills</h3>
+            {% for skill in god.skills %}
+            <div style="background: rgba(255,255,255,0.05); padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 8px; border-left: 3px solid {% if skill.type == 'ultimate' %}#ffd700{% else %}#4a9eff{% endif %};">
+                <strong style="color: {% if skill.type == 'ultimate' %}#ffd700{% else %}#4a9eff{% endif %};">{{ skill.name }}</strong>
+                {% if skill.type == 'ultimate' %}<span style="float: right; background: #ffd700; color: #000; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">ULTIMATE</span>{% endif %}
+                <p style="margin: 0.25rem 0 0; font-size: 0.9rem; color: #aaa;">{{ skill.desc }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<a href="{% url 'gods:list' %}" class="btn btn-secondary" style="margin-top: 1rem;">Back to list</a>
+{% endblock %}

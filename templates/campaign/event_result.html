@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Event Result" %} - Immortal Gods{% endblock %}
+
+{% block content %}
+<div class="card" style="text-align: center;">
+    {% if won %}
+    <h1 style="color: #51cf66;">{% trans "Floor Cleared" %}!</h1>
+    <div class="resources" style="justify-content: center; margin-top: 1rem;">
+        <div class="resource resource-gold">
+            <span class="resource-icon"></span>
+            <span class="resource-value">+{{ gold_earned }}</span>
+        </div>
+        <div class="resource resource-gems">
+            <span class="resource-icon"></span>
+            <span class="resource-value">+{{ gems_earned }}</span>
+        </div>
+        <div class="resource resource-energy">
+            <span class="resource-icon">✨</span>
+            <span class="resource-value">+{{ exp_earned }} EXP</span>
+        </div>
+    </div>
+    {% else %}
+    <h1 style="color: #ff6b6b;">{% trans "Defeat" %}</h1>
+    <p>{% trans "Your team was not strong enough." %}</p>
+    {% endif %}
+
+    <p style="margin-top: 1rem; color: #aaa;">
+        {% trans "Floor" %}: {{ stage.floor }} | {% trans "Score" %}: {{ progress.best_score }}
+    </p>
+
+    <div style="margin-top: 1rem; display: flex; gap: 0.75rem; justify-content: center;">
+        {% if won and progress.highest_floor < season.stages.count %}
+        <a href="{% url 'campaign:event_battle' stage.id|add:'1' %}" class="btn btn-gold">
+            {% trans "Next Floor" %}
+        </a>
+        {% endif %}
+        <a href="{% url 'campaign:event_detail' season.id %}" class="btn">{% trans "Back to Event" %}</a>
+    </div>
+</div>
+{% endblock %}

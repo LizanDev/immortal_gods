@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.name }} - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>{{ item.name }}</h1>
+<p>{{ item.description }}</p>
+<p><strong>Type:</strong> {{ item.get_item_type_display }}</p>
+<p><strong>Bonuses:</strong> ATK +{{ item.attack_bonus }} | DEF +{{ item.defense_bonus }} | HP +{{ item.hp_bonus }} | SPD +{{ item.speed_bonus }}</p>
+<p><strong>Max Level:</strong> {{ item.max_level }}</p>
+<a href="{% url 'items:list' %}">Back to list</a>
+{% endblock %}

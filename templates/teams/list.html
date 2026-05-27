@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Equipos - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>Tus Equipos</h1>
+
+<a href="{% url 'teams:create' %}" class="btn" style="margin-bottom: 1rem;">Crear nuevo equipo</a>
+
+<div>
+    {% for team in teams %}
+    <div style="background: rgba(255,255,255,0.05); padding: 1rem; margin: 0.5rem 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h2><a href="{% url 'teams:detail' team.id %}">{{ team.name }}</a></h2>
+            <p>Miembros: {{ team.god_count }}/5</p>
+        </div>
+        <a href="{% url 'teams:delete' team.id %}" style="color: #ff3232; font-size: 0.85rem;">Eliminar</a>
+    </div>
+    {% empty %}
+    <p>Aún no has creado equipos.</p>
+    {% endfor %}
+</div>
+{% endblock %}

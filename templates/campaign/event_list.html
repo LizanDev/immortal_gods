@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Events" %} - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>{% trans "Active Events" %}</h1>
+
+<div class="grid">
+    {% for season in seasons %}
+    <div class="card">
+        <h2>{{ season.name }}</h2>
+        <p style="color: #ffd700; font-size: 0.9rem;">
+            {% trans "Faction" %}: {{ season.pantheon_label }}
+        </p>
+        <p style="font-size: 0.8rem; color: #aaa;">
+            {{ season.start_date|date:"M d" }} - {{ season.end_date|date:"M d, Y" }}
+        </p>
+        {% with prog=progress|default:0 %}
+        <p style="font-size: 0.85rem; margin-top: 0.5rem;">
+            {% trans "Highest Floor" %}: {{ prog.highest_floor }}
+        </p>
+        <p style="font-size: 0.85rem;">
+            {% trans "Best Score" %}: {{ prog.best_score }}
+        </p>
+        {% endwith %}
+        <a href="{% url 'campaign:event_detail' season.id %}" class="btn" style="margin-top: 0.75rem;">
+            {% trans "Enter Event" %}
+        </a>
+    </div>
+    {% empty %}
+    <p>{% trans "No active events at the moment." %}</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Create Team - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>Create New Team</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <label for="name">Team Name:</label>
+    <input type="text" name="name" id="name" placeholder="My Team">
+    <button type="submit">Create</button>
+</form>
+
+<a href="{% url 'teams:list' %}">Back</a>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}{{ ladder.name }} - Immortal Gods{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+        <h1 style="color: {{ ladder.color }};">{{ ladder.name }}</h1>
+        <p style="color: #aaa;">{{ ladder.description }}</p>
+    </div>
+    <a href="{% url 'campaign:faction_ladders' %}" class="btn btn-secondary">
+        Volver a escaleras
+    </a>
+</div>
+
+<div class="power-banner">
+    <div class="power-label">Poder de esta facción</div>
+    <div class="power-value">{{ team_power }}</div>
+    <div class="power-info">
+        <p style="margin: 0; font-size: 0.85rem; color: #aaa;">
+            Calculado con tus 5 mejores dioses {{ ladder.pantheon_label }}
+        </p>
+    </div>
+</div>
+
+<div style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 4px solid {{ ladder.color }};">
+    <p style="margin: 0 0 0.5rem; font-size: 0.9rem;">
+        Tu progreso: Piso <strong>{{ progress.highest_floor }}</strong>
+    </p>
+    <p style="margin: 0; font-size: 0.85rem; color: #aaa;">
+        Equipo: {{ team.name }} | Dioses {{ ladder.pantheon_label }} en equipo: {{ available_gods|length }}
+    </p>
+    {% if available_gods|length == 0 %}
+    <p style="margin: 0.5rem 0 0; color: #ff6b6b; font-size: 0.8rem;">
+        Tu equipo no tiene dioses {{ ladder.pantheon_label }}. Cambia tu equipo o añade dioses de esta facción.
+    </p>
+    {% endif %}
+</div>
+
+<div class="ladder">
+    {% for stage in stages %}
+    <div class="ladder-floor {% if stage.floor <= progress.highest_floor %}completed{% elif stage.floor == next_floor %}current{% else %}locked{% endif %}">
+        <div class="ladder-floor-info">
+            <span class="ladder-floor-number">Piso {{ stage.floor }}</span>
+            <span class="ladder-floor-name">{{ stage.name }}</span>
+            {% if stage.is_boss %}<span class="boss-badge">JEFE</span>{% endif %}
+        </div>
+        <div class="ladder-floor-requirements">
+            <span>Poder: {{ stage.required_power }}</span>
+        </div>
+        <div class="ladder-floor-action">
+            {% if stage.floor <= next_floor and available_gods|length > 0 %}
+            <a href="{% url 'campaign:faction_battle' stage.id %}" class="btn {% if stage.floor == next_floor %}btn-gold{% endif %}">
+                {% if stage.floor <= progress.highest_floor %}Repetir{% else %}Batallar{% endif %}
+            </a>
+            {% else %}
+            <span style="color: #666;">Bloqueado</span>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+.ladder { display: flex; flex-direction: column; gap: 0.5rem; }
+.ladder-floor {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px;
+    border-left: 4px solid #444;
+}
+.ladder-floor.completed { border-left-color: #51cf66; background: rgba(81,207,102,0.1); }
+.ladder-floor.current { border-left-color: {{ ladder.color }}; background: rgba(255,215,0,0.1); }
+.ladder-floor.locked { opacity: 0.5; }
+.ladder-floor-info { display: flex; align-items: center; gap: 0.75rem; }
+.ladder-floor-number { font-weight: bold; color: {{ ladder.color }}; }
+.boss-badge { background: #ff6b6b; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+.ladder-floor-requirements { font-size: 0.8rem; color: #aaa; }
+.ladder-floor-action { min-width: 100px; text-align: right; }
+
+.power-banner {
+    background: linear-gradient(135deg, #1a1a3e 0%, #2d2d5a 100%);
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.power-label {
+    font-size: 0.85rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.power-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 0 15px rgba(255,215,0,0.3);
+}
+
+.power-info {
+    margin-left: auto;
+    text-align: right;
+}
+</style>
+{% endblock %}

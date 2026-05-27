@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Resultado de Batalla - Immortal Gods{% endblock %}
+
+{% block content %}
+<div class="card" style="text-align: center;">
+    {% if won %}
+    <h1 style="color: #51cf66;"> Victoria!</h1>
+    <div class="resources" style="justify-content: center; margin-top: 1rem;">
+        <div class="resource resource-gold">
+            <span class="resource-icon"></span>
+            <span class="resource-value">+{{ battle.gold_earned }}</span>
+        </div>
+        <div class="resource resource-gems">
+            <span class="resource-icon"></span>
+            <span class="resource-value">+{{ battle.gems_earned }}</span>
+        </div>
+    </div>
+    {% if dropped_item %}
+    <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(255, 215, 0, 0.1); border: 1px solid #ffd700; border-radius: 8px;">
+        <h3 style="color: #ffd700;"> Objeto encontrado!</h3>
+        <p style="font-size: 1.1rem;">{{ dropped_item.name }}</p>
+        <p style="font-size: 0.85rem; color: #aaa;">{{ dropped_item.get_item_type_display }}</p>
+        <p style="font-size: 0.8rem;">
+            ATK +{{ dropped_item.attack_bonus }} | DEF +{{ dropped_item.defense_bonus }} | HP +{{ dropped_item.hp_bonus }} | SPD +{{ dropped_item.speed_bonus }}
+        </p>
+        <a href="{% url 'core:inventory' %}" class="btn btn-gold" style="margin-top: 0.5rem;">Ver inventario</a>
+    </div>
+    {% endif %}
+    {% else %}
+    <h1 style="color: #ff6b6b;"> Derrota </h1>
+    <p>Tu equipo no era lo suficientemente fuerte. ¡Mejora tus dioses y equipamiento!</p>
+    {% endif %}
+
+    <p style="margin-top: 1rem;"> gastada: {{ battle.level.energy_cost }}</p>
+
+    <div style="margin-top: 1rem; display: flex; gap: 0.75rem; justify-content: center;">
+        {% if won and next_level %}
+        <a href="{% url 'campaign:battle' next_level.id %}" class="btn btn-gold">
+            Siguiente nivel ({{ next_level.name }})
+        </a>
+        {% endif %}
+        <a href="{% url 'campaign:list' %}" class="btn">Volver a campaña</a>
+    </div>
+</div>
+{% endblock %}

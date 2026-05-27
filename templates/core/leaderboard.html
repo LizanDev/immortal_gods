@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Clasificación - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>Clasificación</h1>
+
+{% if user_position %}
+<div style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.3); border-radius: 8px;">
+    <span>Tu posición: #{{ user_position }} | Puntuación: {{ user_rank }}</span>
+</div>
+{% endif %}
+
+<table class="leaderboard-table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Jugador</th>
+            <th>Campaña</th>
+            <th>Puntuación</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for player in top_players %}
+        <tr class="{% if player.user_id == user.id %}current-user{% endif %}">
+            <td class="rank">{{ forloop.counter }}</td>
+            <td class="player-name">
+                {% if forloop.counter == 1 %}{% elif forloop.counter == 2 %}{% elif forloop.counter == 3 %}{% endif %}
+                {{ player.user.username }}
+            </td>
+            <td>{{ player.campaign_progress }}</td>
+            <td class="score">{{ player.rank_score }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">Aún no hay jugadores.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<style>
+.leaderboard-table {
+    width: 100%; border-collapse: collapse; margin-top: 1rem;
+}
+.leaderboard-table th, .leaderboard-table td {
+    padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.leaderboard-table th { color: #4a9eff; font-size: 0.85rem; text-transform: uppercase; }
+.leaderboard-table .rank { width: 50px; font-weight: bold; color: #ffd700; }
+.leaderboard-table .score { font-weight: bold; color: #51cf66; }
+.leaderboard-table .current-user { background: rgba(74,158,255,0.15); }
+</style>
+{% endblock %}

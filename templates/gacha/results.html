@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Pull Results - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>Pull Results</h1>
+
+<div class="grid" style="justify-content: center;">
+    {% for result in results %}
+    {% if result.type == "god" %}
+    <div class="god-card rarity-{{ result.god.rarity }}">
+        <div class="god-card-image" style="background: #1a1a3e;">
+            <img src="{{ result.god.image_url }}" alt="{{ result.god.name }}"
+                 style="width: 100%; height: 100%; object-fit: cover; object-position: center;"
+                 onerror="this.style.display='none'">
+        </div>
+        <div class="god-card-body">
+            <div class="god-card-name">{{ result.god.name }}</div>
+            <div class="god-card-info">
+                {{ result.god.get_pantheon_display }} | {{ result.god.get_role_display }}
+            </div>
+            {% if result.new %}
+            <p style="color: #51cf66; font-size: 0.8rem; margin-top: 0.5rem;">✨ NEW!</p>
+            {% else %}
+            <p style="color: #ffd700; font-size: 0.8rem; margin-top: 0.5rem;">+50 EXP (Duplicate)</p>
+            {% endif %}
+        </div>
+    </div>
+    {% elif result.type == "item" %}
+    <div class="item-card {{ result.item.item_type }}">
+        <h3>🎁 {{ result.item.name }}</h3>
+        <p>{{ result.item.get_item_type_display }}</p>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+
+<div style="margin-top: 2rem; display: flex; gap: 1rem;">
+    <a href="{% url 'gacha:pull' %}" class="btn">Pull Again</a>
+    <a href="{% url 'core:inventory' %}" class="btn btn-secondary">View Inventory</a>
+</div>
+{% endblock %}

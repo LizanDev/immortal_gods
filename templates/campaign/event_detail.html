@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ season.name }} - Immortal Gods{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+        <h1>{{ season.name }}</h1>
+        <p style="color: #ffd700;">{% trans "Faction" %}: {{ season.pantheon_label }} {% trans "only" %}</p>
+    </div>
+    <a href="{% url 'campaign:event_list' %}" class="btn btn-secondary">{% trans "Back to Events" %}</a>
+</div>
+
+<div style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 8px;">
+    <span>{% trans "Progress" %}: {% trans "Floor" %} {{ progress.highest_floor }} | {% trans "Best Score" %}: {{ progress.best_score }}</span>
+</div>
+
+<div class="ladder">
+    {% for stage in stages %}
+    <div class="ladder-floor {% if stage.floor <= progress.highest_floor %}completed{% elif stage.floor == progress.highest_floor + 1 %}current{% else %}locked{% endif %}">
+        <div class="ladder-floor-info">
+            <span class="ladder-floor-number">Floor {{ stage.floor }}</span>
+            <span class="ladder-floor-name">{{ stage.name }}</span>
+            {% if stage.is_boss %}<span class="boss-badge">BOSS</span>{% endif %}
+        </div>
+        <div class="ladder-floor-requirements">
+            <span>{% trans "Power" %}: {{ stage.required_power }}</span>
+            <span>{% trans "Rewards" %}: {{ stage.gold_reward }} {{ stage.gems_reward }}</span>
+        </div>
+        <div class="ladder-floor-action">
+            {% if stage.floor <= progress.highest_floor + 1 %}
+            <a href="{% url 'campaign:event_battle' stage.id %}" class="btn {% if stage.floor == progress.highest_floor + 1 %}btn-gold{% endif %}">
+                {% if stage.floor <= progress.highest_floor %}{% trans "Replay" %}{% else %}{% trans "Battle" %}{% endif %}
+            </a>
+            {% else %}
+            <span style="color: #666;">{% trans "Locked" %}</span>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+.ladder { display: flex; flex-direction: column; gap: 0.5rem; }
+.ladder-floor {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px;
+    border-left: 4px solid #444;
+}
+.ladder-floor.completed { border-left-color: #51cf66; background: rgba(81,207,102,0.1); }
+.ladder-floor.current { border-left-color: #ffd700; background: rgba(255,215,0,0.1); }
+.ladder-floor.locked { opacity: 0.5; }
+.ladder-floor-info { display: flex; align-items: center; gap: 0.75rem; }
+.ladder-floor-number { font-weight: bold; color: #4a9eff; }
+.boss-badge { background: #ff6b6b; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+.ladder-floor-requirements { font-size: 0.8rem; color: #aaa; display: flex; gap: 1rem; }
+.ladder-floor-action { min-width: 100px; text-align: right; }
+</style>
+{% endblock %}

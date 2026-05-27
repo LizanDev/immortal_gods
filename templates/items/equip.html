@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Equip {{ player_item.item.name }} - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>Equip {{ player_item.item.name }} +{{ player_item.level }}</h1>
+
+<p>{{ player_item.item.get_item_type_display }}</p>
+<p>Bonuses: ATK +{{ player_item.item.attack_bonus }} | DEF +{{ player_item.defense_bonus }} | HP +{{ player_item.hp_bonus }} | SPD +{{ player_item.speed_bonus }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <select name="god_id">
+        {% for pg in gods %}
+        <option value="{{ pg.id }}">{{ pg.god.name }} (Lv.{{ pg.level }})</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Equip</button>
+</form>
+
+<a href="{% url 'items:my_items' %}">Back</a>
+{% endblock %}

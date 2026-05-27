@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Dioses - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>Mis Dioses</h1>
+
+<div class="grid">
+    {% for pg in gods %}
+    <div class="god-card rarity-{{ pg.god.rarity }}">
+        <div class="god-card-image" style="background: #1a1a3e;">
+            <img src="{{ pg.god.image_url }}" alt="{{ pg.god.name }}"
+                 style="width: 100%; height: 100%; object-fit: cover; object-position: center;"
+                 onerror="this.style.display='none'">
+        </div>
+        <div class="god-card-body">
+            <div class="god-card-name">{{ pg.god.name }} <span style="color: #888;">Nv.{{ pg.level }}</span></div>
+            <div class="god-card-info">
+                {{ pg.god.get_pantheon_display }} | {{ pg.god.get_role_display }} | {{ pg.god.get_rarity_display }}
+            </div>
+            <div style="margin-top: 0.5rem; font-size: 0.75rem;">
+                <div class="stat-bar"><span class="stat-label">ATK</span><span class="stat-value" style="color: #ff6b6b;">{{ pg.total_attack }}</span></div>
+                <div class="stat-bar"><span class="stat-label">DEF</span><span class="stat-value" style="color: #4a9eff;">{{ pg.total_defense }}</span></div>
+                <div class="stat-bar"><span class="stat-label">HP</span><span class="stat-value" style="color: #51cf66;">{{ pg.total_hp }}</span></div>
+                <div class="stat-bar"><span class="stat-label">SPD</span><span class="stat-value" style="color: #ffd700;">{{ pg.total_speed }}</span></div>
+            </div>
+            <div style="margin-top: 0.5rem;">
+                <p style="font-size: 0.7rem; color: #888;">Objetos equipados:</p>
+                {% for eq in pg.equipped_items.all %}
+                <span style="font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 0.2rem 0.4rem; border-radius: 4px;">{{ eq.item.name }} +{{ eq.level }}</span>
+                {% empty %}
+                <span style="font-size: 0.7rem; color: #666;">Ninguno</span>
+                {% endfor %}
+            </div>
+            <div style="margin-top: 1rem;">
+                <h4 style="font-size: 0.85rem; color: #ddd;">Habilidades</h4>
+                {% for skill in pg.skills %}
+                <div style="background: rgba(255,255,255,0.05); padding: 0.5rem; margin-bottom: 0.4rem; border-radius: 6px; border-left: 3px solid {% if skill.type == 'ultimate' %}#ffd700{% else %}#4a9eff{% endif %};">
+                    <strong style="color: {% if skill.type == 'ultimate' %}#ffd700{% else %}#4a9eff{% endif %}; font-size: 0.8rem;">{{ skill.name }}</strong>
+                    {% if skill.type == 'ultimate' %}<span style="float: right; background: #ffd700; color: #000; padding: 1px 6px; border-radius: 3px; font-size: 0.6rem; font-weight: bold;">ULT</span>{% endif %}
+                    <p style="margin: 0.2rem 0 0; font-size: 0.75rem; color: #aaa;">{{ skill.desc }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>Aún no tienes dioses. ¡Prueba el gacha!</p>
+    {% endfor %}
+</div>
+
+<a href="{% url 'core:inventory' %}" class="btn btn-secondary" style="margin-top: 1rem;">Volver al inventario</a>
+{% endblock %}

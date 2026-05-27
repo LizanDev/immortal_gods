@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Escaleras de Facción - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>Escaleras de Facción</h1>
+<p style="color: #aaa; margin-bottom: 1.5rem;">
+    Desafía la escalera de cada facción. Solo se pueden usar dioses de ese panteón. Sin recompensas, solo gloria.
+</p>
+
+<div class="grid">
+    {% for item in ladder_data %}
+    <div class="card faction-card" style="border-top: 3px solid {{ item.ladder.color }};">
+        <h2 style="color: {{ item.ladder.color }};">{{ item.ladder.name }}</h2>
+        <p style="font-size: 0.85rem; color: #aaa;">{{ item.ladder.description }}</p>
+        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;">
+            <p style="margin: 0; font-size: 0.9rem;">
+                Piso más alto: <strong>{{ item.progress.highest_floor }}</strong>
+            </p>
+        </div>
+        <a href="{% url 'campaign:faction_ladder_detail' item.ladder.id %}" class="btn" style="margin-top: 1rem; background: {{ item.ladder.color }};">
+            Entrar a la escalera
+        </a>
+    </div>
+    {% empty %}
+    <p>No hay escaleras de facción disponibles.</p>
+    {% endfor %}
+</div>
+
+<style>
+.faction-card { transition: transform 0.2s; }
+.faction-card:hover { transform: translateY(-4px); }
+</style>
+{% endblock %}

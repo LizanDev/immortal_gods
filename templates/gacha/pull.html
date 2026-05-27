@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Gacha - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>Tirada Gacha</h1>
+
+<div class="resources">
+    <div class="resource resource-gems">
+        <span class="resource-icon">💎</span>
+        <span class="resource-value">{% if user.is_superuser %}{% else %}{{ profile.gems }}{% endif %}</span>
+    </div>
+</div>
+
+<div class="gacha-banner">
+    <h2>Invocar Dioses</h2>
+    <p>Tirada simple: {{ SINGLE_PULL_COST }} gemas | Tirada múltiple (x10): {{ MULTI_PULL_COST }} gemas</p>
+
+    <form method="post" style="max-width: 100%; margin-top: 1rem;">
+        {% csrf_token %}
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <select name="banner" style="min-width: 200px;">
+                {% for value, label in banners %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" name="pull_type" value="single" class="btn">Tirada simple ({{ SINGLE_PULL_COST }} 💎)</button>
+            <button type="submit" name="pull_type" value="multi" class="btn btn-gold">Tirada múltiple (x10) ({{ MULTI_PULL_COST }} 💎)</button>
+        </div>
+    </form>
+</div>
+
+<div>
+    <h2>Tiradas recientes</h2>
+    <ul>
+        {% for pull in history %}
+        <li style="padding: 0.5rem; background: rgba(255,255,255,0.05); margin: 0.3rem 0; border-radius: 4px;">
+            {{ pull.get_pull_type_display }} -
+            {% if pull.god %}
+                <span style="color: {% if pull.god.rarity == 'mythic' %}#ff4444{% elif pull.god.rarity == 'legendary' %}#ffd700{% elif pull.god.rarity == 'epic' %}#a855f7{% elif pull.god.rarity == 'rare' %}#4a9eff{% else %}#888{% endif %};">
+                    {{ pull.god.name }} ({{ pull.god.get_rarity_display }})
+                </span>
+            {% elif pull.item %}
+                 {{ pull.item.name }}
+            {% endif %}
+        </li>
+        {% empty %}
+        <li>Aún no has hecho tiradas</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
