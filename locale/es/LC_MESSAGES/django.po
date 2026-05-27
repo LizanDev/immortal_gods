@@ -1,0 +1,1512 @@
+# Spanish translations for Immortal Gods.
+# Copyright (C) 2026
+# This file is distributed under the same license as the Immortal Gods project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-27 19:00+0000\n"
+"PO-Revision-Date: 2026-05-27 19:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: es\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# Base template
+msgid "Immortal Gods"
+msgstr "Dioses Inmortales"
+
+msgid "Home"
+msgstr "Inicio"
+
+msgid "Inventory"
+msgstr "Inventario"
+
+msgid "My Gods"
+msgstr "Mis Dioses"
+
+msgid "Gacha"
+msgstr "Gacha"
+
+msgid "Teams"
+msgstr "Equipos"
+
+msgid "Campaign"
+msgstr "Campaña"
+
+msgid "Login"
+msgstr "Iniciar Sesión"
+
+msgid "Register"
+msgstr "Registrarse"
+
+msgid "Logout"
+msgstr "Cerrar Sesión"
+
+msgid "Resources"
+msgstr "Recursos"
+
+msgid "Gods"
+msgstr "Dioses"
+
+msgid "Items"
+msgstr "Objetos"
+
+# Home page
+msgid "Welcome to Immortal Gods"
+msgstr "Bienvenido a Dioses Inmortales"
+
+msgid "Collect gods, build your team, and conquer the campaign!"
+msgstr "¡Colecciona dioses, construye tu equipo y conquista la campaña!"
+
+msgid "Start Playing"
+msgstr "Empezar a Jugar"
+
+msgid "View Inventory"
+msgstr "Ver Inventario"
+
+msgid "Stats"
+msgstr "Estadísticas"
+
+msgid "Gods Owned"
+msgstr "Dioses Obtenidos"
+
+msgid "Campaign Progress"
+msgstr "Progreso de Campaña"
+
+msgid "Quick Actions"
+msgstr "Acciones Rápidas"
+
+msgid "Gacha Pull"
+msgstr "Tirada de Gacha"
+
+msgid "My Items"
+msgstr "Mis Objetos"
+
+# Auth pages
+msgid "Username"
+msgstr "Nombre de Usuario"
+
+msgid "Password"
+msgstr "Contraseña"
+
+msgid "Sign In"
+msgstr "Iniciar Sesión"
+
+msgid "Create Account"
+msgstr "Crear Cuenta"
+
+msgid "Don't have an account?"
+msgstr "¿No tienes una cuenta?"
+
+msgid "Already have an account?"
+msgstr "¿Ya tienes una cuenta?"
+
+# Inventory page
+msgid "No gods yet. Try the gacha!"
+msgstr "Aún no tienes dioses. ¡Prueba el gacha!"
+
+msgid "No items yet. Try the gacha!"
+msgstr "Aún no tienes objetos. ¡Prueba el gacha!"
+
+msgid "Equipped"
+msgstr "Equipado"
+
+msgid "Unequip"
+msgstr "Desequipar"
+
+msgid "Equip"
+msgstr "Equipar"
+
+msgid "Upgrade"
+msgstr "Mejorar"
+
+msgid "Max Level"
+msgstr "Nivel Máximo"
+
+# Gacha page
+msgid "Summon Gods"
+msgstr "Invocar Dioses"
+
+msgid "Single Pull"
+msgstr "Tirada Individual"
+
+msgid "Multi Pull (x10)"
+msgstr "Tirada Múltiple (x10)"
+
+msgid "gems"
+msgstr "gemas"
+
+msgid "Recent Pulls"
+msgstr "Tiradas Recientes"
+
+msgid "No pulls yet"
+msgstr "Aún no hay tiradas"
+
+msgid "Insufficient Gems"
+msgstr "Gemas Insuficientes"
+
+msgid "You don't have enough gems for this pull."
+msgstr "No tienes suficientes gemas para esta tirada."
+
+msgid "Get more gems by completing campaign levels!"
+msgstr "¡Consigue más gemas completando niveles de campaña!"
+
+# Teams page
+msgid "Your Teams"
+msgstr "Tus Equipos"
+
+msgid "Create New Team"
+msgstr "Crear Nuevo Equipo"
+
+msgid "Members"
+msgstr "Miembros"
+
+msgid "No teams created yet."
+msgstr "Aún no se han creado equipos."
+
+msgid "Delete Team"
+msgstr "Eliminar Equipo"
+
+msgid "Are you sure you want to delete this team?"
+msgstr "¿Estás seguro de que quieres eliminar este equipo?"
+
+msgid "This action cannot be undone."
+msgstr "Esta acción no se puede deshacer."
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "Add Member"
+msgstr "Añadir Miembro"
+
+msgid "Remove"
+msgstr "Eliminar"
+
+msgid "No gods assigned to this team."
+msgstr "No hay dioses asignados a este equipo."
+
+msgid "Position"
+msgstr "Posición"
+
+# Campaign page
+msgid "Energy"
+msgstr "Energía"
+
+msgid "Progress"
+msgstr "Progreso"
+
+msgid "Battle"
+msgstr "Batalla"
+
+msgid "Locked"
+msgstr "Bloqueado"
+
+msgid "Completed"
+msgstr "Completado"
+
+msgid "Victory"
+msgstr "Victoria"
+
+msgid "Defeat"
+msgstr "Derrota"
+
+msgid "Gold Earned"
+msgstr "Oro Ganado"
+
+msgid "Gems Earned"
+msgstr "Gemas Ganadas"
+
+msgid "Experience Earned"
+msgstr "Experiencia Ganada"
+
+msgid "Required Power"
+msgstr "Poder Requerido"
+
+msgid "Your Power"
+msgstr "Tu Poder"
+
+msgid "Insufficient Energy"
+msgstr "Energía Insuficiente"
+
+msgid "You don't have enough energy for this battle."
+msgstr "No tienes suficiente energía para esta batalla."
+
+msgid "Level"
+msgstr "Nivel"
+
+msgid "Difficulty"
+msgstr "Dificultad"
+
+msgid "Easy"
+msgstr "Fácil"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "Hard"
+msgstr "Difícil"
+
+msgid "Hell"
+msgstr "Infierno"
+
+msgid "Boss"
+msgstr "Jefe"
+
+msgid "Rewards"
+msgstr "Recompensas"
+
+msgid "Not enough energy"
+msgstr "Energía insuficiente"
+
+msgid "No campaign levels available yet."
+msgstr "Aún no hay niveles de campaña disponibles."
+
+# Gods list
+msgid "All Gods"
+msgstr "Todos los Dioses"
+
+msgid "Pantheon"
+msgstr "Panteón"
+
+msgid "Role"
+msgstr "Rol"
+
+msgid "Rarity"
+msgstr "Rareza"
+
+msgid "Base Stats"
+msgstr "Estadísticas Base"
+
+msgid "Back to list"
+msgstr "Volver a la lista"
+
+# Skills
+msgid "Skills"
+msgstr "Habilidades"
+
+msgid "ULTIMATE"
+msgstr "ULTIMATE"
+
+msgid "Basic"
+msgstr "Básica"
+
+# God detail
+msgid "God Detail"
+msgstr "Detalle del Dios"
+
+# Items
+msgid "Weapon"
+msgstr "Arma"
+
+msgid "Armor"
+msgstr "Armadura"
+
+msgid "Helmet"
+msgstr "Casco"
+
+msgid "Boots"
+msgstr "Botas"
+
+msgid "Accessory"
+msgstr "Accesorio"
+
+# Common
+msgid "Back"
+msgstr "Volver"
+
+msgid "Back to Inventory"
+msgstr "Volver al Inventario"
+
+msgid "Back to Teams"
+msgstr "Volver a Equipos"
+
+msgid "Back to Campaign"
+msgstr "Volver a Campaña"
+
+msgid "None"
+msgstr "Ninguno"
+
+msgid "Greek"
+msgstr "Griego"
+
+msgid "Zodiac"
+msgstr "Zodiaco"
+
+msgid "Chinese"
+msgstr "Chino"
+
+msgid "Egyptian"
+msgstr "Egipcio"
+
+msgid "Nordic"
+msgstr "Nórdico"
+
+msgid "Assassin"
+msgstr "Asesino"
+
+msgid "Tank"
+msgstr "Tanque"
+
+msgid "Support"
+msgstr "Soporte"
+
+msgid "Mage"
+msgstr "Mago"
+
+msgid "Archer"
+msgstr "Arquero"
+
+msgid "Common"
+msgstr "Común"
+
+msgid "Rare"
+msgstr "Raro"
+
+msgid "Epic"
+msgstr "Épico"
+
+msgid "Legendary"
+msgstr "Legendario"
+
+msgid "Mythic"
+msgstr "Mítico"
+
+msgid "Standard"
+msgstr "Estándar"
+
+msgid "Greek Pantheon"
+msgstr "Panteón Griego"
+
+msgid "Zodiac Pantheon"
+msgstr "Panteón del Zodiaco"
+
+msgid "Chinese Pantheon"
+msgstr "Panteón Chino"
+
+msgid "Egyptian Pantheon"
+msgstr "Panteón Egipcio"
+
+msgid "Nordic Pantheon"
+msgstr "Panteón Nórdico"
+msgid "72 Transformations"
+msgstr "72 Transformaciones"
+
+msgid "Aegis of Athena"
+msgstr "Égida de Atenea"
+
+msgid "Aerial dive dealing {dmg} damage"
+msgstr "Picado aéreo que inflige {dmg} de daño"
+
+msgid "Aerial strike dealing {dmg} damage"
+msgstr "Golpe aéreo que inflige {dmg} de daño"
+
+msgid "Afterlife Touch"
+msgstr "Toque del Más Allá"
+
+msgid "All-seeing blast dealing {dmg} damage to all"
+msgstr "Explosión que todo lo ve que inflige {dmg} de daño a todos"
+
+msgid "All-seeing strike dealing {dmg} damage"
+msgstr "Golpe que todo lo ve que inflige {dmg} de daño"
+
+msgid "Allfather's Wrath"
+msgstr "Ira del Padre de Todo"
+
+msgid "Ancient script dealing {dmg} damage"
+msgstr "Escritura antigua que inflige {dmg} de daño"
+
+msgid "Ascends mountain, deals {dmg} damage to all"
+msgstr "Asciende la montaña, inflige {dmg} de daño a todos"
+
+msgid "Avenger's Fury"
+msgstr "Furia del Vengador"
+
+msgid "Awakens gods dealing {dmg} damage to all"
+msgstr "Despierta a los dioses que inflige {dmg} de daño a todos"
+
+msgid "Balance Strike"
+msgstr "Golpe de Equilibrio"
+
+msgid "Balances all HP, deals {dmg} to enemies"
+msgstr "Equilibra todos los PV, inflige {dmg} a los enemigos"
+
+msgid "Basic Attack"
+msgstr "Ataque Básico"
+
+msgid "Battle shout dealing {dmg} damage + fear"
+msgstr "Grito de batalla que inflige {dmg} de daño + miedo"
+
+msgid "Beast Call"
+msgstr "Llamada de Bestia"
+
+msgid "Becomes unkillable for 2 turns, reflects {dmg} damage"
+msgstr "Se vuelve inmortal durante 2 turnos, refleja {dmg} de daño"
+
+msgid "Berserker strike dealing {dmg} damage"
+msgstr "Golpe de berserker que inflige {dmg} de daño"
+
+msgid "Bifrost Beam"
+msgstr "Rayo de Bifröst"
+
+msgid "Blinding radiance dealing {dmg} damage to all"
+msgstr "Resplandor cegador que inflige {dmg} de daño a todos"
+
+msgid "Blinding sun burst dealing {dmg} damage to all"
+msgstr "Explosión solar cegadora que inflige {dmg} de daño a todos"
+
+msgid "Blood Frenzy"
+msgstr "Frenesí de Sangre"
+
+msgid "Bloodlust Strike"
+msgstr "Golpe de Sed de Sangre"
+
+msgid "Blooms shield blocking {dmg} damage"
+msgstr "Escudo de loto que bloquea {dmg} de daño"
+
+msgid "Blots out sun dealing {dmg} damage to all"
+msgstr "Oscurece el sol que inflige {dmg} de daño a todos"
+
+msgid "Book of Thoth"
+msgstr "Libro de Thoth"
+
+msgid "Builds shield blocking {dmg} damage"
+msgstr "Construye un escudo que bloquea {dmg} de daño"
+
+msgid "Bulwark"
+msgstr "Baluarte"
+
+msgid "Burning stare dealing {dmg} damage"
+msgstr "Mirada ardiente que inflige {dmg} de daño"
+
+msgid "Calculated attack dealing {dmg} damage"
+msgstr "Ataque calculado que inflige {dmg} de daño"
+
+msgid "Cat's Grace"
+msgstr "Gracia del Gato"
+
+msgid "Celestial Decree"
+msgstr "Decreto Celestial"
+
+msgid "Centaur Charge"
+msgstr "Carga de Centauro"
+
+msgid "Chaos Incarnate"
+msgstr "Caos Encarnado"
+
+msgid "Chaos Spear"
+msgstr "Lanza del Caos"
+
+msgid "Cleansing beam dealing {dmg} damage"
+msgstr "Rayo purificador que inflige {dmg} de daño"
+
+msgid "Cloud Somersault"
+msgstr "Voltereta de Nube"
+
+msgid "Commands Valhalla dealing {dmg} damage to all"
+msgstr "Comanda el Valhalla que inflige {dmg} de daño a todos"
+
+msgid "Commands cosmos dealing {dmg} damage to all"
+msgstr "Comanda el cosmos que inflige {dmg} de daño a todos"
+
+msgid "Commands ghost army dealing {dmg} damage"
+msgstr "Comanda un ejército fantasma que inflige {dmg} de daño"
+
+msgid "Constellation Fury"
+msgstr "Furia de la Constelación"
+
+msgid "Consumes land dealing {dmg} damage to all"
+msgstr "Consume la tierra que inflige {dmg} de daño a todos"
+
+msgid "Cosmic Equilibrium"
+msgstr "Equilibrio Cósmico"
+
+msgid "Cosmic Flood"
+msgstr "Inundación Cósmica"
+
+msgid "Cosmic arrow dealing {dmg} damage"
+msgstr "Flecha cósmica que inflige {dmg} de daño"
+
+msgid "Cosmic ram charge dealing {dmg} damage to all"
+msgstr "Embestida cósmica de carnero que inflige {dmg} de daño a todos"
+
+msgid "Cosmic water dealing {dmg} damage"
+msgstr "Agua cósmica que inflige {dmg} de daño"
+
+msgid "Counter-attack dealing {dmg} damage"
+msgstr "Contraataque que inflige {dmg} de daño"
+
+msgid "Crashing wave dealing {dmg} damage"
+msgstr "Ola destructora que inflige {dmg} de daño"
+
+msgid "Creates clone dealing {dmg} damage"
+msgstr "Crea un clon que inflige {dmg} de daño"
+
+msgid "Creates water fortress, heals team {dmg} HP"
+msgstr "Crea una fortaleza de agua, cura al equipo {dmg} PV"
+
+msgid "Creation Mending"
+msgstr "Reparación de la Creación"
+
+msgid "Creation Strike"
+msgstr "Golpe de Creación"
+
+msgid "Death's Embrace"
+msgstr "Abrazo de la Muerte"
+
+msgid "Deceptive strike dealing {dmg} damage"
+msgstr "Golpe engañoso que inflige {dmg} de daño"
+
+msgid "Defends ally blocking {dmg} damage"
+msgstr "Defiende a un aliado bloqueando {dmg} de daño"
+
+msgid "Demon Hunter's Strike"
+msgstr "Golpe del Cazador de Demonios"
+
+msgid "Demon Queller"
+msgstr "Exterminador de Demonios"
+
+msgid "Desert of Destruction"
+msgstr "Desierto de Destrucción"
+
+msgid "Desert wind dealing {dmg} damage"
+msgstr "Viento del desierto que inflige {dmg} de daño"
+
+msgid "Destiny weave dealing {dmg} damage"
+msgstr "Tejido del destino que inflige {dmg} de daño"
+
+msgid "Divine Craft"
+msgstr "Artesanía Divina"
+
+msgid "Divine Power"
+msgstr "Poder Divino"
+
+msgid "Divine lightning storm dealing {dmg} damage to all enemies"
+msgstr "Tormenta de rayos divina que inflige {dmg} de daño a todos los enemigos"
+
+msgid "Divine order dealing {dmg} damage"
+msgstr "Orden divina que inflige {dmg} de daño"
+
+msgid "Divine thrust dealing {dmg} damage"
+msgstr "Estocada divina que inflige {dmg} de daño"
+
+msgid "Dodges and strikes for {dmg} damage"
+msgstr "Esquiva y golpea por {dmg} de daño"
+
+msgid "Dragon's Breath"
+msgstr "Aliento de Dragón"
+
+msgid "Dream Wave"
+msgstr "Onda de Sueño"
+
+msgid "Drowns battlefield dealing {dmg} damage to all"
+msgstr "Inunda el campo de batalla que inflige {dmg} de daño a todos"
+
+msgid "Dual attack dealing {dmg} damage"
+msgstr "Ataque dual que inflige {dmg} de daño"
+
+msgid "Duality Cascade"
+msgstr "Cascada de Dualidad"
+
+msgid "Earth Stomp"
+msgstr "Pisotón Terrestre"
+
+msgid "Earth's Embrace"
+msgstr "Abrazo de la Tierra"
+
+msgid "Earth-shaking blow dealing {dmg} damage"
+msgstr "Golpe que sacude la tierra que inflige {dmg} de daño"
+
+msgid "Elemental projectile dealing {dmg} damage"
+msgstr "Proyectil elemental que inflige {dmg} de daño"
+
+msgid "Enters battle frenzy dealing {dmg} damage to all enemies"
+msgstr "Entra en frenesí de batalla que inflige {dmg} de daño a todos los enemigos"
+
+msgid "Equalizing blow dealing {dmg} damage"
+msgstr "Golpe igualador que inflige {dmg} de daño"
+
+msgid "Erupts ground dealing {dmg} damage to all enemies"
+msgstr "El suelo entra en erupción que inflige {dmg} de daño a todos los enemigos"
+
+msgid "Eternal Moon Palace"
+msgstr "Palacio Lunar Eterno"
+
+msgid "Eternal Winter"
+msgstr "Invierno Eterno"
+
+msgid "Eye of Horus"
+msgstr "Ojo de Horus"
+
+msgid "Falcon Dive"
+msgstr "Picado de Halcón"
+
+msgid "Falcon Strike"
+msgstr "Golpe de Halcón"
+
+msgid "Falcon's Gaze"
+msgstr "Mirada del Halcón"
+
+msgid "Fate's Thread"
+msgstr "Hilo del Destino"
+
+msgid "Feather strike dealing {dmg} damage"
+msgstr "Golpe de pluma que inflige {dmg} de daño"
+
+msgid "Fierce swipe dealing {dmg} damage"
+msgstr "Zarpazo feroz que inflige {dmg} de daño"
+
+msgid "Fire Horns"
+msgstr "Cuernos de Fuego"
+
+msgid "Fire Wheel Spin"
+msgstr "Giro de Rueda de Fuego"
+
+msgid "Fish Companion"
+msgstr "Compañero Pez"
+
+msgid "Five Colored Stone"
+msgstr "Piedra de Cinco Colores"
+
+msgid "Flaming horns dealing {dmg} damage"
+msgstr "Cuernos llameantes que infligen {dmg} de daño"
+
+msgid "Flaming wheels dealing {dmg} damage"
+msgstr "Ruedas llameantes que infligen {dmg} de daño"
+
+msgid "Forge Hammer"
+msgstr "Martillo de Forja"
+
+msgid "Forged blow dealing {dmg} damage"
+msgstr "Golpe forjado que inflige {dmg} de daño"
+
+msgid "Freezes battlefield dealing {dmg} damage"
+msgstr "Congela el campo de batalla que inflige {dmg} de daño"
+
+msgid "Freezes time, deals {dmg} damage to all"
+msgstr "Congela el tiempo, inflige {dmg} de daño a todos"
+
+msgid "Frenzied attack dealing {dmg} damage"
+msgstr "Ataque frenético que inflige {dmg} de daño"
+
+msgid "Frozen projectile dealing {dmg} damage"
+msgstr "Proyectil congelado que inflige {dmg} de daño"
+
+msgid "Full team heal + {dmg} damage to enemies"
+msgstr "Cura a todo el equipo + {dmg} de daño a los enemigos"
+
+msgid "Galloping strike dealing {dmg} damage"
+msgstr "Golpe galopante que inflige {dmg} de daño"
+
+msgid "Gate of Judgment"
+msgstr "Puerta del Juicio"
+
+msgid "Gate of the Underworld"
+msgstr "Puerta del Inframundo"
+
+msgid "Ghost Wall"
+msgstr "Muro Fantasma"
+
+msgid "Gjallarhorn's Call"
+msgstr "Llamada del Gjallarhorn"
+
+msgid "God of Justice"
+msgstr "Dios de la Justicia"
+
+msgid "God of Light"
+msgstr "Dios de la Luz"
+
+msgid "God of War"
+msgstr "Dios de la Guerra"
+
+msgid "God of War's Fury"
+msgstr "Furia del Dios de la Guerra"
+
+msgid "Goddess of Slaughter"
+msgstr "Diosa de la Matanza"
+
+msgid "Golden Ingot Throw"
+msgstr "Lanzamiento de Lingote Dorado"
+
+msgid "Golden staff blow dealing {dmg} damage"
+msgstr "Golpe de bastón dorado que inflige {dmg} de daño"
+
+msgid "Grants shield absorbing {dmg} damage"
+msgstr "Concede un escudo que absorbe {dmg} de daño"
+
+msgid "Grants {dmg} gold shield to ally"
+msgstr "Concede un escudo dorado de {dmg} a un aliado"
+
+msgid "Green Dragon Blade"
+msgstr "Espada del Dragón Verde"
+
+msgid "Ground shake dealing {dmg} damage"
+msgstr "Terremoto que inflige {dmg} de daño"
+
+msgid "Gungnir's Throw"
+msgstr "Lanzamiento de Gungnir"
+
+msgid "Hammer blow dealing {dmg} damage"
+msgstr "Golpe de martillo que inflige {dmg} de daño"
+
+msgid "Harvest Blessing"
+msgstr "Bendición de la Cosecha"
+
+msgid "Headbutt dealing {dmg} damage + stun"
+msgstr "Cornada que inflige {dmg} de daño + aturdimiento"
+
+msgid "Healing Light"
+msgstr "Luz Sanadora"
+
+msgid "Healing Spell"
+msgstr "Hechizo Sanador"
+
+msgid "Healing Touch"
+msgstr "Toque Sanador"
+
+msgid "Healing rain restoring {dmg} HP"
+msgstr "Lluvia sanadora que restaura {dmg} PV"
+
+msgid "Heals ally for {dmg} HP"
+msgstr "Cura a un aliado por {dmg} PV"
+
+msgid "Heals self for {dmg} HP"
+msgstr "Se cura por {dmg} PV"
+
+msgid "Heaven's Blessing"
+msgstr "Bendición del Cielo"
+
+msgid "Heavenly Spear"
+msgstr "Lanza Celestial"
+
+msgid "Hides in shell, blocks {dmg} damage"
+msgstr "Se esconde en su caparazón, bloquea {dmg} de daño"
+
+msgid "Hieroglyph Blast"
+msgstr "Explosión de Jeroglíficos"
+
+msgid "Honor's Shield"
+msgstr "Escudo de Honor"
+
+msgid "Huntress's Mark"
+msgstr "Marca de la Cazadora"
+
+msgid "Hurls lightning dealing {dmg} damage"
+msgstr "Lanza un rayo que inflige {dmg} de daño"
+
+msgid "Illusion wave dealing {dmg} damage + confuse"
+msgstr "Onda de ilusión que inflige {dmg} de daño + confusión"
+
+msgid "Immovable Object"
+msgstr "Objeto Inamovible"
+
+msgid "Infinite clones deal {dmg} damage to all"
+msgstr "Clones infinitos infligen {dmg} de daño a todos"
+
+msgid "Intimidating roar dealing {dmg} damage"
+msgstr "Rugido intimidante que inflige {dmg} de daño"
+
+msgid "Invulnerable shield for team, reflects {dmg} damage"
+msgstr "Escudo invulnerable para el equipo, refleja {dmg} de daño"
+
+msgid "Iron Wall"
+msgstr "Muro de Hierro"
+
+msgid "Jackal's Bite"
+msgstr "Mordisco del Chacal"
+
+msgid "Jade Rabbit's Grace"
+msgstr "Gracia del Conejo de Jade"
+
+msgid "Judges all enemies dealing {dmg} damage"
+msgstr "Juzga a todos los enemigos que inflige {dmg} de daño"
+
+msgid "Judges enemy dealing {dmg} damage"
+msgstr "Juzga al enemigo que inflige {dmg} de daño"
+
+msgid "Justice Strike"
+msgstr "Golpe de Justicia"
+
+msgid "King of Beasts"
+msgstr "Rey de las Bestias"
+
+msgid "King of Demons"
+msgstr "Rey de los Demonios"
+
+msgid "Knowledge shield blocking {dmg} damage"
+msgstr "Escudo de conocimiento que bloquea {dmg} de daño"
+
+msgid "Leaping strike dealing {dmg} damage"
+msgstr "Golpe saltarín que inflige {dmg} de daño"
+
+msgid "Lethal poison dealing {dmg} damage over time"
+msgstr "Veneno letal que inflige {dmg} de daño durante tiempo"
+
+msgid "Leviathan Ascension"
+msgstr "Ascensión del Leviatán"
+
+msgid "Leviathan's Fury"
+msgstr "Furia del Leviatán"
+
+msgid "Light's Touch"
+msgstr "Toque de Luz"
+
+msgid "Lightning shield blocking {dmg} damage"
+msgstr "Escudo de relámpagos que bloquea {dmg} de daño"
+
+msgid "Lightning-fast attack dealing {dmg} damage"
+msgstr "Ataque ultrarrápido que inflige {dmg} de daño"
+
+msgid "Lion's Roar"
+msgstr "Rugido de León"
+
+msgid "Lioness Claw"
+msgstr "Garra de Leona"
+
+msgid "Lord of the Dead"
+msgstr "Señor de los Muertos"
+
+msgid "Lotus Armor"
+msgstr "Armadura de Loto"
+
+msgid "Love's Embrace"
+msgstr "Abrazo del Amor"
+
+msgid "Loyal Oath"
+msgstr "Juramento Leal"
+
+msgid "Lunar arrow dealing {dmg} damage"
+msgstr "Flecha lunar que inflige {dmg} de daño"
+
+msgid "Lunar ray dealing {dmg} damage"
+msgstr "Rayo lunar que inflige {dmg} de daño"
+
+msgid "Magic Wings"
+msgstr "Alas Mágicas"
+
+msgid "Mandate of Heaven"
+msgstr "Mandato del Cielo"
+
+msgid "Marks all enemies, arrows deal {dmg} damage each"
+msgstr "Marca a todos los enemigos, las flechas infligen {dmg} de daño cada una"
+
+msgid "Messenger's Wrath"
+msgstr "Ira del Mensajero"
+
+msgid "Meteor Shower"
+msgstr "Lluvia de Meteoros"
+
+msgid "Mirror Image"
+msgstr "Imagen Espejo"
+
+msgid "Mjolnir Strike"
+msgstr "Golpe de Mjolnir"
+
+msgid "Molten strike dealing {dmg} damage + burn"
+msgstr "Golpe de lava que inflige {dmg} de daño + quemadura"
+
+msgid "Moonlight Beam"
+msgstr "Rayo de Luz Lunar"
+
+msgid "Moonshot"
+msgstr "Disparo Lunar"
+
+msgid "Mother's Blessing"
+msgstr "Bendición de la Madre"
+
+msgid "Mountain Strike"
+msgstr "Golpe de Montaña"
+
+msgid "Nature's Grasp"
+msgstr "Garras de la Naturaleza"
+
+msgid "Nine Lives"
+msgstr "Nueve Vidas"
+
+msgid "Ocean barrier blocking {dmg} damage"
+msgstr "Barrera oceánica que bloquea {dmg} de daño"
+
+msgid "Ocean's Dream"
+msgstr "Sueño del Océano"
+
+msgid "Ocean's Fortress"
+msgstr "Fortaleza del Océano"
+
+msgid "Ocean's Grasp"
+msgstr "Garras del Océano"
+
+msgid "Opens hell portal dealing {dmg} damage, ignores armor"
+msgstr "Abre un portal al infierno que inflige {dmg} de daño, ignora la armadura"
+
+msgid "Opens underworld dealing {dmg} damage to all"
+msgstr "Abre el inframundo que inflige {dmg} de daño a todos"
+
+msgid "Peak of Ambition"
+msgstr "Cima de la Ambición"
+
+msgid "Phase through shadows dealing {dmg} damage"
+msgstr "Se desplaza por las sombras que inflige {dmg} de daño"
+
+msgid "Poisonous strike dealing {dmg} damage"
+msgstr "Golpe venenoso que inflige {dmg} de daño"
+
+msgid "Power Strike"
+msgstr "Golpe de Poder"
+
+msgid "Prosperity Blessing"
+msgstr "Bendición de Prosperidad"
+
+msgid "Protective Purr"
+msgstr "Ronroneo Protector"
+
+msgid "Protective barrier absorbing {dmg} damage"
+msgstr "Barrera protectora que absorbe {dmg} de daño"
+
+msgid "Protects ally, blocks {dmg} damage"
+msgstr "Protege a un aliado, bloquea {dmg} de daño"
+
+msgid "Pure Heart"
+msgstr "Corazón Puro"
+
+msgid "Purifying Light"
+msgstr "Luz Purificadora"
+
+msgid "Purifying blow dealing {dmg} damage"
+msgstr "Golpe purificador que inflige {dmg} de daño"
+
+msgid "Puts enemies to sleep, deals {dmg} damage"
+msgstr "Duerme a los enemigos, inflige {dmg} de daño"
+
+msgid "Quiet blow dealing {dmg} damage"
+msgstr "Golpe silencioso que inflige {dmg} de daño"
+
+msgid "Radiant beam dealing {dmg} damage"
+msgstr "Rayo radiante que inflige {dmg} de daño"
+
+msgid "Ragnarok's Thunder"
+msgstr "Trueno del Ragnarok"
+
+msgid "Rainbow energy dealing {dmg} damage"
+msgstr "Energía de arcoíris que inflige {dmg} de daño"
+
+msgid "Rains fire arrows dealing {dmg} damage to all"
+msgstr "Lluvia de flechas de fuego que inflige {dmg} de daño a todos"
+
+msgid "Rains gold dealing {dmg} damage to all enemies"
+msgstr "Lluvia de oro que inflige {dmg} de daño a todos los enemigos"
+
+msgid "Raises defense, blocks {dmg} damage"
+msgstr "Aumenta la defensa, bloquea {dmg} de daño"
+
+msgid "Raises shield blocking {dmg} damage"
+msgstr "Levanta un escudo que bloquea {dmg} de daño"
+
+msgid "Raises undead army dealing {dmg} damage"
+msgstr "Levanta un ejército de muertos vivientes que inflige {dmg} de daño"
+
+msgid "Ram Charge"
+msgstr "Embestida de Carnero"
+
+msgid "Raven's Sight"
+msgstr "Visión del Cuervo"
+
+msgid "Redistributes damage, blocks {dmg}"
+msgstr "Redistribuye el daño, bloquea {dmg}"
+
+msgid "Regenerates team, deals {dmg} damage to enemies"
+msgstr "Regenera al equipo, inflige {dmg} de daño a los enemigos"
+
+msgid "Repairs ally for {dmg} HP"
+msgstr "Repara a un aliado por {dmg} PV"
+
+msgid "Reshapes battlefield dealing {dmg} damage"
+msgstr "Remodela el campo de batalla que inflige {dmg} de daño"
+
+msgid "Reshapes reality dealing {dmg} damage to all"
+msgstr "Remodela la realidad que inflige {dmg} de daño a todos"
+
+msgid "Restores {dmg} HP to ally"
+msgstr "Restaura {dmg} PV a un aliado"
+
+msgid "Resurrection Blessing"
+msgstr "Bendición de Resurrección"
+
+msgid "Reveals all weaknesses, deals {dmg} damage"
+msgstr "Revela todas las debilidades, inflige {dmg} de daño"
+
+msgid "Revives fallen ally, deals {dmg} damage"
+msgstr "Revive a un aliado caído, inflige {dmg} de daño"
+
+msgid "Rewrites destiny dealing {dmg} damage"
+msgstr "Reescribe el destino que inflige {dmg} de daño"
+
+msgid "Rewrites reality dealing {dmg} damage to all"
+msgstr "Reescribe la realidad que inflige {dmg} de daño a todos"
+
+msgid "Righteous blow dealing {dmg} damage"
+msgstr "Golpe justo que inflige {dmg} de daño"
+
+msgid "Royal Pounce"
+msgstr "Salto Real"
+
+msgid "Sandstorm"
+msgstr "Tormenta de Arena"
+
+msgid "Savage bite dealing {dmg} damage"
+msgstr "Mordisco salvaje que inflige {dmg} de daño"
+
+msgid "Scales of Justice"
+msgstr "Balanza de la Justicia"
+
+msgid "Sea Goat's Wall"
+msgstr "Muro de la Cabra Marina"
+
+msgid "Shadow Ambush"
+msgstr "Emboscada de Sombra"
+
+msgid "Shadow Step"
+msgstr "Paso de Sombra"
+
+msgid "Shape Shift"
+msgstr "Cambiaformas"
+
+msgid "Shape-shifts into army dealing {dmg} damage"
+msgstr "Se transforma en un ejército que inflige {dmg} de daño"
+
+msgid "Shell Guard"
+msgstr "Guarda de Caparazón"
+
+msgid "Silent Strike"
+msgstr "Golpe Silencioso"
+
+msgid "Silent vengeance dealing {dmg} damage to all"
+msgstr "Venganza silenciosa que inflige {dmg} de daño a todos"
+
+msgid "Sky Shield"
+msgstr "Escudo del Cielo"
+
+msgid "Snow Hunt"
+msgstr "Caza de Nieve"
+
+msgid "Solar Eclipse"
+msgstr "Eclipse Solar"
+
+msgid "Solar Flare"
+msgstr "Llamarada Solar"
+
+msgid "Solar beam dealing {dmg} damage"
+msgstr "Rayo solar que inflige {dmg} de daño"
+
+msgid "Solar projectile dealing {dmg} damage"
+msgstr "Proyectil solar que inflige {dmg} de daño"
+
+msgid "Soul Drain"
+msgstr "Drenaje de Alma"
+
+msgid "Soul Weigh"
+msgstr "Pesaje del Alma"
+
+msgid "Soul drain dealing {dmg} damage"
+msgstr "Drenaje de alma que inflige {dmg} de daño"
+
+msgid "Spear of destiny dealing {dmg} damage"
+msgstr "Lanza del destino que inflige {dmg} de daño"
+
+msgid "Spirit barrier blocking {dmg} damage"
+msgstr "Barrera espiritual que bloquea {dmg} de daño"
+
+msgid "Staff Strike"
+msgstr "Golpe de Bastón"
+
+msgid "Standard strike dealing {dmg} damage"
+msgstr "Golpe estándar que inflige {dmg} de daño"
+
+msgid "Star Arrow"
+msgstr "Flecha Estelar"
+
+msgid "Starlight Rain"
+msgstr "Lluvia de Luz Estelar"
+
+msgid "Steals life dealing {dmg} damage"
+msgstr "Roba vida que inflige {dmg} de daño"
+
+msgid "Stealth attack dealing {dmg} damage"
+msgstr "Ataque furtivo que inflige {dmg} de daño"
+
+msgid "Storm Call"
+msgstr "Llamada de Tormenta"
+
+msgid "Strategic Strike"
+msgstr "Golpe Estratégico"
+
+msgid "Strikes all enemies in {dmg} speed burst"
+msgstr "Golpea a todos los enemigos en ráfaga de velocidad que inflige {dmg} de daño"
+
+msgid "Strong attack dealing {dmg} damage"
+msgstr "Ataque fuerte que inflige {dmg} de daño"
+
+msgid "Summons fish dealing {dmg} damage"
+msgstr "Invoca un pez que inflige {dmg} de daño"
+
+msgid "Summons lion spirits dealing {dmg} damage to all"
+msgstr "Invoca espíritus de león que infligen {dmg} de daño a todos"
+
+msgid "Summons sea monster dealing {dmg} damage to all"
+msgstr "Invoca un monstruo marino que inflige {dmg} de daño a todos"
+
+msgid "Summons storm dealing {dmg} AoE damage"
+msgstr "Invoca una tormenta que inflige {dmg} de daño en área"
+
+msgid "Summons warriors dealing {dmg} damage"
+msgstr "Invoca guerreros que infligen {dmg} de daño"
+
+msgid "Summons wolf dealing {dmg} damage"
+msgstr "Invoca un lobo que inflige {dmg} de daño"
+
+msgid "Sun Arrow"
+msgstr "Flecha Solar"
+
+msgid "Sun Disk"
+msgstr "Disco Solar"
+
+msgid "Sweeping strike dealing {dmg} damage"
+msgstr "Golpe barrido que inflige {dmg} de daño"
+
+msgid "Swift Strike"
+msgstr "Golpe Veloz"
+
+msgid "Swift strike dealing {dmg} damage"
+msgstr "Golpe veloz que inflige {dmg} de daño"
+
+msgid "Third Eye Beam"
+msgstr "Rayo del Tercer Ojo"
+
+msgid "Three Heads Six Arms"
+msgstr "Tres Cabezas Seis Brazos"
+
+msgid "Throne of Magic"
+msgstr "Trono de la Magia"
+
+msgid "Thunder Block"
+msgstr "Bloqueo de Trueno"
+
+msgid "Thunderbolt"
+msgstr "Rayo"
+
+msgid "Tidal Claw"
+msgstr "Garra de Marea"
+
+msgid "Tidal Shield"
+msgstr "Escudo de Marea"
+
+msgid "Tidal Wave"
+msgstr "Ola Gigante"
+
+msgid "Tracking strike dealing {dmg} damage"
+msgstr "Golpe de rastreo que inflige {dmg} de daño"
+
+msgid "Transforms and strikes for {dmg} damage"
+msgstr "Se transforma y golpea por {dmg} de daño"
+
+msgid "Transforms into dragon dealing {dmg} damage"
+msgstr "Se transforma en dragón que inflige {dmg} de daño"
+
+msgid "Treasure Flood"
+msgstr "Inundación de Tesoros"
+
+msgid "Trickster's Blade"
+msgstr "Hoja del Embaucador"
+
+msgid "Trickster's Dash"
+msgstr "Carrera del Embaucador"
+
+msgid "Truth-seeing beam dealing {dmg} damage"
+msgstr "Rayo que ve la verdad que inflige {dmg} de daño"
+
+msgid "Twin Strike"
+msgstr "Golpe Gemelo"
+
+msgid "Ultimate ability dealing {dmg} damage"
+msgstr "Habilidad definitiva que inflige {dmg} de daño"
+
+msgid "Unleashes ancient magic dealing {dmg} damage"
+msgstr "Desata magia antigua que inflige {dmg} de daño"
+
+msgid "Unleashes full form dealing {dmg} damage"
+msgstr "Desata su forma completa que inflige {dmg} de daño"
+
+msgid "Unleashes legendary might dealing {dmg} damage"
+msgstr "Desata su poder legendario que inflige {dmg} de daño"
+
+msgid "Unleashes pure chaos dealing {dmg} damage"
+msgstr "Desata caos puro que inflige {dmg} de daño"
+
+msgid "Unleashes war fury dealing {dmg} damage"
+msgstr "Desata la furia de la guerra que inflige {dmg} de daño"
+
+msgid "Unstable energy dealing {dmg} damage"
+msgstr "Energía inestable que inflige {dmg} de daño"
+
+msgid "Valkyrie's Call"
+msgstr "Llamada de la Valquiria"
+
+msgid "Vengeance Step"
+msgstr "Paso de Venganza"
+
+msgid "Venom Sting"
+msgstr "Aguijón Venenoso"
+
+msgid "Vigilant shield blocking {dmg} damage"
+msgstr "Escudo vigilante que bloquea {dmg} de daño"
+
+msgid "Vines deal {dmg} damage + root"
+msgstr "Las enredaderas infligen {dmg} de daño + raíz"
+
+msgid "Virgin's Grace"
+msgstr "Gracia de la Virgen"
+
+msgid "Volcanic Eruption"
+msgstr "Erupción Volcánica"
+
+msgid "War Cry"
+msgstr "Grito de Guerra"
+
+msgid "Watchman's Ward"
+msgstr "Protección del Vigilante"
+
+msgid "Water Bearer's Flow"
+msgstr "Flujo del Portador de Agua"
+
+msgid "Water dragon breath dealing {dmg} damage"
+msgstr "Aliento de dragón de agua que inflige {dmg} de daño"
+
+msgid "Water tentacles dealing {dmg} damage + slow"
+msgstr "Tentáculos de agua que infligen {dmg} de daño + ralentización"
+
+msgid "Water-earth shield blocking {dmg} damage"
+msgstr "Escudo de agua y tierra que bloquea {dmg} de daño"
+
+msgid "Water-infused claw dealing {dmg} damage"
+msgstr "Garra infundida de agua que inflige {dmg} de daño"
+
+msgid "Wealth projectile dealing {dmg} damage"
+msgstr "Proyectil de riqueza que inflige {dmg} de daño"
+
+msgid "Weaver of Fate"
+msgstr "Tejedora del Destino"
+
+msgid "Wing barrier blocking {dmg} damage"
+msgstr "Barrera de alas que bloquea {dmg} de daño"
+
+msgid "Winter's Arrow"
+msgstr "Flecha de Invierno"
+
+msgid "Wisdom's Shield"
+msgstr "Escudo de Sabiduría"
+
+msgid "Wisdom's Ward"
+msgstr "Protección de la Sabiduría"
+
+msgid "World Forge"
+msgstr "Forja del Mundo"
+
+msgid "World Shaper"
+msgstr "Modelador del Mundo"
+
+msgid "World-shaking storm dealing {dmg} damage"
+msgstr "Tormenta que sacude el mundo que inflige {dmg} de daño"
+
+msgid "Wrath of Olympus"
+msgstr "Ira del Olimpo"
+
+# Items
+msgid "Thunder Sword"
+msgstr "Espada del Rayo"
+
+msgid "Poseidon's Trident"
+msgstr "Tridente de Poseidón"
+
+msgid "Hades' Scythe"
+msgstr "Guadaña de Hades"
+
+msgid "Apollo's Bow"
+msgstr "Arco de Apolo"
+
+msgid "Sun Wukong's Staff"
+msgstr "Bastón de Sun Wukong"
+
+msgid "Ra's Sun Blade"
+msgstr "Espada Solar de Ra"
+
+msgid "Mjolnir"
+msgstr "Mjolnir"
+
+msgid "Gungnir"
+msgstr "Gungnir"
+
+msgid "Aegis Shield"
+msgstr "Escudo Égida"
+
+msgid "Dragon Scale Mail"
+msgstr "Armadura de Escamas de Dragón"
+
+msgid "Osiris' Robe"
+msgstr "Túnica de Osiris"
+
+msgid "Valkyrie Armor"
+msgstr "Armadura de Valquiria"
+
+msgid "Jade Armor"
+msgstr "Armadura de Jade"
+
+msgid "Crown of Zeus"
+msgstr "Corona de Zeus"
+
+msgid "Anubis' Mask"
+msgstr "Máscara de Anubis"
+
+msgid "Odin's Helm"
+msgstr "Casco de Odin"
+
+msgid "Dragon Horn Helm"
+msgstr "Casco de Cuerno de Dragón"
+
+msgid "Zodiac Crown"
+msgstr "Corona del Zodiaco"
+
+msgid "Hermes' Sandals"
+msgstr "Sandalias de Hermes"
+
+msgid "Wind Walkers"
+msgstr "Caminantes del Viento"
+
+msgid "Shadow Steps"
+msgstr "Pasos de Sombra"
+
+msgid "Iron Boots"
+msgstr "Botas de Hierro"
+
+msgid "Cloud Walkers"
+msgstr "Caminantes de Nubes"
+
+msgid "Eye of Horus"
+msgstr "Ojo de Horus"
+
+msgid "Phoenix Feather"
+msgstr "Pluma de Fénix"
+
+msgid "Yggdrasil Seed"
+msgstr "Semilla de Yggdrasil"
+
+msgid "Taiji Amulet"
+msgstr "Amuleto Taiji"
+
+msgid "Olympus Ring"
+msgstr "Anillo del Olimpo"
+
+# Campaign levels
+msgid "Temple Entrance"
+msgstr "Entrada del Templo"
+
+msgid "Forest of Shadows"
+msgstr "Bosque de las Sombras"
+
+msgid "River Crossing"
+msgstr "Cruce del Río"
+
+msgid "Mountain Pass"
+msgstr "Paso de Montaña"
+
+msgid "Ancient Ruins"
+msgstr "Ruinas Antiguas"
+
+msgid "Dark Cave"
+msgstr "Cueva Oscura"
+
+msgid "Guardian's Gate"
+msgstr "Puerta del Guardián"
+
+msgid "Volcanic Wastes"
+msgstr "Páramos Volcánicos"
+
+msgid "Frozen Peaks"
+msgstr "Picos Helados"
+
+msgid "Storm Valley"
+msgstr "Valle de la Tormenta"
+
+msgid "Shadow Fortress"
+msgstr "Fortaleza de las Sombras"
+
+msgid "Dragon's Lair"
+msgstr "Guarida del Dragón"
+
+msgid "Celestial Realm"
+msgstr "Reino Celestial"
+
+msgid "Abyss of Chaos"
+msgstr "Abismo del Caos"
+
+msgid "Throne of Gods"
+msgstr "Trono de los Dioses"
+
+msgid "Battle Result"
+msgstr "Resultado de Batalla"
+
+msgid "Item Found"
+msgstr "Objeto Encontrado"
+
+msgid "Energy spent"
+msgstr "Energía gastada"
+
+msgid "Abandoned Village"
+msgstr "Pueblo Abandonado"
+
+msgid "Whispering Woods"
+msgstr "Bosque Susurrante"
+
+msgid "Swamp of Decay"
+msgstr "Pantano de la Decadencia"
+
+msgid "Crystal Caverns"
+msgstr "Cavernas de Cristal"
+
+msgid "Enchanted Garden"
+msgstr "Jardín Encantado"
+
+msgid "Cursed Battlefield"
+msgstr "Campo de Batalla Maldito"
+
+msgid "Phantom Citadel"
+msgstr "Ciudadela Fantasma"
+
+msgid "Lava Temple"
+msgstr "Templo de Lava"
+
+msgid "Astral Plane"
+msgstr "Plano Astral"
+
+msgid "Titan's Graveyard"
+msgstr "Cementerio de Titanes"
+
+msgid "Void Dimension"
+msgstr "Dimensión del Vacío"
+
+msgid "Infernal Gates"
+msgstr "Puertas Infernales"
+
+msgid "Netherworld"
+msgstr "Inframundo"
+
+msgid "Pandemonium"
+msgstr "Pandemonium"
+
+msgid "Eternal Darkness"
+msgstr "Oscuridad Eterna"
