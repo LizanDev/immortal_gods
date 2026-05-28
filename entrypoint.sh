@@ -9,6 +9,9 @@ uv run python manage.py migrate --noinput
 echo "Collecting static files..."
 uv run python manage.py collectstatic --noinput
 
+echo "Seeding game data..."
+uv run python manage.py seed_data
+
 echo "Creating superuser..."
 uv run python manage.py create_superuser
 
