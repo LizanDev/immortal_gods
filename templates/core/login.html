@@ -8,32 +8,31 @@
     .login-fullpage {
         min-height: calc(100vh - 180px);
         background: url('{% static "images/gods/login.webp" %}') center/cover no-repeat;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
+        position: relative;
     }
     .login-form-overlay {
-        background: rgba(10, 10, 26, 0.7);
+        position: absolute;
+        top: 60px;
+        right: 280px;
+        background: rgba(10, 10, 26, 0.85);
         backdrop-filter: blur(10px);
-        padding: 2.5rem 3rem;
-        border-radius: 16px;
+        padding: 35px 40px;
+        border-radius: 12px;
         border: 2px solid rgba(233, 69, 96, 0.6);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
         min-width: 320px;
-        max-width: 400px;
     }
     .login-form-overlay h1 {
         text-align: center;
         color: #fff;
-        margin-bottom: 1.5rem;
-        font-size: 1.8rem;
+        margin-bottom: 25px;
+        font-size: 1.6rem;
         text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
     }
     .login-form-overlay input {
         width: 100%;
-        padding: 0.9rem 1rem;
-        margin-bottom: 1rem;
+        padding: 12px 15px;
+        margin-bottom: 15px;
         background: rgba(255, 255, 255, 0.1);
         border: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 8px;
@@ -53,14 +52,16 @@
     }
     .login-form-overlay .btn {
         width: 100%;
-        padding: 1rem;
+        padding: 12px;
         font-size: 1.1rem;
-        margin-top: 0.5rem;
+        margin-top: 5px;
         background: linear-gradient(135deg, #e94560, #c73650);
         border: none;
         border-radius: 8px;
         cursor: pointer;
         transition: transform 0.2s, box-shadow 0.2s;
+        color: #fff;
+        font-weight: bold;
     }
     .login-form-overlay .btn:hover {
         transform: scale(1.03);
@@ -68,7 +69,7 @@
     }
     .login-form-overlay p {
         text-align: center;
-        margin-top: 1.5rem;
+        margin-top: 20px;
         color: rgba(255, 255, 255, 0.7);
     }
     .login-form-overlay a {
