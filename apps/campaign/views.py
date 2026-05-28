@@ -130,7 +130,6 @@ def campaign_battle(request, level_id):
             profile.campaign_progress = level.order + 1
             profile.save(update_fields=["campaign_progress"])
             profile.recalculate_rank_score()
-            print(f"DEBUG: Progress updated to {profile.campaign_progress}")
 
         drop_chance = ITEM_DROP_CHANCE.get(level.difficulty, 0.05)
         if random.random() < drop_chance:
@@ -271,59 +270,6 @@ def faction_battle(request, stage_id):
     team_power = sum(
         god.total_attack + god.total_defense
         for god in faction_gods
-    )
-
-    power_ratio = team_power / stage.required_power if stage.required_power > 0 else 1
-
-    if power_ratio >= 1.0:
-        won = True
-    elif power_ratio >= 0.7:
-        won = random.random() < (power_ratio - 0.5)
-    else:
-        won = False
-
-    if won and stage.floor > progress.highest_floor:
-        progress.highest_floor = stage.floor
-        progress.save(update_fields=["highest_floor"])
-        profile.recalculate_rank_score()
-
-    next_stage = None
-    if won:
-        next_stage = FactionStage.objects.filter(
-            ladder=ladder, floor=stage.floor + 1
-        ).first()
-
-    return render(
-        request,
-        "campaign/faction_battle_result.html",
-        {
-            "ladder": ladder,
-            "stage": stage,
-            "won": won,
-            "progress": progress,
-            "next_stage": next_stage,
-        },
-    )
-
-    if stage.floor > progress.highest_floor + 1:
-        messages.error(request, "Complete previous floors first.")
-        return redirect("campaign:faction_ladder_detail", ladder_id=ladder.id)
-
-    available_gods = list(
-        profile.gods.filter(god__pantheon=ladder.pantheon)
-        .select_related("god")
-    )
-
-    if not available_gods:
-        messages.error(
-            request,
-            f"Necesitas dioses {ladder.pantheon_label} para entrar en esta escalera.",
-        )
-        return redirect("campaign:faction_ladder_detail", ladder_id=ladder.id)
-
-    team_power = sum(
-        god.total_attack + god.total_defense
-        for god in available_gods[:5]
     )
 
     power_ratio = team_power / stage.required_power if stage.required_power > 0 else 1

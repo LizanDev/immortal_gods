@@ -176,12 +176,15 @@ class PlayerMission(models.Model):
 
     def recalculate_rank_score(self) -> None:
         """Recalculate rank score based on campaign and faction progress."""
-        campaign_score = self.campaign_progress * 100
-        faction_score = sum(
-            fp.highest_floor * 50 for fp in self.faction_progress.all()
-        )
-        self.rank_score = campaign_score + faction_score
-        self.save(update_fields=["rank_score", "updated_at"])
+        try:
+            campaign_score = self.campaign_progress * 100
+            faction_score = sum(
+                fp.highest_floor * 50 for fp in self.faction_progress.all()
+            )
+            self.rank_score = campaign_score + faction_score
+            self.save(update_fields=["rank_score", "updated_at"])
+        except Exception:
+            pass  # Fail silently to avoid breaking battles
 
 
 class ReferralCode(models.Model):
