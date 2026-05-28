@@ -694,6 +694,21 @@ class PlayerGod(models.Model):
         return True
 
     @property
+    def weapon(self):
+        """Get equipped weapon."""
+        return self.equipped_items.filter(item__item_type="weapon").first()
+
+    @property
+    def armor(self):
+        """Get equipped armor."""
+        return self.equipped_items.filter(item__item_type="armor").first()
+
+    @property
+    def amulet(self):
+        """Get equipped amulet."""
+        return self.equipped_items.filter(item__item_type="amulet").first()
+
+    @property
     def active_passives(self) -> list[dict]:
         """Get list of active item passives for this god."""
         passives = []

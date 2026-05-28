@@ -5,6 +5,49 @@
 {% block content %}
 <h1>Mis Dioses</h1>
 
+{% csrf_token %}
+
+<style>
+    .equip-slots { display: flex; gap: 0.5rem; margin: 0.5rem 0; }
+    .equip-slot {
+        width: 60px; height: 60px;
+        border: 2px dashed rgba(255,255,255,0.3);
+        border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        background: rgba(0,0,0,0.2);
+    }
+    .equip-slot:hover { border-color: #e94560; background: rgba(233,69,96,0.1); }
+    .equip-slot.occupied { border-style: solid; border-color: #4a9eff; background: rgba(74,158,255,0.1); }
+    .equip-slot .slot-icon { font-size: 1.5rem; }
+    .equip-slot .slot-label { font-size: 0.6rem; color: #888; position: absolute; bottom: 2px; }
+    .equip-slot .item-preview { font-size: 0.7rem; color: #ffd700; text-align: center; padding: 2px; }
+
+    .modal-overlay {
+        display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.8); z-index: 1000;
+        align-items: center; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-content {
+        background: #16213e; border-radius: 12px; padding: 1.5rem;
+        max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;
+        border: 2px solid #e94560;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .modal-close { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+    .item-option {
+        display: flex; align-items: center; gap: 0.5rem;
+        padding: 0.5rem; margin: 0.3rem 0;
+        background: rgba(255,255,255,0.05); border-radius: 6px;
+        cursor: pointer; transition: background 0.2s;
+    }
+    .item-option:hover { background: rgba(233,69,96,0.2); }
+    .item-option .item-stats { font-size: 0.7rem; color: #aaa; }
+</style>
+
 <div class="grid">
     {% for pg in gods %}
     <div class="god-card rarity-{{ pg.god.rarity }}">
@@ -23,14 +66,61 @@
                 <div class="stat-bar"><span class="stat-label">HP</span><span class="stat-value" style="color: #51cf66;">{{ pg.total_hp }}</span></div>
                 <div class="stat-bar"><span class="stat-label">SPD</span><span class="stat-value" style="color: #ffd700;">{{ pg.total_speed }}</span></div>
             </div>
-            <div style="margin-top: 0.5rem;">
-                <p style="font-size: 0.7rem; color: #888;">Objetos equipados:</p>
-                {% for eq in pg.equipped_items.all %}
-                <span style="font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 0.2rem 0.4rem; border-radius: 4px;">{{ eq.item.name }} +{{ eq.level }}</span>
-                {% empty %}
-                <span style="font-size: 0.7rem; color: #666;">Ninguno</span>
-                {% endfor %}
+
+            <div class="equip-slots">
+                <div class="equip-slot {% if pg.weapon %}occupied{% endif %}"
+                     onclick="handleSlotClick({{ pg.id }}, 'weapon', {% if pg.weapon %}{{ pg.weapon.id }}{% else %}null{% endif %})"
+                     title="Arma">
+                    {% if pg.weapon %}
+                    <div class="item-preview">⚔️<br>{{ pg.weapon.item.name|truncatechars:8 }}</div>
+                    {% else %}
+                    <span class="slot-icon">⚔️</span>
+                    <span class="slot-label">Arma</span>
+                    {% endif %}
+                </div>
+                <div class="equip-slot {% if pg.armor %}occupied{% endif %}"
+                     onclick="handleSlotClick({{ pg.id }}, 'armor', {% if pg.armor %}{{ pg.armor.id }}{% else %}null{% endif %})"
+                     title="Armadura">
+                    {% if pg.armor %}
+                    <div class="item-preview">🛡️<br>{{ pg.armor.item.name|truncatechars:8 }}</div>
+                    {% else %}
+                    <span class="slot-icon">🛡️</span>
+                    <span class="slot-label">Armadura</span>
+                    {% endif %}
+                </div>
+                <div class="equip-slot {% if pg.amulet %}occupied{% endif %}"
+                     onclick="handleSlotClick({{ pg.id }}, 'amulet', {% if pg.amulet %}{{ pg.amulet.id }}{% else %}null{% endif %})"
+                     title="Amuleto">
+                    {% if pg.amulet %}
+                    <div class="item-preview"><br>{{ pg.amulet.item.name|truncatechars:8 }}</div>
+                    {% else %}
+                    <span class="slot-icon">💎</span>
+                    <span class="slot-label">Amuleto</span>
+                    {% endif %}
+                </div>
             </div>
+                <div class="equip-slot {% if pg.armor %}occupied{% endif %}"
+                     onclick="openEquipModal({{ pg.id }}, 'armor')"
+                     title="Armadura">
+                    {% if pg.armor %}
+                    <div class="item-preview">🛡️<br>{{ pg.armor.item.name|truncatechars:8 }}</div>
+                    {% else %}
+                    <span class="slot-icon">🛡️</span>
+                    <span class="slot-label">Armadura</span>
+                    {% endif %}
+                </div>
+                <div class="equip-slot {% if pg.amulet %}occupied{% endif %}"
+                     onclick="openEquipModal({{ pg.id }}, 'amulet')"
+                     title="Amuleto">
+                    {% if pg.amulet %}
+                    <div class="item-preview">💎<br>{{ pg.amulet.item.name|truncatechars:8 }}</div>
+                    {% else %}
+                    <span class="slot-icon"></span>
+                    <span class="slot-label">Amuleto</span>
+                    {% endif %}
+                </div>
+            </div>
+
             {% if pg.active_passives %}
             <div style="margin-top: 0.5rem;">
                 <p style="font-size: 0.7rem; color: #ffd700;">✨ Pasivas activas:</p>
@@ -48,6 +138,7 @@
                 {% endfor %}
             </div>
             {% endif %}
+
             <div style="margin-top: 1rem;">
                 <h4 style="font-size: 0.85rem; color: #ddd;">Habilidades</h4>
                 {% for skill in pg.skills %}
@@ -65,5 +156,101 @@
     {% endfor %}
 </div>
 
-<a href="{% url 'core:inventory' %}" class="btn btn-secondary" style="margin-top: 1rem;">Volver al inventario</a>
+<div id="equipModal" class="modal-overlay" onclick="closeEquipModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 id="modalTitle">Equipar objeto</h3>
+            <button class="modal-close" onclick="closeEquipModal()">&times;</button>
+        </div>
+        <div id="modalItems"></div>
+    </div>
+</div>
+
+<script>
+let currentGodId = null;
+let currentSlot = null;
+
+function handleSlotClick(godId, slotType, equippedItemId) {
+    if (equippedItemId) {
+        if (confirm('¿Desequipar este objeto?')) {
+            unequipItem(equippedItemId);
+        }
+    } else {
+        openEquipModal(godId, slotType);
+    }
+}
+
+function openEquipModal(godId, slotType) {
+    currentGodId = godId;
+    currentSlot = slotType;
+
+    const slotNames = { weapon: 'Arma', armor: 'Armadura', amulet: 'Amuleto' };
+    document.getElementById('modalTitle').textContent = `Equipar ${slotNames[slotType]}`;
+
+    fetch(`/gods/${godId}/available-items/${slotType}/`)
+        .then(r => r.json())
+        .then(data => {
+            const container = document.getElementById('modalItems');
+            if (data.items.length === 0) {
+                container.innerHTML = '<p style="color: #888; text-align: center;">No tienes objetos disponibles</p>';
+            } else {
+                container.innerHTML = data.items.map(item => `
+                    <div class="item-option" onclick="equipItem(${godId}, ${item.id})">
+                        <div>
+                            <strong>${item.name} +${item.level}</strong>
+                            <div class="item-stats">
+                                ${item.atk ? 'ATK +' + item.atk + ' ' : ''}
+                                ${item.def ? 'DEF +' + item.def + ' ' : ''}
+                                ${item.hp ? 'HP +' + item.hp + ' ' : ''}
+                                ${item.spd ? 'SPD +' + item.spd : ''}
+                            </div>
+                            ${item.is_specific ? '<span style="color: #ffd700; font-size: 0.7rem;">✨ Específico</span>' : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+            document.getElementById('equipModal').classList.add('active');
+        });
+}
+
+function closeEquipModal(event) {
+    if (!event || event.target === document.getElementById('equipModal')) {
+        document.getElementById('equipModal').classList.remove('active');
+    }
+}
+
+function equipItem(godId, itemId) {
+    fetch(`/gods/${godId}/equip/${itemId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === 'ok') {
+            location.reload();
+        } else {
+            alert(data.message);
+        }
+    });
+}
+
+function unequipItem(itemId) {
+    fetch(`/gods/unequip/${itemId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === 'ok') {
+            location.reload();
+        }
+    });
+}
+</script>
 {% endblock %}
