@@ -1,4 +1,4 @@
-"""Management command to create default superuser from environment variables."""
+"""Management command to create or update superuser from environment variables."""
 
 import os
 from django.core.management.base import BaseCommand
@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 
 class Command(BaseCommand):
-    help = "Create default superuser if it doesn't exist using environment variables"
+    help = "Create or update superuser using environment variables"
 
     def handle(self, *args, **options):
         username = os.getenv("ADMIN_USERNAME")
@@ -15,16 +15,22 @@ class Command(BaseCommand):
 
         if not username or not password:
             self.stdout.write(self.style.WARNING(
-                "ADMIN_USERNAME and ADMIN_PASSWORD environment variables not set. Skipping superuser creation."
+                "ADMIN_USERNAME and ADMIN_PASSWORD environment variables not set. Skipping."
             ))
             return
 
-        if User.objects.filter(username=username).exists():
-            self.stdout.write(self.style.SUCCESS(f"Superuser '{username}' already exists."))
-            return
+        user, created = User.objects.get_or_create(
+            username=username,
+            defaults={"email": email, "is_staff": True, "is_superuser": True}
+        )
 
-        try:
-            User.objects.create_superuser(username, email, password)
+        user.set_password(password)
+        user.email = email
+        user.is_staff = True
+        user.is_superuser = True
+        user.save()
+
+        if created:
             self.stdout.write(self.style.SUCCESS(f"Superuser '{username}' created successfully."))
-        except Exception as e:
-            self.stdout.write(self.style.ERROR(f"Failed to create superuser: {e}"))
+        else:
+            self.stdout.write(self.style.SUCCESS(f"Superuser '{username}' password updated successfully."))
