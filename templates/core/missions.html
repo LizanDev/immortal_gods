@@ -184,9 +184,19 @@
 
 <div class="missions-header">
     <h1>⚔️ Misiones Diarias</h1>
-    <div class="energy-display">
-        <span class="energy-icon">⚡</span>
-        <span>{{ profile.energy }}/{{ profile.max_energy }}</span>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        {% if total_energy_claimable > 0 %}
+        <form method="post" action="{% url 'core:claim_all_missions' %}">
+            {% csrf_token %}
+            <button type="submit" class="claim-btn" style="padding: 0.7rem 1.5rem; font-size: 1rem;">
+                ⚡ Reclamar todo (+{{ total_energy_claimable }})
+            </button>
+        </form>
+        {% endif %}
+        <div class="energy-display">
+            <span class="energy-icon">⚡</span>
+            <span>{{ profile.energy }}/{{ profile.max_energy }}</span>
+        </div>
     </div>
 </div>
 

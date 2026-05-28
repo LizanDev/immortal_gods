@@ -206,6 +206,32 @@ def claim_mission(request, mission_id):
     return redirect("core:missions")
 
 
+@login_required
+def claim_all_missions(request):
+    """Claim all completed mission rewards at once."""
+    if request.method == "POST":
+        profile = request.user.profile
+        total_energy = 0
+        claimed_count = 0
+
+        for pm in PlayerMission.objects.filter(
+            player=profile, completed=True, claimed=False
+        ):
+            energy = pm.claim_reward()
+            total_energy += energy
+            claimed_count += 1
+
+        if claimed_count > 0:
+            profile.add_energy(total_energy)
+            messages.success(
+                request, f"¡{claimed_count} misiones reclamadas! +{total_energy} energía"
+            )
+        else:
+            messages.info(request, "No hay misiones para reclamar")
+
+    return redirect("core:missions")
+
+
 SHOP_ITEMS = [
     {
         "id": "essence_small",
