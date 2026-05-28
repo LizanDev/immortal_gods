@@ -25,3 +25,4 @@ staticfiles/
 *.png
 *.jpg
 !static/**/*.jpg
+!static/images/**/*.png
