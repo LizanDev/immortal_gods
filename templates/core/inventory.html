@@ -6,6 +6,26 @@
 {% block content %}
 <h1>Inventario</h1>
 
+<div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: linear-gradient(135deg, rgba(233,69,96,0.15), rgba(74,158,255,0.1)); border: 1px solid rgba(233,69,96,0.3); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span style="font-size: 1.8rem;">👤</span>
+        <div>
+            <div style="font-size: 0.75rem; color: #aaa;">Personaje principal</div>
+            <div style="font-size: 1.1rem; font-weight: bold; color: #e94560; text-shadow: 0 0 10px rgba(233,69,96,0.5);">{{ user.username }}</div>
+        </div>
+    </div>
+    <div style="display: flex; gap: 1rem; align-items: center;">
+        <div style="text-align: center;">
+            <div style="font-size: 0.7rem; color: #aaa;">Oro</div>
+            <div style="font-size: 1rem; font-weight: bold; color: #ffd700;">{{ profile.gold }}</div>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-size: 0.7rem; color: #aaa;">Gemas</div>
+            <div style="font-size: 1rem; font-weight: bold; color: #4a9eff;">{{ profile.gems }}</div>
+        </div>
+    </div>
+</div>
+
 <div style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.2); border-radius: 8px;">
     <form method="post" action="{% url 'core:redeem_referral' %}" style="display: flex; gap: 0.5rem; align-items: center;">
         {% csrf_token %}
