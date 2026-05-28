@@ -34,8 +34,11 @@
     {% endfor %}
 </div>
 
-<div style="margin-top: 2rem; display: flex; gap: 1rem;">
-    <a href="{% url 'gacha:pull' %}" class="btn">Tirar de nuevo</a>
+<div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+    <form method="post" action="{% url 'gacha:pull' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn">🎲 Tirar de nuevo</button>
+    </form>
     <a href="{% url 'core:inventory' %}" class="btn btn-secondary">Ver Inventario</a>
 </div>
 {% endblock %}
