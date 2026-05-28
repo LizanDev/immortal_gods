@@ -22,22 +22,24 @@
             <a href="{% url 'core:inventory' %}">{% trans "Inventory" %}</a>
             <a href="{% url 'core:shop' %}" style="color: #4a9eff;">🏪 {% trans "Shop" %}</a>
             <a href="{% url 'core:missions' %}" style="color: #ffd700;">⚔️ {% trans "Missions" %}</a>
-            <span class="user">{{ user.username }}</span>
-            <form method="post" action="{% url 'core:logout' %}" style="display:inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-secondary">{% trans "Logout" %}</button>
-            </form>
-            <form action="{% url 'set_language' %}" method="post" style="display:inline; margin-left: 1rem;">
-                {% csrf_token %}
-                <input name="next" type="hidden" value="{{ request.path }}">
-                <select name="language" onchange="this.form.submit()" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 0.3rem; border-radius: 4px;">
-                    {% get_current_language as CURRENT_LANGUAGE %}
-                    {% get_available_languages as AVAILABLE_LANGUAGES %}
-                    {% for code, name in AVAILABLE_LANGUAGES %}
-                    <option value="{{ code }}" {% if code == CURRENT_LANGUAGE %}selected{% endif %}>{{ name }}</option>
-                    {% endfor %}
-                </select>
-            </form>
+            <div class="nav-right">
+                <span class="user">{{ user.username }}</span>
+                <form method="post" action="{% url 'core:logout' %}" style="display:inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary">{% trans "Logout" %}</button>
+                </form>
+                <form action="{% url 'set_language' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.path }}">
+                    <select name="language" onchange="this.form.submit()" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 0.3rem; border-radius: 4px;">
+                        {% get_current_language as CURRENT_LANGUAGE %}
+                        {% get_available_languages as AVAILABLE_LANGUAGES %}
+                        {% for code, name in AVAILABLE_LANGUAGES %}
+                        <option value="{{ code }}" {% if code == CURRENT_LANGUAGE %}selected{% endif %}>{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
         </div>
     </nav>
     {% endif %}
