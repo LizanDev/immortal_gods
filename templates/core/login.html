@@ -7,12 +7,17 @@
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    html, body {
+        height: 100%;
+        overflow: hidden;
+    }
+
     .login-page {
-        min-height: 100vh;
+        height: 100vh;
+        width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 2rem;
         background: #050508;
         position: relative;
         overflow: hidden;
@@ -28,103 +33,84 @@
         z-index: 0;
     }
     .bg-layer.bg-image {
-        background-image: url("{% static 'images/gods/login.webp' %}?v=3");
+        background-image: url("{% static 'images/gods/login.webp' %}?v=4");
         background-size: cover;
         background-position: center;
-        opacity: 0.35;
+        opacity: 0.3;
     }
     .bg-layer.bg-gradient {
-        background: radial-gradient(ellipse at center top, rgba(88,28,135,0.4) 0%, transparent 50%),
-                    radial-gradient(ellipse at center bottom, rgba(233,69,96,0.2) 0%, transparent 50%),
-                    linear-gradient(180deg, #050508 0%, #0f0a1a 50%, #050508 100%);
+        background: radial-gradient(ellipse at center, rgba(88,28,135,0.3) 0%, transparent 60%),
+                    linear-gradient(180deg, #050508 0%, #0f0a1a 100%);
     }
-    .bg-layer.bg-vignette {
-        background: radial-gradient(ellipse at center, transparent 0%, #050508 100%);
+
+    /* Imagen del dios a la derecha */
+    .god-image-bg {
+        position: absolute;
+        right: 5%;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40%;
+        max-width: 450px;
+        height: 80%;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0.25;
+        mask-image: linear-gradient(to left, rgba(0,0,0,0.7) 0%, transparent 60%);
+        -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.7) 0%, transparent 60%);
+    }
+    .god-image-bg img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: drop-shadow(0 0 50px rgba(233,69,96,0.5));
+        animation: godFloat 5s ease-in-out infinite;
+    }
+    @keyframes godFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
     }
 
     /* Rayos */
     .lightning {
         position: absolute;
         top: -100px;
-        width: 3px;
-        height: 200px;
-        background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 100%);
+        width: 2px;
+        height: 150px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, transparent 100%);
         opacity: 0;
-        z-index: 1;
+        z-index: 2;
         filter: blur(1px);
+        pointer-events: none;
     }
     .lightning.flash {
-        animation: lightningStrike 0.15s ease-out;
+        animation: lightningStrike 0.2s ease-out;
     }
     @keyframes lightningStrike {
-        0% { opacity: 0; transform: translateY(0); }
-        20% { opacity: 1; transform: translateY(50px); }
-        40% { opacity: 0.5; transform: translateY(100px); }
-        60% { opacity: 1; transform: translateY(150px); }
-        100% { opacity: 0; transform: translateY(200px); }
+        0% { opacity: 0; }
+        30% { opacity: 1; }
+        100% { opacity: 0; }
     }
 
-    /* Partículas de energía divina */
+    /* Partículas */
     .particles {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 1;
+        z-index: 2;
         pointer-events: none;
         overflow: hidden;
     }
     .energy-particle {
         position: absolute;
         border-radius: 50%;
-        animation: energyFloat 4s ease-in-out infinite;
+        animation: energyFloat 3s ease-in-out infinite;
     }
     @keyframes energyFloat {
-        0%, 100% {
-            transform: translateY(0) translateX(0) scale(1);
-            opacity: 0;
-        }
-        25% { opacity: 0.8; }
-        50% {
-            transform: translateY(-30vh) translateX(10px) scale(1.2);
-            opacity: 0.6;
-        }
-        75% { opacity: 0.3; }
-        100% {
-            transform: translateY(-60vh) translateX(-10px) scale(0.8);
-            opacity: 0;
-        }
-    }
-
-    /* Imagen del dios decorativa */
-    .god-image-container {
-        position: absolute;
-        right: -50px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 350px;
-        height: 450px;
-        opacity: 0.2;
-        z-index: 1;
-        pointer-events: none;
-        mask-image: linear-gradient(to left, rgba(0,0,0,0.6) 0%, transparent 80%);
-        -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.6) 0%, transparent 80%);
-    }
-    .god-image-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        filter: drop-shadow(0 0 40px rgba(233,69,96,0.6));
-        animation: godFloat 6s ease-in-out infinite;
-    }
-    @keyframes godFloat {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-15px); }
-    }
-
-    @media (max-width: 900px) {
-        .god-image-container { display: none; }
+        0%, 100% { opacity: 0; transform: translateY(0) scale(1); }
+        50% { opacity: 0.7; }
+        100% { transform: translateY(-50vh) scale(0.5); opacity: 0; }
     }
 
     /* Carta principal */
@@ -132,74 +118,75 @@
         position: relative;
         z-index: 10;
         width: 100%;
-        max-width: 380px;
+        max-width: 360px;
         background: linear-gradient(180deg, rgba(20,10,35,0.95) 0%, rgba(10,5,20,0.98) 100%);
-        border-radius: 24px;
-        padding: 2.5rem 2rem;
-        border: 1px solid rgba(233,69,96,0.3);
+        border-radius: 20px;
+        padding: 2rem 1.8rem;
+        border: 1px solid rgba(233,69,96,0.4);
         box-shadow:
-            0 0 80px rgba(233,69,96,0.15),
-            0 0 120px rgba(88,28,135,0.1),
-            inset 0 1px 0 rgba(255,255,255,0.1),
-            inset 0 -1px 0 rgba(0,0,0,0.5);
+            0 0 60px rgba(233,69,96,0.2),
+            0 0 100px rgba(88,28,135,0.15),
+            inset 0 1px 0 rgba(255,255,255,0.1);
         backdrop-filter: blur(20px);
+        animation: cardGlow 3s ease-in-out infinite;
+    }
+    @keyframes cardGlow {
+        0%, 100% { box-shadow: 0 0 60px rgba(233,69,96,0.2), 0 0 100px rgba(88,28,135,0.15), inset 0 1px 0 rgba(255,255,255,0.1); }
+        50% { box-shadow: 0 0 80px rgba(233,69,96,0.35), 0 0 120px rgba(88,28,135,0.2), inset 0 1px 0 rgba(255,255,255,0.1); }
     }
 
-    /* Logo/Título */
+    /* Logo */
     .logo-container {
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
     }
     .logo-icon {
-        font-size: 3.5rem;
-        margin-bottom: 0.5rem;
+        font-size: 2.5rem;
         display: inline-block;
         animation: logoPulse 2s ease-in-out infinite;
-        filter: drop-shadow(0 0 20px rgba(255,200,50,0.6));
+        filter: drop-shadow(0 0 15px rgba(255,200,50,0.6));
     }
     @keyframes logoPulse {
-        0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(255,200,50,0.6)); }
-        50% { transform: scale(1.1); filter: drop-shadow(0 0 40px rgba(255,200,50,0.9)); }
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
     }
     .logo-title {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         font-weight: 900;
-        letter-spacing: 4px;
+        letter-spacing: 3px;
         background: linear-gradient(180deg, #fff 0%, #e94560 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        text-shadow: none;
-        filter: drop-shadow(0 2px 10px rgba(233,69,96,0.5));
+        filter: drop-shadow(0 2px 8px rgba(233,69,96,0.5));
     }
     .logo-subtitle {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         color: rgba(255,255,255,0.5);
-        letter-spacing: 3px;
-        margin-top: 0.3rem;
+        letter-spacing: 2px;
+        margin-top: 0.25rem;
         text-transform: uppercase;
     }
 
-    /* Línea decorativa */
     .decorative-line {
         height: 1px;
         background: linear-gradient(90deg, transparent, rgba(233,69,96,0.6), transparent);
-        margin: 1.5rem 0;
+        margin: 1.2rem 0;
     }
 
     /* Inputs */
     .input-group {
         position: relative;
-        margin-bottom: 1rem;
+        margin-bottom: 0.8rem;
     }
     .input-group input {
         width: 100%;
-        padding: 1rem 1rem 1rem 3rem;
+        padding: 0.85rem 1rem 0.85rem 2.8rem;
         background: rgba(0,0,0,0.5);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 10px;
         color: #fff;
-        font-size: 1rem;
+        font-size: 0.95rem;
         transition: all 0.3s;
     }
     .input-group input::placeholder {
@@ -208,48 +195,36 @@
     .input-group input:focus {
         outline: none;
         border-color: #e94560;
-        background: rgba(233,69,96,0.08);
-        box-shadow: 0 0 20px rgba(233,69,96,0.2), inset 0 0 20px rgba(233,69,96,0.05);
+        background: rgba(233,69,96,0.1);
+        box-shadow: 0 0 15px rgba(233,69,96,0.2);
     }
     .input-icon {
         position: absolute;
-        left: 1rem;
+        left: 0.9rem;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 1.1rem;
+        font-size: 1rem;
         opacity: 0.5;
-        transition: all 0.3s;
         pointer-events: none;
+        transition: all 0.3s;
     }
     .input-group input:focus ~ .input-icon {
         opacity: 1;
         color: #e94560;
     }
-    .input-status {
-        position: absolute;
-        right: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 0.8rem;
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
-    .input-group input:valid ~ .input-status.valid { opacity: 1; color: #51cf66; }
-    .input-group input:focus ~ .input-status.focus { opacity: 1; }
 
-    /* Botón principal */
+    /* Botón */
     .btn-invoke {
         width: 100%;
-        padding: 1rem;
+        padding: 0.9rem;
         margin-top: 0.5rem;
-        background: linear-gradient(135deg, #e94560 0%, #c73650 50%, #e94560 100%);
-        background-size: 200% 100%;
+        background: linear-gradient(135deg, #e94560 0%, #c73650 100%);
         border: none;
-        border-radius: 12px;
+        border-radius: 10px;
         color: #fff;
-        font-size: 1rem;
+        font-size: 0.95rem;
         font-weight: 700;
-        letter-spacing: 3px;
+        letter-spacing: 2px;
         cursor: pointer;
         position: relative;
         overflow: hidden;
@@ -263,73 +238,59 @@
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
         transition: left 0.5s;
     }
     .btn-invoke:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(233,69,96,0.5);
-        background-position: 100% 0;
+        box-shadow: 0 8px 25px rgba(233,69,96,0.4);
     }
     .btn-invoke:hover::before {
         left: 100%;
-    }
-    .btn-invoke:active {
-        transform: translateY(0);
     }
 
     /* Links */
     .login-links {
         text-align: center;
-        margin-top: 1.5rem;
-    }
-    .login-links p {
-        color: rgba(255,255,255,0.5);
+        margin-top: 1.2rem;
         font-size: 0.85rem;
+        color: rgba(255,255,255,0.5);
     }
     .login-links a {
         color: #e94560;
         font-weight: 600;
         text-decoration: none;
-        transition: color 0.3s;
     }
     .login-links a:hover {
         color: #ff6b6b;
         text-decoration: underline;
     }
 
-    /* Footer decorativo */
+    /* Footer */
     .login-footer {
         text-align: center;
-        margin-top: 2rem;
-        padding-top: 1rem;
+        margin-top: 1.5rem;
+        padding-top: 0.8rem;
         border-top: 1px solid rgba(255,255,255,0.05);
     }
     .faction-icons {
         display: flex;
         justify-content: center;
-        gap: 1rem;
-        margin-bottom: 0.5rem;
-    }
-    .faction-icons span {
-        font-size: 1.2rem;
-        opacity: 0.3;
-        transition: all 0.3s;
-    }
-    .faction-icons span:hover {
-        opacity: 0.7;
-        transform: scale(1.2);
+        gap: 0.8rem;
+        margin-bottom: 0.4rem;
+        font-size: 1rem;
+        opacity: 0.35;
     }
     .login-footer p {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
         color: rgba(255,255,255,0.3);
         letter-spacing: 1px;
     }
 
-    @media (max-width: 480px) {
-        .login-card { padding: 2rem 1.5rem; border-radius: 20px; }
-        .logo-title { font-size: 1.5rem; }
-        .btn-invoke { font-size: 0.9rem; }
+    @media (max-width: 600px) {
+        html, body { overflow: auto; }
+        .god-image-bg { display: none; }
+        .login-card { margin: 1rem; max-width: 100%; }
     }
 </style>
 
@@ -337,20 +298,19 @@
     <!-- Capas de fondo -->
     <div class="bg-layer bg-image"></div>
     <div class="bg-layer bg-gradient"></div>
-    <div class="bg-layer bg-vignette"></div>
-
-    <!-- Rayos -->
-    <div class="lightning" id="lightning1" style="left: 15%;"></div>
-    <div class="lightning" id="lightning2" style="left: 75%;"></div>
-    <div class="lightning" id="lightning3" style="left: 45%;"></div>
-
-    <!-- Partículas de energía -->
-    <div class="particles" id="particles"></div>
 
     <!-- Imagen del dios -->
-    <div class="god-image-container">
+    <div class="god-image-bg">
         <img src="{% static 'images/gods/download.png' %}" alt="God">
     </div>
+
+    <!-- Rayos -->
+    <div class="lightning" id="lightning1" style="left: 20%;"></div>
+    <div class="lightning" id="lightning2" style="left: 70%;"></div>
+    <div class="lightning" id="lightning3" style="left: 45%;"></div>
+
+    <!-- Partículas -->
+    <div class="particles" id="particles"></div>
 
     <!-- Carta de login -->
     <div class="login-card">
@@ -367,66 +327,50 @@
             <div class="input-group">
                 <input type="text" name="username" id="username" placeholder="Nombre de guerrero" required autocomplete="username">
                 <span class="input-icon">👤</span>
-                <span class="input-status valid">✓</span>
-                <span class="input-status focus">✎</span>
             </div>
             <div class="input-group">
                 <input type="password" name="password" id="password" placeholder="Contraseña divina" required autocomplete="current-password">
                 <span class="input-icon">🔮</span>
-                <span class="input-status focus">✎</span>
             </div>
             <button type="submit" class="btn-invoke">⚔ Invocar Poder ⚔</button>
         </form>
 
         <div class="login-links">
-            <p>¿Sin poderes? <a href="{% url 'core:register' %}">Únete al Olimpo</a></p>
+            ¿Sin poderes? <a href="{% url 'core:register' %}">Únete al Olimpo</a>
         </div>
 
         <div class="login-footer">
-            <div class="faction-icons">
-                <span title="Griego">⚔️</span>
-                <span title="Nórdico">🛡️</span>
-                <span title="Egipcio">☥</span>
-                <span title="Chino">☯</span>
-                <span title="Zodiaco">♋</span>
-            </div>
-            <p>78 DIOSES • 5 PANTEONES • INFINITAS POSIBILIDADES</p>
+            <div class="faction-icons">⚔️ 🛡️ ☥ ☯ ♋</div>
+            <p>78 DIOSES • 5 PANTEONES</p>
         </div>
     </div>
 </div>
 
 <script>
-    // Crear partículas de energía divina
+    // Partículas
     const particlesContainer = document.getElementById('particles');
-    const colors = ['#e94560', '#ffd700', '#4a9eff', '#a855f7', '#51cf66'];
-    const particleCount = 40;
+    const colors = ['#e94560', '#ffd700', '#4a9eff', '#a855f7'];
 
-    for (let i = 0; i < particleCount; i++) {
+    for (let i = 0; i < 25; i++) {
         const particle = document.createElement('div');
         particle.className = 'energy-particle';
         particle.style.left = Math.random() * 100 + '%';
-        particle.style.top = (Math.random() * 60 + 40) + '%';
-        particle.style.width = (Math.random() * 6 + 2) + 'px';
+        particle.style.top = (Math.random() * 50 + 50) + '%';
+        particle.style.width = (Math.random() * 4 + 2) + 'px';
         particle.style.height = particle.style.width;
         particle.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * colors.length)]} 0%, transparent 70%)`;
-        particle.style.animationDelay = Math.random() * 4 + 's';
-        particle.style.animationDuration = (Math.random() * 2 + 3) + 's';
+        particle.style.animationDelay = Math.random() * 3 + 's';
+        particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
         particlesContainer.appendChild(particle);
     }
 
-    // Efecto de rayos
+    // Rayos
     function triggerLightning() {
-        const lightning = document.getElementById('lightning' + (Math.floor(Math.random() * 3) + 1));
+        const idx = Math.floor(Math.random() * 3) + 1;
+        const lightning = document.getElementById('lightning' + idx);
         lightning.classList.add('flash');
-        setTimeout(() => lightning.classList.remove('flash'), 150);
+        setTimeout(() => lightning.classList.remove('flash'), 200);
     }
-
-    setInterval(triggerLightning, 4000);
-
-    // Efecto de temblor al hacer submit
-    document.querySelector('.btn-invoke').addEventListener('click', function() {
-        this.style.transform = 'scale(0.98)';
-        setTimeout(() => this.style.transform = '', 100);
-    });
+    setInterval(triggerLightning, 5000);
 </script>
 {% endblock %}
