@@ -310,11 +310,16 @@ def shop(request):
         profile.spend_gems(item["cost"])
 
         if item["type"] == "essence":
-            random_god = profile.gods.first()
-            if random_god:
-                random_god.add_essence(item["amount"])
+            god_id = request.POST.get("god_id")
+            if god_id:
+                target_god = profile.gods.filter(id=god_id).first()
+            else:
+                target_god = profile.gods.first()
+
+            if target_god:
+                target_god.add_essence(item["amount"])
                 messages.success(
-                    request, f"¡Compra exitosa! +{item['amount']} esencia para {random_god.god.name}"
+                    request, f"¡Compra exitosa! +{item['amount']} esencia para {target_god.god.name}"
                 )
             else:
                 profile.gems += item["cost"]
