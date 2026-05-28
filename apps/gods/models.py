@@ -1,7 +1,10 @@
 """Gods models."""
 
+import os
+from pathlib import Path
 from typing import Any
 
+from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -512,8 +515,14 @@ class God(models.Model):
 
     @property
     def image_url(self) -> str:
-        """Get AI-generated image URL for this god."""
+        """Get image URL for this god (static if available, AI fallback)."""
         import urllib.parse
+
+        filename = self.name.lower().replace(" ", "_") + ".png"
+        static_path = settings.BASE_DIR / "static" / "images" / "gods" / filename
+
+        if static_path.exists():
+            return f"{settings.STATIC_URL}images/gods/{filename}"
 
         prompt = self.GOD_PROMPTS.get(self.name, "epic fantasy god portrait")
         encoded = urllib.parse.quote(prompt)
