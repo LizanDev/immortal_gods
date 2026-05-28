@@ -71,6 +71,29 @@ def level_up_god(request, god_id):
 
 
 @login_required
+def ascend_god(request, god_id):
+    """Ascend a god using essence."""
+    pg = get_object_or_404(PlayerGod, pk=god_id, player=request.user.profile)
+
+    if request.method == "POST":
+        if pg.ascend():
+            messages.success(
+                request,
+                f"{pg.god.name} ascended to Tier {pg.quality_tier}!",
+            )
+        else:
+            if pg.quality_tier >= 5:
+                messages.error(request, f"{pg.god.name} is already at max tier!")
+            else:
+                messages.error(
+                    request,
+                    f"Not enough essence. Need {pg.ascension_cost}, have {pg.essence}",
+                )
+
+    return redirect("core:inventory")
+
+
+@login_required
 def equip_item(request, god_id, item_id):
     """Equip an item to a god via AJAX."""
     pg = get_object_or_404(PlayerGod, pk=god_id, player=request.user.profile)

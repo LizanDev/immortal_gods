@@ -564,6 +564,30 @@ class God(models.Model):
         return skills
 
 
+ASCENSION_COSTS = {
+    1: 5,
+    2: 10,
+    3: 25,
+    4: 50,
+}
+
+ESSENCE_REWARDS = {
+    Rarity.COMMON: 1,
+    Rarity.RARE: 2,
+    Rarity.EPIC: 5,
+    Rarity.LEGENDARY: 10,
+    Rarity.MYTHIC: 25,
+}
+
+QUALITY_NAMES = {
+    1: "I",
+    2: "II",
+    3: "III",
+    4: "IV",
+    5: "V",
+}
+
+
 class PlayerGod(models.Model):
     """Represents a god owned by a player with progression."""
 
@@ -573,6 +597,8 @@ class PlayerGod(models.Model):
     god = models.ForeignKey(God, on_delete=models.CASCADE, related_name="player_owners")
     level = models.PositiveIntegerField(default=1)
     experience = models.PositiveIntegerField(default=0)
+    essence = models.PositiveIntegerField(default=0)
+    quality_tier = models.PositiveIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -583,9 +609,45 @@ class PlayerGod(models.Model):
         return f"{self.god.name} (Lv.{self.level})"
 
     @property
+    def quality_roman(self) -> str:
+        """Return roman numeral for quality tier."""
+        return QUALITY_NAMES.get(self.quality_tier, "I")
+
+    @property
+    def ascension_cost(self) -> int:
+        """Get essence cost for next ascension."""
+        if self.quality_tier >= 5:
+            return 0
+        return ASCENSION_COSTS.get(self.quality_tier, 0)
+
+    @property
+    def can_ascend(self) -> bool:
+        """Check if this god can be ascended."""
+        return self.quality_tier < 5 and self.essence >= self.ascension_cost
+
+    def ascend(self) -> bool:
+        """Spend essence to ascend this god to next quality tier."""
+        if not self.can_ascend:
+            return False
+        self.essence -= self.ascension_cost
+        self.quality_tier += 1
+        self.save(update_fields=["essence", "quality_tier"])
+        return True
+
+    def add_essence(self, amount: int) -> None:
+        """Add essence from duplicate pulls."""
+        self.essence += amount
+        self.save(update_fields=["essence"])
+
+    @property
+    def quality_multiplier(self) -> float:
+        """Get stat multiplier based on quality tier."""
+        return 1.0 + (self.quality_tier - 1) * 0.15
+
+    @property
     def total_attack(self) -> int:
-        """Calculate total attack including equipment bonuses."""
-        base = self.god.base_attack + (self.level * 10)
+        """Calculate total attack including equipment bonuses and quality."""
+        base = (self.god.base_attack + (self.level * 10)) * self.quality_multiplier
         equipment_bonus = sum(
             eq.item.attack_bonus * eq.level for eq in self.equipped_items.all()
         )
@@ -594,12 +656,12 @@ class PlayerGod(models.Model):
             for eq in self.equipped_items.all()
             if eq.item.has_passive_for(self.god.name)
         )
-        return base + equipment_bonus + passive_bonus
+        return int(base) + equipment_bonus + passive_bonus
 
     @property
     def total_defense(self) -> int:
-        """Calculate total defense including equipment bonuses."""
-        base = self.god.base_defense + (self.level * 5)
+        """Calculate total defense including equipment bonuses and quality."""
+        base = (self.god.base_defense + (self.level * 5)) * self.quality_multiplier
         equipment_bonus = sum(
             eq.item.defense_bonus * eq.level for eq in self.equipped_items.all()
         )
@@ -608,12 +670,12 @@ class PlayerGod(models.Model):
             for eq in self.equipped_items.all()
             if eq.item.has_passive_for(self.god.name)
         )
-        return base + equipment_bonus + passive_bonus
+        return int(base) + equipment_bonus + passive_bonus
 
     @property
     def total_hp(self) -> int:
-        """Calculate total HP including equipment bonuses."""
-        base = self.god.base_hp + (self.level * 50)
+        """Calculate total HP including equipment bonuses and quality."""
+        base = (self.god.base_hp + (self.level * 50)) * self.quality_multiplier
         equipment_bonus = sum(
             eq.item.hp_bonus * eq.level for eq in self.equipped_items.all()
         )
@@ -622,12 +684,12 @@ class PlayerGod(models.Model):
             for eq in self.equipped_items.all()
             if eq.item.has_passive_for(self.god.name)
         )
-        return base + equipment_bonus + passive_bonus
+        return int(base) + equipment_bonus + passive_bonus
 
     @property
     def total_speed(self) -> int:
-        """Calculate total speed including equipment bonuses."""
-        base = self.god.base_speed + (self.level * 2)
+        """Calculate total speed including equipment bonuses and quality."""
+        base = (self.god.base_speed + (self.level * 2)) * self.quality_multiplier
         equipment_bonus = sum(
             eq.item.speed_bonus * eq.level for eq in self.equipped_items.all()
         )
@@ -636,7 +698,7 @@ class PlayerGod(models.Model):
             for eq in self.equipped_items.all()
             if eq.item.has_passive_for(self.god.name)
         )
-        return base + equipment_bonus + passive_bonus
+        return int(base) + equipment_bonus + passive_bonus
 
     def add_experience(self, amount: int) -> bool:
         """Add experience and level up if needed."""

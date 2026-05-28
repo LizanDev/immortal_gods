@@ -4,7 +4,7 @@ import random
 
 from django.db import models
 
-from apps.gods.models import RARITY_PULL_WEIGHTS, God, PlayerGod
+from apps.gods.models import ESSENCE_REWARDS, RARITY_PULL_WEIGHTS, God, PlayerGod
 from apps.items.models import Item
 
 SINGLE_PULL_COST = 150
@@ -86,7 +86,8 @@ def perform_pull(player, banner: str, pull_type: str) -> list[dict]:
             )
 
             if not created:
-                player_god.add_experience(50)
+                essence_reward = ESSENCE_REWARDS.get(god.rarity, 1)
+                player_god.add_essence(essence_reward)
 
             PullHistory.objects.create(
                 player=player,
@@ -94,6 +95,12 @@ def perform_pull(player, banner: str, pull_type: str) -> list[dict]:
                 pull_type=pull_type,
                 god=god,
             )
-            results.append({"type": "god", "god": god, "new": created})
+            results.append({
+                "type": "god",
+                "god": god,
+                "new": created,
+                "duplicate": not created,
+                "essence_reward": ESSENCE_REWARDS.get(god.rarity, 1) if not created else 0,
+            })
 
     return results

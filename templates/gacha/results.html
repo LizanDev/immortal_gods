@@ -19,9 +19,9 @@
                 {{ result.god.get_pantheon_display }} | {{ result.god.get_role_display }}
             </div>
             {% if result.new %}
-            <p style="color: #51cf66; font-size: 0.8rem; margin-top: 0.5rem;">✨ NEW!</p>
+            <p style="color: #51cf66; font-size: 0.8rem; margin-top: 0.5rem;">✨ ¡NUEVO!</p>
             {% else %}
-            <p style="color: #ffd700; font-size: 0.8rem; margin-top: 0.5rem;">+50 EXP (Duplicate)</p>
+            <p style="color: #a855f7; font-size: 0.8rem; margin-top: 0.5rem;">💠 +{{ result.essence_reward }} Esencia (Duplicado)</p>
             {% endif %}
         </div>
     </div>
@@ -35,7 +35,7 @@
 </div>
 
 <div style="margin-top: 2rem; display: flex; gap: 1rem;">
-    <a href="{% url 'gacha:pull' %}" class="btn">Pull Again</a>
-    <a href="{% url 'core:inventory' %}" class="btn btn-secondary">View Inventory</a>
+    <a href="{% url 'gacha:pull' %}" class="btn">Tirar de nuevo</a>
+    <a href="{% url 'core:inventory' %}" class="btn btn-secondary">Ver Inventario</a>
 </div>
 {% endblock %}

@@ -193,9 +193,16 @@
                      onerror="this.style.display='none'">
             </div>
             <div class="god-card-body">
-                <div class="god-card-name">{{ pg.god.name }} <span style="color: #888;">Nv.{{ pg.level }}</span></div>
+                <div class="god-card-name">
+                    {{ pg.god.name }}
+                    <span style="color: #ffd700;">{{ pg.quality_roman }}</span>
+                    <span style="color: #888;">Nv.{{ pg.level }}</span>
+                </div>
                 <div class="god-card-info">
                     {{ pg.god.get_pantheon_display }} | {{ pg.god.get_role_display }}
+                </div>
+                <div style="font-size: 0.7rem; color: #a855f7; margin-top: 2px;">
+                    💠 Esencia: {{ pg.essence }}
                 </div>
 
                 <!-- Equipment Slots -->
@@ -223,14 +230,29 @@
                     <div class="stat-bar"><span class="stat-label">HP</span><span class="stat-value" style="color: #51cf66;">{{ pg.total_hp }}</span></div>
                     <div class="stat-bar"><span class="stat-label">SPD</span><span class="stat-value" style="color: #ffd700;">{{ pg.total_speed }}</span></div>
                 </div>
-                <div style="margin-top: 0.75rem;">
-                    <form method="post" action="{% url 'gods:level_up' pg.id %}" style="display: flex; align-items: center; gap: 0.5rem;">
+                <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <form method="post" action="{% url 'gods:level_up' pg.id %}" style="display: flex; align-items: center; gap: 0.3rem;">
                         {% csrf_token %}
-                        <span style="font-size: 0.8rem; color: #ffd700;">Subir nivel: {{ pg.gold_upgrade_cost }} </span>
+                        <span style="font-size: 0.75rem; color: #ffd700;">Nv.</span>
                         {% if user.is_superuser or profile.gold >= pg.gold_upgrade_cost %}
-                        <button type="submit" class="btn btn-gold" style="font-size: 0.75rem; padding: 0.2rem 0.6rem;">Subir nivel</button>
+                        <button type="submit" class="btn btn-gold" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">+{{ pg.gold_upgrade_cost }}</button>
+                        {% else %}
+                        <span style="font-size: 0.7rem; color: #666;">{{ pg.gold_upgrade_cost }}</span>
                         {% endif %}
                     </form>
+                    {% if pg.quality_tier < 5 %}
+                    <form method="post" action="{% url 'gods:ascend' pg.id %}" style="display: flex; align-items: center; gap: 0.3rem;">
+                        {% csrf_token %}
+                        <span style="font-size: 0.75rem; color: #a855f7;">⬆️{{ pg.ascension_cost }}</span>
+                        {% if user.is_superuser or profile.gold >= 0 %}
+                        <button type="submit" class="btn" style="font-size: 0.7rem; padding: 0.2rem 0.5rem; background: linear-gradient(135deg, #a855f7, #7c3aed);">Ascender</button>
+                        {% else %}
+                        <span style="font-size: 0.7rem; color: #666;">{{ pg.ascension_cost }}</span>
+                        {% endif %}
+                    </form>
+                    {% else %}
+                    <span style="font-size: 0.7rem; color: #ffd700; padding: 0.2rem 0.5rem; background: rgba(255,215,0,0.2); border-radius: 4px;">⭐ MAX</span>
+                    {% endif %}
                 </div>
                 {% if pg.active_passives %}
                 <div style="margin-top: 0.5rem;">

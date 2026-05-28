@@ -162,7 +162,7 @@ GODS_DATA = [
 ]
 
 ITEMS_DATA = [
-    # Weapons
+    # Greek Gods - Zeus (3 items)
     {
         "name": _("Thunder Sword"), "item_type": ItemType.WEAPON,
         "attack_bonus": 50, "defense_bonus": 0, "hp_bonus": 0, "speed_bonus": 10,
@@ -171,127 +171,11 @@ ITEMS_DATA = [
         "passive_atk": 30, "passive_def": 0, "passive_hp": 0, "passive_spd": 5,
     },
     {
-        "name": _("Poseidon's Trident"), "item_type": ItemType.WEAPON,
-        "attack_bonus": 60, "defense_bonus": 0, "hp_bonus": 0, "speed_bonus": 5,
-        "belongs_to_god": "Poseidon", "passive_name": _("Ocean's Wrath"),
-        "passive_desc": _("Tidal waves crash on enemies"),
-        "passive_atk": 25, "passive_def": 0, "passive_hp": 100, "passive_spd": 0,
-    },
-    {
-        "name": _("Hades' Scythe"), "item_type": ItemType.WEAPON,
-        "attack_bonus": 70, "defense_bonus": 0, "hp_bonus": -50, "speed_bonus": 15,
-        "belongs_to_god": "Hades", "passive_name": _("Soul Reaper"),
-        "passive_desc": _("Steals life from fallen enemies"),
-        "passive_atk": 40, "passive_def": 0, "passive_hp": 0, "passive_spd": 10,
-    },
-    {
-        "name": _("Apollo's Bow"), "item_type": ItemType.WEAPON,
-        "attack_bonus": 55, "defense_bonus": 0, "hp_bonus": 0, "speed_bonus": 20,
-        "belongs_to_god": "Apollo", "passive_name": _("Sun Piercer"),
-        "passive_desc": _("Arrows burn through armor"),
-        "passive_atk": 20, "passive_def": 0, "passive_hp": 0, "passive_spd": 15,
-    },
-    {
-        "name": _("Sun Wukong's Staff"), "item_type": ItemType.WEAPON,
-        "attack_bonus": 65, "defense_bonus": 10, "hp_bonus": 0, "speed_bonus": 15,
-        "belongs_to_god": "Sun Wukong", "passive_name": _("Monkey King's Fury"),
-        "passive_desc": _("Staff extends to strike all enemies"),
-        "passive_atk": 35, "passive_def": 5, "passive_hp": 0, "passive_spd": 10,
-    },
-    {
-        "name": _("Ra's Sun Blade"), "item_type": ItemType.WEAPON,
-        "attack_bonus": 60, "defense_bonus": 0, "hp_bonus": 50, "speed_bonus": 10,
-        "belongs_to_god": "Ra", "passive_name": _("Solar Flare"),
-        "passive_desc": _("Blinding light weakens enemies"),
-        "passive_atk": 25, "passive_def": 0, "passive_hp": 50, "passive_spd": 5,
-    },
-    {
-        "name": _("Mjolnir"), "item_type": ItemType.WEAPON,
-        "attack_bonus": 75, "defense_bonus": 5, "hp_bonus": 0, "speed_bonus": 0,
-        "belongs_to_god": "Thor", "passive_name": _("Thunder God's Might"),
-        "passive_desc": _("Lightning chains between enemies"),
-        "passive_atk": 30, "passive_def": 10, "passive_hp": 0, "passive_spd": 0,
-    },
-    {
-        "name": _("Gungnir"), "item_type": ItemType.WEAPON,
-        "attack_bonus": 55, "defense_bonus": 0, "hp_bonus": 0, "speed_bonus": 25,
-        "belongs_to_god": "Odin", "passive_name": _("Allfather's Aim"),
-        "passive_desc": _("Spear never misses its target"),
-        "passive_atk": 20, "passive_def": 0, "passive_hp": 0, "passive_spd": 20,
-    },
-
-    # Armor
-    {
-        "name": _("Aegis Shield"), "item_type": ItemType.ARMOR,
-        "attack_bonus": 0, "defense_bonus": 60, "hp_bonus": 200, "speed_bonus": -5,
-        "belongs_to_god": "Athena", "passive_name": _("Divine Protection"),
-        "passive_desc": _("Shield reflects 20% of damage"),
-        "passive_atk": 0, "passive_def": 30, "passive_hp": 100, "passive_spd": 0,
-    },
-    {
-        "name": _("Dragon Scale Mail"), "item_type": ItemType.ARMOR,
-        "attack_bonus": 10, "defense_bonus": 50, "hp_bonus": 300, "speed_bonus": -10,
-        "belongs_to_god": "Dragon King", "passive_name": _("Dragon's Hide"),
-        "passive_desc": _("Scales harden against fire"),
-        "passive_atk": 5, "passive_def": 25, "passive_hp": 150, "passive_spd": 0,
-    },
-    {
-        "name": _("Osiris' Robe"), "item_type": ItemType.ARMOR,
-        "attack_bonus": 0, "defense_bonus": 40, "hp_bonus": 400, "speed_bonus": 0,
-        "belongs_to_god": "Osiris", "passive_name": _("Afterlife Ward"),
-        "passive_desc": _("Death's embrace grants resilience"),
-        "passive_atk": 0, "passive_def": 20, "passive_hp": 200, "passive_spd": 0,
-    },
-    {
-        "name": _("Valkyrie Armor"), "item_type": ItemType.ARMOR,
-        "attack_bonus": 15, "defense_bonus": 45, "hp_bonus": 250, "speed_bonus": 5,
-        "belongs_to_god": "Freya", "passive_name": _("Warrior's Grace"),
-        "passive_desc": _("Battle spirit enhances movement"),
-        "passive_atk": 10, "passive_def": 15, "passive_hp": 100, "passive_spd": 5,
-    },
-    {
-        "name": _("Jade Armor"), "item_type": ItemType.ARMOR,
-        "attack_bonus": 5, "defense_bonus": 55, "hp_bonus": 350, "speed_bonus": -5,
-        "belongs_to_god": "Jade Emperor", "passive_name": _("Celestial Jade"),
-        "passive_desc": _("Jade absorbs heavenly energy"),
-        "passive_atk": 0, "passive_def": 25, "passive_hp": 150, "passive_spd": 0,
-    },
-
-    # Amulets
-    {
-        "name": _("Eye of Horus"), "item_type": ItemType.AMULET,
-        "attack_bonus": 25, "defense_bonus": 25, "hp_bonus": 100, "speed_bonus": 10,
-        "belongs_to_god": "Horus", "passive_name": _("All-Seeing Eye"),
-        "passive_desc": _("Perceives all threats before they happen"),
-        "passive_atk": 15, "passive_def": 15, "passive_hp": 50, "passive_spd": 5,
-    },
-    {
-        "name": _("Phoenix Feather"), "item_type": ItemType.AMULET,
-        "attack_bonus": 15, "defense_bonus": 15, "hp_bonus": 200, "speed_bonus": 15,
-        "belongs_to_god": "Ra", "passive_name": _("Rebirth Flame"),
-        "passive_desc": _("Rises from ashes with renewed strength"),
-        "passive_atk": 10, "passive_def": 10, "passive_hp": 100, "passive_spd": 10,
-    },
-    {
-        "name": _("Yggdrasil Seed"), "item_type": ItemType.AMULET,
-        "attack_bonus": 10, "defense_bonus": 20, "hp_bonus": 300, "speed_bonus": 5,
-        "belongs_to_god": "Odin", "passive_name": _("World Tree's Blessing"),
-        "passive_desc": _("Connected to all nine realms"),
-        "passive_atk": 5, "passive_def": 15, "passive_hp": 150, "passive_spd": 0,
-    },
-    {
-        "name": _("Taiji Amulet"), "item_type": ItemType.AMULET,
-        "attack_bonus": 20, "defense_bonus": 20, "hp_bonus": 150, "speed_bonus": 20,
-        "belongs_to_god": "Nuwa", "passive_name": _("Yin Yang Balance"),
-        "passive_desc": _("Harmonizes opposing forces"),
-        "passive_atk": 10, "passive_def": 10, "passive_hp": 50, "passive_spd": 10,
-    },
-    {
-        "name": _("Olympus Ring"), "item_type": ItemType.AMULET,
-        "attack_bonus": 30, "defense_bonus": 10, "hp_bonus": 100, "speed_bonus": 15,
-        "belongs_to_god": "Zeus", "passive_name": _("Divine Authority"),
-        "passive_desc": _("Commands the power of Olympus"),
-        "passive_atk": 20, "passive_def": 5, "passive_hp": 50, "passive_spd": 10,
+        "name": _("Aegis of Zeus"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 10, "defense_bonus": 70, "hp_bonus": 250, "speed_bonus": 0,
+        "belongs_to_god": "Zeus", "passive_name": _("Divine Shield"),
+        "passive_desc": _("Creates an impenetrable barrier"),
+        "passive_atk": 0, "passive_def": 40, "passive_hp": 150, "passive_spd": 0,
     },
     {
         "name": _("Crown of Zeus"), "item_type": ItemType.AMULET,
@@ -300,26 +184,228 @@ ITEMS_DATA = [
         "passive_desc": _("Commands respect from all gods"),
         "passive_atk": 15, "passive_def": 15, "passive_hp": 50, "passive_spd": 5,
     },
+
+    # Greek Gods - Poseidon (3 items)
     {
-        "name": _("Anubis' Mask"), "item_type": ItemType.AMULET,
-        "attack_bonus": 25, "defense_bonus": 20, "hp_bonus": 50, "speed_bonus": 15,
-        "belongs_to_god": "Anubis", "passive_name": _("Jackal's Sight"),
-        "passive_desc": _("Sees the weakness of souls"),
-        "passive_atk": 15, "passive_def": 10, "passive_hp": 0, "passive_spd": 10,
+        "name": _("Poseidon's Trident"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 60, "defense_bonus": 0, "hp_bonus": 0, "speed_bonus": 5,
+        "belongs_to_god": "Poseidon", "passive_name": _("Ocean's Wrath"),
+        "passive_desc": _("Tidal waves crash on enemies"),
+        "passive_atk": 25, "passive_def": 0, "passive_hp": 100, "passive_spd": 0,
     },
     {
-        "name": _("Odin's Helm"), "item_type": ItemType.AMULET,
-        "attack_bonus": 30, "defense_bonus": 25, "hp_bonus": 150, "speed_bonus": 5,
-        "belongs_to_god": "Odin", "passive_name": _("Raven's Wisdom"),
-        "passive_desc": _("Two ravens whisper battle tactics"),
-        "passive_atk": 10, "passive_def": 15, "passive_hp": 50, "passive_spd": 5,
+        "name": _("Sea King's Armor"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 5, "defense_bonus": 55, "hp_bonus": 350, "speed_bonus": -5,
+        "belongs_to_god": "Poseidon", "passive_name": _("Ocean's Depth"),
+        "passive_desc": _("Underwater pressure strengthens defense"),
+        "passive_atk": 0, "passive_def": 30, "passive_hp": 200, "passive_spd": 0,
     },
     {
-        "name": _("Dragon Horn Helm"), "item_type": ItemType.AMULET,
-        "attack_bonus": 15, "defense_bonus": 35, "hp_bonus": 200, "speed_bonus": 0,
-        "belongs_to_god": "Dragon King", "passive_name": _("Dragon's Crown"),
-        "passive_desc": _("Horns channel ancient dragon power"),
-        "passive_atk": 5, "passive_def": 20, "passive_hp": 100, "passive_spd": 0,
+        "name": _("Neptune's Pendant"), "item_type": ItemType.AMULET,
+        "attack_bonus": 15, "defense_bonus": 15, "hp_bonus": 150, "speed_bonus": 15,
+        "belongs_to_god": "Poseidon", "passive_name": _("Tidal Blessing"),
+        "passive_desc": _("Currents guide all actions"),
+        "passive_atk": 10, "passive_def": 10, "passive_hp": 100, "passive_spd": 10,
+    },
+
+    # Greek Gods - Hades (3 items)
+    {
+        "name": _("Hades' Scythe"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 70, "defense_bonus": 0, "hp_bonus": -50, "speed_bonus": 15,
+        "belongs_to_god": "Hades", "passive_name": _("Soul Reaper"),
+        "passive_desc": _("Steals life from fallen enemies"),
+        "passive_atk": 40, "passive_def": 0, "passive_hp": 0, "passive_spd": 10,
+    },
+    {
+        "name": _("Underworld Cloak"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 0, "defense_bonus": 50, "hp_bonus": 300, "speed_bonus": 0,
+        "belongs_to_god": "Hades", "passive_name": _("Death's Embrace"),
+        "passive_desc": _("Shadows provide protection"),
+        "passive_atk": 0, "passive_def": 35, "passive_hp": 150, "passive_spd": 0,
+    },
+    {
+        "name": _("Helm of Darkness"), "item_type": ItemType.AMULET,
+        "attack_bonus": 20, "defense_bonus": 20, "hp_bonus": 100, "speed_bonus": 5,
+        "belongs_to_god": "Hades", "passive_name": _("Shadow Walk"),
+        "passive_desc": _("Moves unseen through shadows"),
+        "passive_atk": 15, "passive_def": 10, "passive_hp": 50, "passive_spd": 5,
+    },
+
+    # Greek Gods - Ares (3 items)
+    {
+        "name": _("Blades of Chaos"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 65, "defense_bonus": 0, "hp_bonus": 0, "speed_bonus": 10,
+        "belongs_to_god": "Ares", "passive_name": _("Bloodlust"),
+        "passive_desc": _("Gains strength from bloodshed"),
+        "passive_atk": 35, "passive_def": 0, "passive_hp": 0, "passive_spd": 5,
+    },
+    {
+        "name": _("War Lord's Plate"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 15, "defense_bonus": 60, "hp_bonus": 200, "speed_bonus": -5,
+        "belongs_to_god": "Ares", "passive_name": _("Battle Hardened"),
+        "passive_desc": _("Victory breeds resilience"),
+        "passive_atk": 10, "passive_def": 30, "passive_hp": 100, "passive_spd": 0,
+    },
+    {
+        "name": _("Skull Pendant"), "item_type": ItemType.AMULET,
+        "attack_bonus": 25, "defense_bonus": 10, "hp_bonus": 80, "speed_bonus": 10,
+        "belongs_to_god": "Ares", "passive_name": _("Warmonger"),
+        "passive_desc": _("The god of war demands blood"),
+        "passive_atk": 15, "passive_def": 5, "passive_hp": 50, "passive_spd": 5,
+    },
+
+    # Greek Gods - Athena (3 items)
+    {
+        "name": _("Spear of Athena"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 55, "defense_bonus": 10, "hp_bonus": 50, "speed_bonus": 5,
+        "belongs_to_god": "Athena", "passive_name": _("Divine Wisdom"),
+        "passive_desc": _("Strategic advantage in battle"),
+        "passive_atk": 25, "passive_def": 15, "passive_hp": 50, "passive_spd": 5,
+    },
+    {
+        "name": _("Aegis Shield"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 0, "defense_bonus": 65, "hp_bonus": 250, "speed_bonus": -5,
+        "belongs_to_god": "Athena", "passive_name": _("Divine Protection"),
+        "passive_desc": _("Shield reflects 20% of damage"),
+        "passive_atk": 0, "passive_def": 35, "passive_hp": 150, "passive_spd": 0,
+    },
+    {
+        "name": _("Owl Eye Amulet"), "item_type": ItemType.AMULET,
+        "attack_bonus": 15, "defense_bonus": 25, "hp_bonus": 100, "speed_bonus": 10,
+        "belongs_to_god": "Athena", "passive_name": _("Wisdom's Eye"),
+        "passive_desc": _("Sees through all deception"),
+        "passive_atk": 10, "passive_def": 15, "passive_hp": 50, "passive_spd": 10,
+    },
+
+    # Greek Gods - Apollo (3 items)
+    {
+        "name": _("Apollo's Bow"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 55, "defense_bonus": 0, "hp_bonus": 0, "speed_bonus": 20,
+        "belongs_to_god": "Apollo", "passive_name": _("Sun Piercer"),
+        "passive_desc": _("Arrows burn through armor"),
+        "passive_atk": 20, "passive_def": 0, "passive_hp": 0, "passive_spd": 15,
+    },
+    {
+        "name": _("Solar Armor"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 10, "defense_bonus": 50, "hp_bonus": 200, "speed_bonus": 5,
+        "belongs_to_god": "Apollo", "passive_name": _("Radiant Body"),
+        "passive_desc": _("Light provides protection"),
+        "passive_atk": 5, "passive_def": 30, "passive_hp": 100, "passive_spd": 5,
+    },
+    {
+        "name": _("Laurel Crown"), "item_type": ItemType.AMULET,
+        "attack_bonus": 20, "defense_bonus": 15, "hp_bonus": 80, "speed_bonus": 15,
+        "belongs_to_god": "Apollo", "passive_name": _("Sun's Blessing"),
+        "passive_desc": _("The sun guides all paths"),
+        "passive_atk": 15, "passive_def": 10, "passive_hp": 50, "passive_spd": 10,
+    },
+
+    # Greek Gods - Artemis (3 items)
+    {
+        "name": _("Moonlit Bow"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 50, "defense_bonus": 0, "hp_bonus": 0, "speed_bonus": 25,
+        "belongs_to_god": "Artemis", "passive_name": _("Moonlight Arrow"),
+        "passive_desc": _("Silver arrows never miss"),
+        "passive_atk": 25, "passive_def": 0, "passive_hp": 0, "passive_spd": 15,
+    },
+    {
+        "name": _("Hunter's Guard"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 5, "defense_bonus": 45, "hp_bonus": 180, "speed_bonus": 10,
+        "belongs_to_god": "Artemis", "passive_name": _("Beast's Instinct"),
+        "passive_desc": _("Animal agility protects"),
+        "passive_atk": 0, "passive_def": 25, "passive_hp": 100, "passive_spd": 10,
+    },
+    {
+        "name": _("Moonstone Pendant"), "item_type": ItemType.AMULET,
+        "attack_bonus": 15, "defense_bonus": 15, "hp_bonus": 100, "speed_bonus": 20,
+        "belongs_to_god": "Artemis", "passive_name": _("Lunar Grace"),
+        "passive_desc": _("The moon empowers all actions"),
+        "passive_atk": 10, "passive_def": 10, "passive_hp": 50, "passive_spd": 15,
+    },
+
+    # Greek Gods - Hermes (3 items)
+    {
+        "name": _("Caduceus Staff"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 45, "defense_bonus": 5, "hp_bonus": 0, "speed_bonus": 30,
+        "belongs_to_god": "Hermes", "passive_name": _("Swift Strike"),
+        "passive_desc": _("Lightning fast attacks"),
+        "passive_atk": 20, "passive_def": 0, "passive_hp": 0, "passive_spd": 20,
+    },
+    {
+        "name": _("Winged Boots"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 5, "defense_bonus": 30, "hp_bonus": 100, "speed_bonus": 20,
+        "belongs_to_god": "Hermes", "passive_name": _("Wind Walker"),
+        "passive_desc": _("As light as the wind"),
+        "passive_atk": 0, "passive_def": 20, "passive_hp": 50, "passive_spd": 15,
+    },
+    {
+        "name": _("Hermes' Sandals"), "item_type": ItemType.AMULET,
+        "attack_bonus": 10, "defense_bonus": 10, "hp_bonus": 50, "speed_bonus": 40,
+        "belongs_to_god": "Hermes", "passive_name": _("Messenger's Swiftness"),
+        "passive_desc": _("Moves faster than thought itself"),
+        "passive_atk": 5, "passive_def": 5, "passive_hp": 0, "passive_spd": 30,
+    },
+
+    # Greek Gods - Hephaestus (3 items)
+    {
+        "name": _("Forge Hammer"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 60, "defense_bonus": 15, "hp_bonus": 50, "speed_bonus": -5,
+        "belongs_to_god": "Hephaestus", "passive_name": _("Molten Strike"),
+        "passive_desc": _("Fire enhances every blow"),
+        "passive_atk": 35, "passive_def": 10, "passive_hp": 0, "passive_spd": 0,
+    },
+    {
+        "name": _("Divine Forged Plate"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 10, "defense_bonus": 70, "hp_bonus": 300, "speed_bonus": -10,
+        "belongs_to_god": "Hephaestus", "passive_name": _("Fire Protection"),
+        "passive_desc": _("Forged in celestial flames"),
+        "passive_atk": 0, "passive_def": 40, "passive_hp": 200, "passive_spd": 0,
+    },
+    {
+        "name": _("Iron Boots"), "item_type": ItemType.AMULET,
+        "attack_bonus": 5, "defense_bonus": 30, "hp_bonus": 100, "speed_bonus": -5,
+        "belongs_to_god": "Hephaestus", "passive_name": _("Forge Walker"),
+        "passive_desc": _("Immune to lava and fire"),
+        "passive_atk": 0, "passive_def": 20, "passive_hp": 50, "passive_spd": 0,
+    },
+
+    # Greek Gods - Demeter (3 items)
+    {
+        "name": _("Harvest Scythe"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 45, "defense_bonus": 5, "hp_bonus": 50, "speed_bonus": 5,
+        "belongs_to_god": "Demeter", "passive_name": _("Nature's Wrath"),
+        "passive_desc": _("Plants entangle enemies"),
+        "passive_atk": 20, "passive_def": 5, "passive_hp": 50, "passive_spd": 5,
+    },
+    {
+        "name": _("Nature's Mantle"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 5, "defense_bonus": 45, "hp_bonus": 250, "speed_bonus": 5,
+        "belongs_to_god": "Demeter", "passive_name": _("Earth's Embrace"),
+        "passive_desc": _("Nature provides shelter"),
+        "passive_atk": 0, "passive_def": 25, "passive_hp": 150, "passive_spd": 5,
+    },
+    {
+        "name": _("Seed of Life"), "item_type": ItemType.AMULET,
+        "attack_bonus": 10, "defense_bonus": 20, "hp_bonus": 200, "speed_bonus": 5,
+        "belongs_to_god": "Demeter", "passive_name": _("Regeneration"),
+        "passive_desc": _("Life energy constantly heals"),
+        "passive_atk": 0, "passive_def": 10, "passive_hp": 150, "passive_spd": 0,
+    },
+
+    # Zodiac Gods - Leo (3 items)
+    {
+        "name": _("Leo Claw"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 60, "defense_bonus": 5, "hp_bonus": 0, "speed_bonus": 15,
+        "belongs_to_god": "Leo", "passive_name": _("King's Strike"),
+        "passive_desc": _("The lion strikes with authority"),
+        "passive_atk": 35, "passive_def": 0, "passive_hp": 0, "passive_spd": 10,
+    },
+    {
+        "name": _("Royal Mane Armor"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 10, "defense_bonus": 55, "hp_bonus": 250, "speed_bonus": 0,
+        "belongs_to_god": "Leo", "passive_name": _("Pride's Strength"),
+        "passive_desc": _("The king of beasts cannot be defeated"),
+        "passive_atk": 5, "passive_def": 30, "passive_hp": 150, "passive_spd": 0,
     },
     {
         "name": _("Zodiac Crown"), "item_type": ItemType.AMULET,
@@ -328,41 +414,261 @@ ITEMS_DATA = [
         "passive_desc": _("Constellations empower the wearer"),
         "passive_atk": 10, "passive_def": 10, "passive_hp": 50, "passive_spd": 10,
     },
+
+    # Zodiac Gods - Aries (3 items)
     {
-        "name": _("Hermes' Sandals"), "item_type": ItemType.AMULET,
-        "attack_bonus": 0, "defense_bonus": 10, "hp_bonus": 0, "speed_bonus": 50,
-        "belongs_to_god": "Hermes", "passive_name": _("Messenger's Swiftness"),
-        "passive_desc": _("Moves faster than thought itself"),
-        "passive_atk": 0, "passive_def": 5, "passive_hp": 0, "passive_spd": 30,
+        "name": _("Ram Horn Blade"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 55, "defense_bonus": 10, "hp_bonus": 0, "speed_bonus": 15,
+        "belongs_to_god": "Aries", "passive_name": _("Ram Charge"),
+        "passive_desc": _("Never retreat, always charge forward"),
+        "passive_atk": 30, "passive_def": 5, "passive_hp": 0, "passive_spd": 10,
     },
     {
-        "name": _("Wind Walkers"), "item_type": ItemType.AMULET,
-        "attack_bonus": 5, "defense_bonus": 15, "hp_bonus": 50, "speed_bonus": 40,
-        "belongs_to_god": "Skadi", "passive_name": _("Winter's Step"),
-        "passive_desc": _("Leaves trails of frost"),
-        "passive_atk": 0, "passive_def": 10, "passive_hp": 0, "passive_spd": 20,
+        "name": _("Wool Coat"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 5, "defense_bonus": 50, "hp_bonus": 200, "speed_bonus": 5,
+        "belongs_to_god": "Aries", "passive_name": _("Fiery Wool"),
+        "passive_desc": _("Warmth provides protection"),
+        "passive_atk": 0, "passive_def": 30, "passive_hp": 100, "passive_spd": 5,
     },
     {
-        "name": _("Shadow Steps"), "item_type": ItemType.AMULET,
-        "attack_bonus": 10, "defense_bonus": 5, "hp_bonus": 0, "speed_bonus": 45,
-        "belongs_to_god": "Loki", "passive_name": _("Trickster's Path"),
-        "passive_desc": _("Walks between shadows unseen"),
-        "passive_atk": 10, "passive_def": 0, "passive_hp": 0, "passive_spd": 25,
+        "name": _("Golden Fleece"), "item_type": ItemType.AMULET,
+        "attack_bonus": 15, "defense_bonus": 25, "hp_bonus": 150, "speed_bonus": 10,
+        "belongs_to_god": "Aries", "passive_name": _("Mythic Shield"),
+        "passive_desc": _("Legendary protection from all harm"),
+        "passive_atk": 10, "passive_def": 15, "passive_hp": 100, "passive_spd": 5,
+    },
+
+    # Zodiac Gods - Taurus (3 items)
+    {
+        "name": _("Bull Horns"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 50, "defense_bonus": 15, "hp_bonus": 100, "speed_bonus": -5,
+        "belongs_to_god": "Taurus", "passive_name": _("Immovable Force"),
+        "passive_desc": _("As strong as the earth itself"),
+        "passive_atk": 25, "passive_def": 15, "passive_hp": 100, "passive_spd": 0,
     },
     {
-        "name": _("Iron Boots"), "item_type": ItemType.AMULET,
-        "attack_bonus": 0, "defense_bonus": 30, "hp_bonus": 100, "speed_bonus": -10,
-        "belongs_to_god": "Hephaestus", "passive_name": _("Forge Walker"),
-        "passive_desc": _("Immune to lava and fire"),
-        "passive_atk": 0, "passive_def": 20, "passive_hp": 50, "passive_spd": 0,
+        "name": _("Stone Skin"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 0, "defense_bonus": 70, "hp_bonus": 350, "speed_bonus": -10,
+        "belongs_to_god": "Taurus", "passive_name": _("Mountain's Defense"),
+        "passive_desc": _("Unmovable and unbreakable"),
+        "passive_atk": 0, "passive_def": 45, "passive_hp": 200, "passive_spd": 0,
     },
     {
-        "name": _("Cloud Walkers"), "item_type": ItemType.AMULET,
-        "attack_bonus": 5, "defense_bonus": 10, "hp_bonus": 80, "speed_bonus": 35,
-        "belongs_to_god": "Sun Wukong", "passive_name": _("Cloud Somersault"),
-        "passive_desc": _("Leaps 108,000 li in one bound"),
-        "passive_atk": 5, "passive_def": 5, "passive_hp": 0, "passive_spd": 20,
+        "name": _("Earth Gem"), "item_type": ItemType.AMULET,
+        "attack_bonus": 10, "defense_bonus": 30, "hp_bonus": 200, "speed_bonus": 0,
+        "belongs_to_god": "Taurus", "passive_name": _("Earth's Blessing"),
+        "passive_desc": _("The earth provides strength"),
+        "passive_atk": 5, "passive_def": 20, "passive_hp": 150, "passive_spd": 0,
     },
+
+    # Zodiac Gods - Scorpio (3 items)
+    {
+        "name": _("Venomous Stinger"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 65, "defense_bonus": 0, "hp_bonus": -30, "speed_bonus": 10,
+        "belongs_to_god": "Scorpio", "passive_name": _("Deadly Poison"),
+        "passive_desc": _("Poison weakens all enemies"),
+        "passive_atk": 40, "passive_def": 0, "passive_hp": 0, "passive_spd": 5,
+    },
+    {
+        "name": _("Scorpion Shell"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 5, "defense_bonus": 55, "hp_bonus": 200, "speed_bonus": 0,
+        "belongs_to_god": "Scorpio", "passive_name": _("Venom Shield"),
+        "passive_desc": _("Poisonous carapace protects"),
+        "passive_atk": 5, "passive_def": 35, "passive_hp": 100, "passive_spd": 0,
+    },
+    {
+        "name": _("Stinger Pendant"), "item_type": ItemType.AMULET,
+        "attack_bonus": 20, "defense_bonus": 15, "hp_bonus": 80, "speed_bonus": 15,
+        "belongs_to_god": "Scorpio", "passive_name": _("Ambush Master"),
+        "passive_desc": _("Strikes when least expected"),
+        "passive_atk": 15, "passive_def": 10, "passive_hp": 50, "passive_spd": 10,
+    },
+
+    # Zodiac Gods - Sagittarius (3 items)
+    {
+        "name": _("Celestial Bow"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 60, "defense_bonus": 0, "hp_bonus": 0, "speed_bonus": 20,
+        "belongs_to_god": "Sagittarius", "passive_name": _("Star Arrow"),
+        "passive_desc": _("Arrows fall like meteors"),
+        "passive_atk": 35, "passive_def": 0, "passive_hp": 0, "passive_spd": 15,
+    },
+    {
+        "name": _("Centaur Hooves"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 10, "defense_bonus": 45, "hp_bonus": 180, "speed_bonus": 10,
+        "belongs_to_god": "Sagittarius", "passive_name": _("Swift Movement"),
+        "passive_desc": _("Gallop across the battlefield"),
+        "passive_atk": 5, "passive_def": 25, "passive_hp": 100, "passive_spd": 10,
+    },
+    {
+        "name": _("Arrow Charm"), "item_type": ItemType.AMULET,
+        "attack_bonus": 20, "defense_bonus": 10, "hp_bonus": 80, "speed_bonus": 20,
+        "belongs_to_god": "Sagittarius", "passive_name": _("Perfect Aim"),
+        "passive_desc": _("Never misses the target"),
+        "passive_atk": 15, "passive_def": 5, "passive_hp": 50, "passive_spd": 15,
+    },
+
+    # Zodiac Gods - Aquarius (3 items)
+    {
+        "name": _("Water Bearer Vessel"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 50, "defense_bonus": 10, "hp_bonus": 50, "speed_bonus": 15,
+        "belongs_to_god": "Aquarius", "passive_name": _("Tidal Wave"),
+        "passive_desc": _("Water crushes all obstacles"),
+        "passive_atk": 25, "passive_def": 5, "passive_hp": 50, "passive_spd": 10,
+    },
+    {
+        "name": _("Cosmic Armor"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 10, "defense_bonus": 50, "hp_bonus": 250, "speed_bonus": 5,
+        "belongs_to_god": "Aquarius", "passive_name": _("Star Protection"),
+        "passive_desc": _("Cosmic water shields the body"),
+        "passive_atk": 5, "passive_def": 30, "passive_hp": 150, "passive_spd": 5,
+    },
+    {
+        "name": _("Aquarius Ring"), "item_type": ItemType.AMULET,
+        "attack_bonus": 15, "defense_bonus": 20, "hp_bonus": 150, "speed_bonus": 15,
+        "belongs_to_god": "Aquarius", "passive_name": _("Water Spirit"),
+        "passive_desc": _("Flows like water in battle"),
+        "passive_atk": 10, "passive_def": 10, "passive_hp": 100, "passive_spd": 10,
+    },
+
+    # Zodiac Gods - Pisces (3 items)
+    {
+        "name": _("Fish Staff"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 45, "defense_bonus": 15, "hp_bonus": 80, "speed_bonus": 10,
+        "belongs_to_god": "Pisces", "passive_name": _("Ocean's Call"),
+        "passive_desc": _("The sea answers every call"),
+        "passive_atk": 20, "passive_def": 10, "passive_hp": 80, "passive_spd": 5,
+    },
+    {
+        "name": _("Fish Scale Mail"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 5, "defense_bonus": 50, "hp_bonus": 280, "speed_bonus": 0,
+        "belongs_to_god": "Pisces", "passive_name": _("Deep Sea Shield"),
+        "passive_desc": _("The depths protect their own"),
+        "passive_atk": 0, "passive_def": 30, "passive_hp": 180, "passive_spd": 0,
+    },
+    {
+        "name": _("Moonfish Pendant"), "item_type": ItemType.AMULET,
+        "attack_bonus": 15, "defense_bonus": 20, "hp_bonus": 150, "speed_bonus": 10,
+        "belongs_to_god": "Pisces", "passive_name": _("Dream Walker"),
+        "passive_desc": _("Dreams become reality"),
+        "passive_atk": 10, "passive_def": 10, "passive_hp": 100, "passive_spd": 5,
+    },
+
+    # Zodiac Gods - Gemini (3 items)
+    {
+        "name": _("Twin Blades"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 55, "defense_bonus": 5, "hp_bonus": 0, "speed_bonus": 20,
+        "belongs_to_god": "Gemini", "passive_name": _("Twin Strike"),
+        "passive_desc": _("Two strikes for the price of one"),
+        "passive_atk": 30, "passive_def": 0, "passive_hp": 0, "passive_spd": 15,
+    },
+    {
+        "name": _("Dual Shield"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 10, "defense_bonus": 55, "hp_bonus": 200, "speed_bonus": 5,
+        "belongs_to_god": "Gemini", "passive_name": _("Mirror Image"),
+        "passive_desc": _("Creates copies to confuse enemies"),
+        "passive_atk": 5, "passive_def": 35, "passive_hp": 100, "passive_spd": 5,
+    },
+    {
+        "name": _("Twin Star Amulet"), "item_type": ItemType.AMULET,
+        "attack_bonus": 20, "defense_bonus": 15, "hp_bonus": 100, "speed_bonus": 20,
+        "belongs_to_god": "Gemini", "passive_name": _("Star Power"),
+        "passive_desc": _("The stars align for victory"),
+        "passive_atk": 15, "passive_def": 10, "passive_hp": 50, "passive_spd": 15,
+    },
+
+    # Zodiac Gods - Virgo (3 items)
+    {
+        "name": _("Wheat Sickle"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 45, "defense_bonus": 10, "hp_bonus": 50, "speed_bonus": 10,
+        "belongs_to_god": "Virgo", "passive_name": _("Harvest Blessing"),
+        "passive_desc": _("Abundance empowers all actions"),
+        "passive_atk": 20, "passive_def": 5, "passive_hp": 50, "passive_spd": 5,
+    },
+    {
+        "name": _("Pure White Robes"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 5, "defense_bonus": 50, "hp_bonus": 220, "speed_bonus": 5,
+        "belongs_to_god": "Virgo", "passive_name": _("Purification"),
+        "passive_desc": _("Purity shields from harm"),
+        "passive_atk": 0, "passive_def": 30, "passive_hp": 120, "passive_spd": 5,
+    },
+    {
+        "name": _("Harvest Amulet"), "item_type": ItemType.AMULET,
+        "attack_bonus": 15, "defense_bonus": 20, "hp_bonus": 150, "speed_bonus": 10,
+        "belongs_to_god": "Virgo", "passive_name": _("Earth Mother's Gift"),
+        "passive_desc": _("Nature's bounty is endless"),
+        "passive_atk": 10, "passive_def": 10, "passive_hp": 100, "passive_spd": 5,
+    },
+
+    # Zodiac Gods - Libra (3 items)
+    {
+        "name": _("Scale Sword"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 50, "defense_bonus": 10, "hp_bonus": 50, "speed_bonus": 10,
+        "belongs_to_god": "Libra", "passive_name": _("Balance Strike"),
+        "passive_desc": _("Perfect balance in every attack"),
+        "passive_atk": 25, "passive_def": 5, "passive_hp": 50, "passive_spd": 10,
+    },
+    {
+        "name": _("Balance Shield"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 10, "defense_bonus": 50, "hp_bonus": 200, "speed_bonus": 5,
+        "belongs_to_god": "Libra", "passive_name": _("Justice's Guard"),
+        "passive_desc": _("Justice protects the righteous"),
+        "passive_atk": 5, "passive_def": 30, "passive_hp": 100, "passive_spd": 5,
+    },
+    {
+        "name": _("Scales Pendant"), "item_type": ItemType.AMULET,
+        "attack_bonus": 15, "defense_bonus": 20, "hp_bonus": 120, "speed_bonus": 15,
+        "belongs_to_god": "Libra", "passive_name": _("Equality"),
+        "passive_desc": _("All forces are in harmony"),
+        "passive_atk": 10, "passive_def": 10, "passive_hp": 70, "passive_spd": 10,
+    },
+
+    # Zodiac Gods - Cancer (3 items)
+    {
+        "name": _("Crab Claws"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 45, "defense_bonus": 15, "hp_bonus": 100, "speed_bonus": 0,
+        "belongs_to_god": "Cancer", "passive_name": _("Shell Crack"),
+        "passive_desc": _("Hard shell crushes all defenses"),
+        "passive_atk": 20, "passive_def": 10, "passive_hp": 100, "passive_spd": 0,
+    },
+    {
+        "name": _("Shell Armor"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 0, "defense_bonus": 60, "hp_bonus": 300, "speed_bonus": -5,
+        "belongs_to_god": "Cancer", "passive_name": _("Tide Turner"),
+        "passive_desc": _("The moon controls the tides"),
+        "passive_atk": 0, "passive_def": 40, "passive_hp": 200, "passive_spd": 0,
+    },
+    {
+        "name": _("Moon Shell Pendant"), "item_type": ItemType.AMULET,
+        "attack_bonus": 10, "defense_bonus": 25, "hp_bonus": 180, "speed_bonus": 5,
+        "belongs_to_god": "Cancer", "passive_name": _("Lunar Protection"),
+        "passive_desc": _("The moon provides strength"),
+        "passive_atk": 5, "passive_def": 15, "passive_hp": 120, "passive_spd": 5,
+    },
+
+    # Zodiac Gods - Capricorn (3 items)
+    {
+        "name": _("Goat Horn Spear"), "item_type": ItemType.WEAPON,
+        "attack_bonus": 50, "defense_bonus": 15, "hp_bonus": 50, "speed_bonus": 5,
+        "belongs_to_god": "Capricorn", "passive_name": _("Mountain Climb"),
+        "passive_desc": _("Never stops until the top"),
+        "passive_atk": 25, "passive_def": 10, "passive_hp": 50, "passive_spd": 5,
+    },
+    {
+        "name": _("Sea Goat Coat"), "item_type": ItemType.ARMOR,
+        "attack_bonus": 10, "defense_bonus": 55, "hp_bonus": 280, "speed_bonus": 0,
+        "belongs_to_god": "Capricorn", "passive_name": _("Adaptability"),
+        "passive_desc": _("Adapts to any environment"),
+        "passive_atk": 5, "passive_def": 35, "passive_hp": 180, "passive_spd": 0,
+    },
+    {
+        "name": _("Mountain Peak Charm"), "item_type": ItemType.AMULET,
+        "attack_bonus": 15, "defense_bonus": 25, "hp_bonus": 150, "speed_bonus": 10,
+        "belongs_to_god": "Capricorn", "passive_name": _("Ambition"),
+        "passive_desc": _("Reaches heights unknown"),
+        "passive_atk": 10, "passive_def": 15, "passive_hp": 100, "passive_spd": 5,
+    },
+
+    # Continue with Chinese Gods...
 ]
 
 CAMPAIGN_LEVELS_DATA = [
