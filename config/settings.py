@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-change-me-in-production")
 DEBUG = os.getenv("APP_DEBUG", "true").lower() == "true"
 ALLOWED_HOSTS = os.getenv(
-    "ALLOWED_HOSTS", "localhost,127.0.0.1,*.devtunnels.ms,*.ngrok-free.app,*.ngrok.io,*"
+    "ALLOWED_HOSTS", "localhost,127.0.0.1,immortal-gods.onrender.com,*.onrender.com,*.devtunnels.ms,*.ngrok-free.app,*.ngrok.io,*"
 ).split(",")
 
 CSRF_TRUSTED_ORIGINS = [
