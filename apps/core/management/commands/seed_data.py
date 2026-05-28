@@ -83,6 +83,15 @@ GODS_DATA = [
     {"name": "Hermes", "pantheon": Pantheon.GREEK, "role": Role.ASSASSIN, "rarity": Rarity.RARE, "base_attack": 180, "base_defense": 100, "base_hp": 1200, "base_speed": 160},
     {"name": "Hephaestus", "pantheon": Pantheon.GREEK, "role": Role.TANK, "rarity": Rarity.RARE, "base_attack": 160, "base_defense": 220, "base_hp": 2000, "base_speed": 90},
     {"name": "Demeter", "pantheon": Pantheon.GREEK, "role": Role.SUPPORT, "rarity": Rarity.COMMON, "base_attack": 140, "base_defense": 150, "base_hp": 1600, "base_speed": 100},
+    {"name": "Cronus", "pantheon": Pantheon.GREEK, "role": Role.TANK, "rarity": Rarity.MYTHIC, "base_attack": 260, "base_defense": 240, "base_hp": 2800, "base_speed": 100},
+    {"name": "Gaia", "pantheon": Pantheon.GREEK, "role": Role.SUPPORT, "rarity": Rarity.MYTHIC, "base_attack": 180, "base_defense": 260, "base_hp": 3000, "base_speed": 90},
+    {"name": "Prometheus", "pantheon": Pantheon.GREEK, "role": Role.MAGE, "rarity": Rarity.LEGENDARY, "base_attack": 240, "base_defense": 160, "base_hp": 1700, "base_speed": 130},
+    {"name": "Hecate", "pantheon": Pantheon.GREEK, "role": Role.MAGE, "rarity": Rarity.LEGENDARY, "base_attack": 260, "base_defense": 140, "base_hp": 1500, "base_speed": 140},
+    {"name": "Persephone", "pantheon": Pantheon.GREEK, "role": Role.SUPPORT, "rarity": Rarity.EPIC, "base_attack": 170, "base_defense": 180, "base_hp": 1800, "base_speed": 120},
+    {"name": "Dionysus", "pantheon": Pantheon.GREEK, "role": Role.MAGE, "rarity": Rarity.EPIC, "base_attack": 200, "base_defense": 130, "base_hp": 1500, "base_speed": 125},
+    {"name": "Eros", "pantheon": Pantheon.GREEK, "role": Role.ARCHER, "rarity": Rarity.RARE, "base_attack": 190, "base_defense": 100, "base_hp": 1200, "base_speed": 150},
+    {"name": "Nike", "pantheon": Pantheon.GREEK, "role": Role.ASSASSIN, "rarity": Rarity.RARE, "base_attack": 200, "base_defense": 110, "base_hp": 1300, "base_speed": 155},
+    {"name": "Morpheus", "pantheon": Pantheon.GREEK, "role": Role.MAGE, "rarity": Rarity.COMMON, "base_attack": 150, "base_defense": 140, "base_hp": 1400, "base_speed": 110},
 
     # Zodiac Gods
     {"name": "Aries", "pantheon": Pantheon.ZODIAC, "role": Role.ASSASSIN, "rarity": Rarity.EPIC, "base_attack": 210, "base_defense": 130, "base_hp": 1400, "base_speed": 145},
@@ -109,6 +118,11 @@ GODS_DATA = [
     {"name": "Nuwa", "pantheon": Pantheon.CHINESE, "role": Role.MAGE, "rarity": Rarity.MYTHIC, "base_attack": 260, "base_defense": 180, "base_hp": 2000, "base_speed": 125},
     {"name": "Zhong Kui", "pantheon": Pantheon.CHINESE, "role": Role.TANK, "rarity": Rarity.RARE, "base_attack": 170, "base_defense": 200, "base_hp": 1900, "base_speed": 90},
     {"name": "Caishen", "pantheon": Pantheon.CHINESE, "role": Role.SUPPORT, "rarity": Rarity.COMMON, "base_attack": 140, "base_defense": 150, "base_hp": 1500, "base_speed": 105},
+    {"name": "Fuxi", "pantheon": Pantheon.CHINESE, "role": Role.MAGE, "rarity": Rarity.MYTHIC, "base_attack": 280, "base_defense": 200, "base_hp": 2200, "base_speed": 135},
+    {"name": "Shennong", "pantheon": Pantheon.CHINESE, "role": Role.SUPPORT, "rarity": Rarity.MYTHIC, "base_attack": 190, "base_defense": 220, "base_hp": 2600, "base_speed": 115},
+    {"name": "Xiwangmu", "pantheon": Pantheon.CHINESE, "role": Role.SUPPORT, "rarity": Rarity.LEGENDARY, "base_attack": 210, "base_defense": 210, "base_hp": 2400, "base_speed": 125},
+    {"name": "Huangdi", "pantheon": Pantheon.CHINESE, "role": Role.TANK, "rarity": Rarity.LEGENDARY, "base_attack": 230, "base_defense": 250, "base_hp": 2500, "base_speed": 105},
+    {"name": "Lei Gong", "pantheon": Pantheon.CHINESE, "role": Role.MAGE, "rarity": Rarity.EPIC, "base_attack": 240, "base_defense": 130, "base_hp": 1500, "base_speed": 140},
 
     # Egyptian Gods
     {"name": "Ra", "pantheon": Pantheon.EGYPTIAN, "role": Role.MAGE, "rarity": Rarity.LEGENDARY, "base_attack": 250, "base_defense": 140, "base_hp": 1700, "base_speed": 125},
@@ -121,6 +135,12 @@ GODS_DATA = [
     {"name": "Sekhmet", "pantheon": Pantheon.EGYPTIAN, "role": Role.ASSASSIN, "rarity": Rarity.RARE, "base_attack": 210, "base_defense": 110, "base_hp": 1350, "base_speed": 140},
     {"name": "Bastet", "pantheon": Pantheon.EGYPTIAN, "role": Role.SUPPORT, "rarity": Rarity.COMMON, "base_attack": 140, "base_defense": 150, "base_hp": 1500, "base_speed": 115},
     {"name": "Ptah", "pantheon": Pantheon.EGYPTIAN, "role": Role.TANK, "rarity": Rarity.COMMON, "base_attack": 150, "base_defense": 190, "base_hp": 1800, "base_speed": 95},
+    {"name": "Amun", "pantheon": Pantheon.EGYPTIAN, "role": Role.MAGE, "rarity": Rarity.MYTHIC, "base_attack": 270, "base_defense": 190, "base_hp": 2300, "base_speed": 130},
+    {"name": "Hathor", "pantheon": Pantheon.EGYPTIAN, "role": Role.SUPPORT, "rarity": Rarity.LEGENDARY, "base_attack": 200, "base_defense": 200, "base_hp": 2200, "base_speed": 115},
+    {"name": "Khepri", "pantheon": Pantheon.EGYPTIAN, "role": Role.MAGE, "rarity": Rarity.LEGENDARY, "base_attack": 240, "base_defense": 150, "base_hp": 1800, "base_speed": 135},
+    {"name": "Ma'at", "pantheon": Pantheon.EGYPTIAN, "role": Role.SUPPORT, "rarity": Rarity.EPIC, "base_attack": 160, "base_defense": 210, "base_hp": 1900, "base_speed": 120},
+    {"name": "Sobek", "pantheon": Pantheon.EGYPTIAN, "role": Role.TANK, "rarity": Rarity.EPIC, "base_attack": 220, "base_defense": 230, "base_hp": 2100, "base_speed": 100},
+    {"name": "Seshat", "pantheon": Pantheon.EGYPTIAN, "role": Role.MAGE, "rarity": Rarity.RARE, "base_attack": 180, "base_defense": 150, "base_hp": 1400, "base_speed": 130},
 
     # Nordic Gods
     {"name": "Odin", "pantheon": Pantheon.NORDIC, "role": Role.TANK, "rarity": Rarity.MYTHIC, "base_attack": 240, "base_defense": 220, "base_hp": 2500, "base_speed": 120},
@@ -133,6 +153,12 @@ GODS_DATA = [
     {"name": "Baldr", "pantheon": Pantheon.NORDIC, "role": Role.MAGE, "rarity": Rarity.RARE, "base_attack": 190, "base_defense": 140, "base_hp": 1400, "base_speed": 120},
     {"name": "Skadi", "pantheon": Pantheon.NORDIC, "role": Role.ARCHER, "rarity": Rarity.RARE, "base_attack": 200, "base_defense": 120, "base_hp": 1350, "base_speed": 135},
     {"name": "Vidar", "pantheon": Pantheon.NORDIC, "role": Role.ASSASSIN, "rarity": Rarity.COMMON, "base_attack": 160, "base_defense": 130, "base_hp": 1300, "base_speed": 125},
+    {"name": "Ymir", "pantheon": Pantheon.NORDIC, "role": Role.TANK, "rarity": Rarity.MYTHIC, "base_attack": 250, "base_defense": 260, "base_hp": 3000, "base_speed": 85},
+    {"name": "Hel", "pantheon": Pantheon.NORDIC, "role": Role.MAGE, "rarity": Rarity.LEGENDARY, "base_attack": 260, "base_defense": 150, "base_hp": 1800, "base_speed": 125},
+    {"name": "Njord", "pantheon": Pantheon.NORDIC, "role": Role.SUPPORT, "rarity": Rarity.LEGENDARY, "base_attack": 190, "base_defense": 190, "base_hp": 2000, "base_speed": 120},
+    {"name": "Sif", "pantheon": Pantheon.NORDIC, "role": Role.SUPPORT, "rarity": Rarity.EPIC, "base_attack": 170, "base_defense": 180, "base_hp": 1700, "base_speed": 115},
+    {"name": "Ullr", "pantheon": Pantheon.NORDIC, "role": Role.ARCHER, "rarity": Rarity.EPIC, "base_attack": 230, "base_defense": 120, "base_hp": 1400, "base_speed": 145},
+    {"name": "Bragi", "pantheon": Pantheon.NORDIC, "role": Role.MAGE, "rarity": Rarity.RARE, "base_attack": 180, "base_defense": 140, "base_hp": 1400, "base_speed": 125},
 ]
 
 ITEMS_DATA = [
