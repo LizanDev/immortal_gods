@@ -12,6 +12,9 @@ uv run python manage.py collectstatic --noinput
 echo "Seeding game data..."
 uv run python manage.py seed_data
 
+echo "Seeding daily missions..."
+uv run python manage.py seed_missions
+
 echo "Creating superuser..."
 uv run python manage.py create_superuser
 

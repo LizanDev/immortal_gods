@@ -152,7 +152,10 @@ def missions(request):
     """Show daily missions and allow claiming rewards."""
     profile = request.user.profile
 
-    track_mission(profile, "daily_login")
+    try:
+        track_mission(profile, "daily_login")
+    except Exception:
+        pass  # Ignore errors if missions table is empty
 
     active_missions = DailyMission.objects.filter(is_active=True)
 
