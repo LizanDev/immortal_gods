@@ -12,3 +12,11 @@ def translate_passive(value):
     if not value:
         return value
     return _(value)
+
+
+@register.filter
+def get_item(dictionary, key):
+    """Get an item from a dictionary by key."""
+    if dictionary is None:
+        return None
+    return dictionary.get(key)

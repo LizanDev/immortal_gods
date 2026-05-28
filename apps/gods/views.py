@@ -33,10 +33,20 @@ def my_gods(request):
     from apps.gods.models import Pantheon
     pantheons = Pantheon.choices
 
+    pantheon_counts = {}
+    for pg in gods:
+        p = pg.god.pantheon
+        pantheon_counts[p] = pantheon_counts.get(p, 0) + 1
+
     return render(
         request,
         "gods/my_gods.html",
-        {"gods": gods, "profile": profile, "pantheons": pantheons},
+        {
+            "gods": gods,
+            "profile": profile,
+            "pantheons": pantheons,
+            "pantheon_counts": pantheon_counts,
+        },
     )
 
 

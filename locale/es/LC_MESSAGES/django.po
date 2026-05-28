@@ -1396,9 +1396,6 @@ msgstr "Botas de Hierro"
 msgid "Cloud Walkers"
 msgstr "Caminantes de Nubes"
 
-msgid "Eye of Horus"
-msgstr "Ojo de Horus"
-
 msgid "Phoenix Feather"
 msgstr "Pluma de Fénix"
 
@@ -1527,9 +1524,6 @@ msgstr "Perforador Solar"
 msgid "Monkey King's Fury"
 msgstr "Furia del Rey Mono"
 
-msgid "Solar Flare"
-msgstr "Llamarada Solar"
-
 msgid "Thunder God's Might"
 msgstr "Poder del Dios del Trueno"
 
@@ -1593,10 +1587,6 @@ msgstr "Sendero del Embaucador"
 msgid "Forge Walker"
 msgstr "Caminante de la Forja"
 
-msgid "Cloud Somersault"
-msgstr "Voltereta en las Nubes"
-
-# Item Passives - Descriptions
 msgid "Lightning strikes deal double damage"
 msgstr "Los rayos causan el doble de daño"
 
@@ -1682,29 +1672,17 @@ msgid "Leaps 108,000 li in one bound"
 msgstr "Salta 108,000 li de un salto"
 
 # My Gods page
-msgid "Weapon"
-msgstr "Arma"
-
-msgid "Armor"
-msgstr "Armadura"
-
 msgid "Amulet"
 msgstr "Amuleto"
 
 msgid "Active Passives"
 msgstr "Pasivas Activas"
 
-msgid "Skills"
-msgstr "Habilidades"
-
 msgid "You don't have any gods yet. Try the gacha!"
 msgstr "Aún no tienes dioses. ¡Prueba el gacha!"
 
 msgid "Equip Item"
 msgstr "Equipar Objeto"
-
-msgid "Equip"
-msgstr "Equipar"
 
 msgid "No available items"
 msgstr "No hay objetos disponibles"

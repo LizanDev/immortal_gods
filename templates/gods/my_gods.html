@@ -74,7 +74,7 @@
     </div>
     {% for pantheon_value, pantheon_label in pantheons %}
     <div class="faction-tab" onclick="filterFaction('{{ pantheon_value }}', this)">
-        {{ pantheon_label }} <span class="count">({{ pantheon_counts|default:0 }})</span>
+        {{ pantheon_label }} <span class="count">({{ pantheon_counts|get_item:pantheon_value|default:0 }})</span>
     </div>
     {% endfor %}
 </div>
