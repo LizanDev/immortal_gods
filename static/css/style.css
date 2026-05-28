@@ -377,3 +377,54 @@ ul { list-style: none; }
 .resource-gems .resource-value { color: #a855f7; }
 .resource-gold .resource-value { color: #ffd700; }
 .resource-energy .resource-value { color: #51cf66; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+    nav a {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.6rem;
+    }
+    nav .user {
+        width: 100%;
+        text-align: center;
+        margin: 0.5rem 0 0 0;
+        order: -1;
+    }
+    nav form {
+        width: 100%;
+        justify-content: center;
+        margin-top: 0.5rem;
+    }
+    main {
+        margin: 1rem auto;
+        padding: 0 0.5rem;
+    }
+    .grid {
+        flex-direction: column;
+        align-items: center;
+    }
+    .god-card {
+        width: 100%;
+        max-width: 300px;
+    }
+    .resources {
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+    }
+    form {
+        max-width: 100%;
+    }
+    .gacha-banner {
+        padding: 1rem;
+    }
+    .level-card {
+        padding: 1rem;
+    }
+}
