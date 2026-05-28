@@ -1510,3 +1510,210 @@ msgstr "Pandemonium"
 
 msgid "Eternal Darkness"
 msgstr "Oscuridad Eterna"
+
+# Item Passives - Names
+msgid "Storm Caller"
+msgstr "Invocador de Tormentas"
+
+msgid "Ocean's Wrath"
+msgstr "Ira del Océano"
+
+msgid "Soul Reaper"
+msgstr "Segador de Almas"
+
+msgid "Sun Piercer"
+msgstr "Perforador Solar"
+
+msgid "Monkey King's Fury"
+msgstr "Furia del Rey Mono"
+
+msgid "Solar Flare"
+msgstr "Llamarada Solar"
+
+msgid "Thunder God's Might"
+msgstr "Poder del Dios del Trueno"
+
+msgid "Allfather's Aim"
+msgstr "Puntería del Padre de Todo"
+
+msgid "Divine Protection"
+msgstr "Protección Divina"
+
+msgid "Dragon's Hide"
+msgstr "Piel de Dragón"
+
+msgid "Afterlife Ward"
+msgstr "Guardián del Más Allá"
+
+msgid "Warrior's Grace"
+msgstr "Gracia del Guerrero"
+
+msgid "Celestial Jade"
+msgstr "Jade Celestial"
+
+msgid "All-Seeing Eye"
+msgstr "Ojo que Todo lo Ve"
+
+msgid "Rebirth Flame"
+msgstr "Llama del Renacimiento"
+
+msgid "World Tree's Blessing"
+msgstr "Bendición del Árbol del Mundo"
+
+msgid "Yin Yang Balance"
+msgstr "Equilibrio Yin Yang"
+
+msgid "Divine Authority"
+msgstr "Autoridad Divina"
+
+msgid "King's Authority"
+msgstr "Autoridad del Rey"
+
+msgid "Jackal's Sight"
+msgstr "Visión del Chacal"
+
+msgid "Raven's Wisdom"
+msgstr "Sabiduría del Cuervo"
+
+msgid "Dragon's Crown"
+msgstr "Corona del Dragón"
+
+msgid "Star Alignment"
+msgstr "Alineación Estelar"
+
+msgid "Messenger's Swiftness"
+msgstr "Rapidez del Mensajero"
+
+msgid "Winter's Step"
+msgstr "Paso del Invierno"
+
+msgid "Trickster's Path"
+msgstr "Sendero del Embaucador"
+
+msgid "Forge Walker"
+msgstr "Caminante de la Forja"
+
+msgid "Cloud Somersault"
+msgstr "Voltereta en las Nubes"
+
+# Item Passives - Descriptions
+msgid "Lightning strikes deal double damage"
+msgstr "Los rayos causan el doble de daño"
+
+msgid "Tidal waves crash on enemies"
+msgstr "Las olas gigantes aplastan a los enemigos"
+
+msgid "Steals life from fallen enemies"
+msgstr "Roba vida de los enemigos caídos"
+
+msgid "Arrows burn through armor"
+msgstr "Las flechas atraviesan la armadura"
+
+msgid "Staff extends to strike all enemies"
+msgstr "El bastón se extiende para golpear a todos los enemigos"
+
+msgid "Blinding light weakens enemies"
+msgstr "La luz cegadora debilita a los enemigos"
+
+msgid "Lightning chains between enemies"
+msgstr "Los rayos encadenan entre enemigos"
+
+msgid "Spear never misses its target"
+msgstr "La lanza nunca falla su objetivo"
+
+msgid "Shield reflects 20% of damage"
+msgstr "El escudo refleja el 20% del daño"
+
+msgid "Scales harden against fire"
+msgstr "Las escamas se endurecen contra el fuego"
+
+msgid "Death's embrace grants resilience"
+msgstr "El abrazo de la muerte otorga resistencia"
+
+msgid "Battle spirit enhances movement"
+msgstr "El espíritu de batalla mejora el movimiento"
+
+msgid "Jade absorbs heavenly energy"
+msgstr "El jade absorbe energía celestial"
+
+msgid "Perceives all threats before they happen"
+msgstr "Percibe todas las amenazas antes de que ocurran"
+
+msgid "Rises from ashes with renewed strength"
+msgstr "Renace de las cenizas con fuerza renovada"
+
+msgid "Connected to all nine realms"
+msgstr "Conectado a los nueve reinos"
+
+msgid "Harmonizes opposing forces"
+msgstr "Armoniza fuerzas opuestas"
+
+msgid "Commands the power of Olympus"
+msgstr "Comanda el poder del Olimpo"
+
+msgid "Commands respect from all gods"
+msgstr "Comanda el respeto de todos los dioses"
+
+msgid "Sees the weakness of souls"
+msgstr "Ve la debilidad de las almas"
+
+msgid "Two ravens whisper battle tactics"
+msgstr "Dos cuervos susurran tácticas de batalla"
+
+msgid "Horns channel ancient dragon power"
+msgstr "Los cuernos canalizan el poder ancestral del dragón"
+
+msgid "Constellations empower the wearer"
+msgstr "Las constelaciones empoderan al portador"
+
+msgid "Moves faster than thought itself"
+msgstr "Se mueve más rápido que el pensamiento"
+
+msgid "Leaves trails of frost"
+msgstr "Deja estelas de escarcha"
+
+msgid "Walks between shadows unseen"
+msgstr "Camina entre sombras sin ser visto"
+
+msgid "Immune to lava and fire"
+msgstr "Inmune a la lava y el fuego"
+
+msgid "Leaps 108,000 li in one bound"
+msgstr "Salta 108,000 li de un salto"
+
+# My Gods page
+msgid "Weapon"
+msgstr "Arma"
+
+msgid "Armor"
+msgstr "Armadura"
+
+msgid "Amulet"
+msgstr "Amuleto"
+
+msgid "Active Passives"
+msgstr "Pasivas Activas"
+
+msgid "Skills"
+msgstr "Habilidades"
+
+msgid "You don't have any gods yet. Try the gacha!"
+msgstr "Aún no tienes dioses. ¡Prueba el gacha!"
+
+msgid "Equip Item"
+msgstr "Equipar Objeto"
+
+msgid "Equip"
+msgstr "Equipar"
+
+msgid "No available items"
+msgstr "No hay objetos disponibles"
+
+msgid "Specific"
+msgstr "Específico"
+
+msgid "Unequip this item?"
+msgstr "¿Desequipar este objeto?"
+
+msgid "All"
+msgstr "Todos"

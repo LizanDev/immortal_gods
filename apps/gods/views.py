@@ -29,7 +29,15 @@ def my_gods(request):
     """Show player's owned gods."""
     profile = request.user.profile
     gods = profile.gods.select_related("god").prefetch_related("equipped_items__item").all()
-    return render(request, "gods/my_gods.html", {"gods": gods, "profile": profile})
+
+    from apps.gods.models import Pantheon
+    pantheons = Pantheon.choices
+
+    return render(
+        request,
+        "gods/my_gods.html",
+        {"gods": gods, "profile": profile, "pantheons": pantheons},
+    )
 
 
 @login_required

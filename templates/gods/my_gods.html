@@ -1,13 +1,30 @@
 {% extends "base.html" %}
+{% load i18n %}
+{% load passive_filters %}
 
-{% block title %}Mis Dioses - Immortal Gods{% endblock %}
+{% block title %}{% trans "My Gods" %} - Immortal Gods{% endblock %}
 
 {% block content %}
-<h1>Mis Dioses</h1>
+<h1>{% trans "My Gods" %}</h1>
 
 {% csrf_token %}
 
 <style>
+    .faction-tabs {
+        display: flex; gap: 0.5rem; margin-bottom: 1.5rem;
+        flex-wrap: wrap; border-bottom: 2px solid rgba(255,255,255,0.1);
+        padding-bottom: 0.5rem;
+    }
+    .faction-tab {
+        padding: 0.5rem 1rem; background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.2); border-radius: 6px;
+        color: #aaa; cursor: pointer; transition: all 0.2s;
+        font-size: 0.85rem;
+    }
+    .faction-tab:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .faction-tab.active { background: rgba(233,69,96,0.3); border-color: #e94560; color: #fff; }
+    .faction-tab .count { font-size: 0.7rem; color: #888; margin-left: 0.3rem; }
+
     .equip-slots { display: flex; gap: 0.5rem; margin: 0.5rem 0; }
     .equip-slot {
         width: 60px; height: 60px;
@@ -46,11 +63,25 @@
     }
     .item-option:hover { background: rgba(233,69,96,0.2); }
     .item-option .item-stats { font-size: 0.7rem; color: #aaa; }
+
+    .god-card[data-pantheon] { display: none; }
+    .god-card[data-pantheon].visible { display: block; }
 </style>
+
+<div class="faction-tabs">
+    <div class="faction-tab active" onclick="filterFaction('all', this)">
+        {% trans "All" %} <span class="count">({{ gods|length }})</span>
+    </div>
+    {% for pantheon_value, pantheon_label in pantheons %}
+    <div class="faction-tab" onclick="filterFaction('{{ pantheon_value }}', this)">
+        {{ pantheon_label }} <span class="count">({{ pantheon_counts|default:0 }})</span>
+    </div>
+    {% endfor %}
+</div>
 
 <div class="grid">
     {% for pg in gods %}
-    <div class="god-card rarity-{{ pg.god.rarity }}">
+    <div class="god-card rarity-{{ pg.god.rarity }} visible" data-pantheon="{{ pg.god.pantheon }}">
         <div class="god-card-image">
             <img src="{{ pg.god.image_url }}" alt="{{ pg.god.name }}"
                  onerror="this.style.display='none'">
@@ -70,64 +101,43 @@
             <div class="equip-slots">
                 <div class="equip-slot {% if pg.weapon %}occupied{% endif %}"
                      onclick="handleSlotClick({{ pg.id }}, 'weapon', {% if pg.weapon %}{{ pg.weapon.id }}{% else %}null{% endif %})"
-                     title="Arma">
+                     title="{% trans 'Weapon' %}">
                     {% if pg.weapon %}
                     <div class="item-preview">⚔️<br>{{ pg.weapon.item.name|truncatechars:8 }}</div>
                     {% else %}
-                    <span class="slot-icon">⚔️</span>
-                    <span class="slot-label">Arma</span>
+                    <span class="slot-icon">️</span>
+                    <span class="slot-label">{% trans "Weapon" %}</span>
                     {% endif %}
                 </div>
                 <div class="equip-slot {% if pg.armor %}occupied{% endif %}"
                      onclick="handleSlotClick({{ pg.id }}, 'armor', {% if pg.armor %}{{ pg.armor.id }}{% else %}null{% endif %})"
-                     title="Armadura">
+                     title="{% trans 'Armor' %}">
                     {% if pg.armor %}
-                    <div class="item-preview">🛡️<br>{{ pg.armor.item.name|truncatechars:8 }}</div>
+                    <div class="item-preview">️<br>{{ pg.armor.item.name|truncatechars:8 }}</div>
                     {% else %}
-                    <span class="slot-icon">🛡️</span>
-                    <span class="slot-label">Armadura</span>
+                    <span class="slot-icon">️</span>
+                    <span class="slot-label">{% trans "Armor" %}</span>
                     {% endif %}
                 </div>
                 <div class="equip-slot {% if pg.amulet %}occupied{% endif %}"
                      onclick="handleSlotClick({{ pg.id }}, 'amulet', {% if pg.amulet %}{{ pg.amulet.id }}{% else %}null{% endif %})"
-                     title="Amuleto">
-                    {% if pg.amulet %}
-                    <div class="item-preview"><br>{{ pg.amulet.item.name|truncatechars:8 }}</div>
-                    {% else %}
-                    <span class="slot-icon">💎</span>
-                    <span class="slot-label">Amuleto</span>
-                    {% endif %}
-                </div>
-            </div>
-                <div class="equip-slot {% if pg.armor %}occupied{% endif %}"
-                     onclick="openEquipModal({{ pg.id }}, 'armor')"
-                     title="Armadura">
-                    {% if pg.armor %}
-                    <div class="item-preview">🛡️<br>{{ pg.armor.item.name|truncatechars:8 }}</div>
-                    {% else %}
-                    <span class="slot-icon">🛡️</span>
-                    <span class="slot-label">Armadura</span>
-                    {% endif %}
-                </div>
-                <div class="equip-slot {% if pg.amulet %}occupied{% endif %}"
-                     onclick="openEquipModal({{ pg.id }}, 'amulet')"
-                     title="Amuleto">
+                     title="{% trans 'Amulet' %}">
                     {% if pg.amulet %}
                     <div class="item-preview">💎<br>{{ pg.amulet.item.name|truncatechars:8 }}</div>
                     {% else %}
-                    <span class="slot-icon"></span>
-                    <span class="slot-label">Amuleto</span>
+                    <span class="slot-icon">💎</span>
+                    <span class="slot-label">{% trans "Amulet" %}</span>
                     {% endif %}
                 </div>
             </div>
 
             {% if pg.active_passives %}
             <div style="margin-top: 0.5rem;">
-                <p style="font-size: 0.7rem; color: #ffd700;">✨ Pasivas activas:</p>
+                <p style="font-size: 0.7rem; color: #ffd700;">✨ {% trans "Active Passives" %}:</p>
                 {% for passive in pg.active_passives %}
                 <div style="background: rgba(255,215,0,0.1); padding: 0.4rem; margin-bottom: 0.3rem; border-radius: 4px; border-left: 2px solid #ffd700;">
-                    <strong style="color: #ffd700; font-size: 0.75rem;">{{ passive.name }}</strong>
-                    <p style="margin: 0.2rem 0 0; font-size: 0.7rem; color: #ccc;">{{ passive.desc }}</p>
+                    <strong style="color: #ffd700; font-size: 0.75rem;">{{ passive.name|translate_passive }}</strong>
+                    <p style="margin: 0.2rem 0 0; font-size: 0.7rem; color: #ccc;">{{ passive.desc|translate_passive }}</p>
                     <p style="margin: 0.2rem 0 0; font-size: 0.65rem; color: #aaa;">
                         {% if passive.bonuses.atk %}ATK +{{ passive.bonuses.atk }} {% endif %}
                         {% if passive.bonuses.def %}DEF +{{ passive.bonuses.def }} {% endif %}
@@ -140,7 +150,7 @@
             {% endif %}
 
             <div style="margin-top: 1rem;">
-                <h4 style="font-size: 0.85rem; color: #ddd;">Habilidades</h4>
+                <h4 style="font-size: 0.85rem; color: #ddd;">{% trans "Skills" %}</h4>
                 {% for skill in pg.skills %}
                 <div style="background: rgba(255,255,255,0.05); padding: 0.5rem; margin-bottom: 0.4rem; border-radius: 6px; border-left: 3px solid {% if skill.type == 'ultimate' %}#ffd700{% else %}#4a9eff{% endif %};">
                     <strong style="color: {% if skill.type == 'ultimate' %}#ffd700{% else %}#4a9eff{% endif %}; font-size: 0.8rem;">{{ skill.name }}</strong>
@@ -152,14 +162,14 @@
         </div>
     </div>
     {% empty %}
-    <p>Aún no tienes dioses. ¡Prueba el gacha!</p>
+    <p>{% trans "You don't have any gods yet. Try the gacha!" %}</p>
     {% endfor %}
 </div>
 
 <div id="equipModal" class="modal-overlay" onclick="closeEquipModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
-            <h3 id="modalTitle">Equipar objeto</h3>
+            <h3 id="modalTitle">{% trans "Equip Item" %}</h3>
             <button class="modal-close" onclick="closeEquipModal()">&times;</button>
         </div>
         <div id="modalItems"></div>
@@ -170,9 +180,22 @@
 let currentGodId = null;
 let currentSlot = null;
 
+function filterFaction(pantheon, tabElement) {
+    document.querySelectorAll('.faction-tab').forEach(t => t.classList.remove('active'));
+    tabElement.classList.add('active');
+
+    document.querySelectorAll('.god-card').forEach(card => {
+        if (pantheon === 'all' || card.dataset.pantheon === pantheon) {
+            card.classList.add('visible');
+        } else {
+            card.classList.remove('visible');
+        }
+    });
+}
+
 function handleSlotClick(godId, slotType, equippedItemId) {
     if (equippedItemId) {
-        if (confirm('¿Desequipar este objeto?')) {
+        if (confirm('{% trans "Unequip this item?" %}')) {
             unequipItem(equippedItemId);
         }
     } else {
@@ -184,15 +207,15 @@ function openEquipModal(godId, slotType) {
     currentGodId = godId;
     currentSlot = slotType;
 
-    const slotNames = { weapon: 'Arma', armor: 'Armadura', amulet: 'Amuleto' };
-    document.getElementById('modalTitle').textContent = `Equipar ${slotNames[slotType]}`;
+    const slotNames = { weapon: '{% trans "Weapon" %}', armor: '{% trans "Armor" %}', amulet: '{% trans "Amulet" %}' };
+    document.getElementById('modalTitle').textContent = `{% trans "Equip" %} ${slotNames[slotType]}`;
 
     fetch(`/gods/${godId}/available-items/${slotType}/`)
         .then(r => r.json())
         .then(data => {
             const container = document.getElementById('modalItems');
             if (data.items.length === 0) {
-                container.innerHTML = '<p style="color: #888; text-align: center;">No tienes objetos disponibles</p>';
+                container.innerHTML = '<p style="color: #888; text-align: center;">{% trans "No available items" %}</p>';
             } else {
                 container.innerHTML = data.items.map(item => `
                     <div class="item-option" onclick="equipItem(${godId}, ${item.id})">
@@ -204,7 +227,7 @@ function openEquipModal(godId, slotType) {
                                 ${item.hp ? 'HP +' + item.hp + ' ' : ''}
                                 ${item.spd ? 'SPD +' + item.spd : ''}
                             </div>
-                            ${item.is_specific ? '<span style="color: #ffd700; font-size: 0.7rem;">✨ Específico</span>' : ''}
+                            ${item.is_specific ? '<span style="color: #ffd700; font-size: 0.7rem;">✨ {% trans "Specific" %}</span>' : ''}
                         </div>
                     </div>
                 `).join('');
