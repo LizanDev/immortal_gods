@@ -55,10 +55,8 @@ def inventory(request):
 
 
 def landing(request):
-    """Landing page for non-authenticated users."""
-    if request.user.is_authenticated:
-        return redirect("core:home")
-    return render(request, "core/landing.html")
+    """Redirect to login page."""
+    return redirect("core:login")
 
 
 def register(request):
