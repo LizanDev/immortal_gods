@@ -5,103 +5,116 @@
 
 {% block content %}
 <style>
-    .login-fullpage {
+    .login-page {
         min-height: calc(100vh - 180px);
-        background: url('{% static "images/gods/login.webp" %}') center/cover no-repeat;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 2rem;
+        background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 100%);
     }
-    .login-form-overlay {
-        background: rgba(10, 10, 26, 0.75);
-        backdrop-filter: blur(15px);
-        padding: 3rem 3.5rem;
-        border-radius: 20px;
-        border: 2px solid rgba(233, 69, 96, 0.5);
-        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7);
-        text-align: center;
-        max-width: 420px;
+    .login-card {
+        background: linear-gradient(145deg, #16213e, #1a1a3e);
+        border-radius: 24px;
+        border: 3px solid #e94560;
+        box-shadow: 0 30px 100px rgba(0, 0, 0, 0.8);
+        overflow: hidden;
+        max-width: 500px;
         width: 100%;
     }
-    .login-form-overlay h1 {
+    .login-card-image {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+        display: block;
+    }
+    .login-card-content {
+        padding: 2.5rem 3rem;
+    }
+    .login-card-content h1 {
         color: #fff;
-        font-size: 2.2rem;
-        margin-bottom: 0.5rem;
-        text-shadow: 0 0 30px rgba(233, 69, 96, 0.6);
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 0.3rem;
+        text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
         letter-spacing: 2px;
     }
-    .login-form-overlay .subtitle {
-        color: rgba(255, 255, 255, 0.6);
+    .login-card-content .subtitle {
+        color: rgba(255, 255, 255, 0.5);
+        text-align: center;
         font-size: 0.9rem;
         margin-bottom: 2rem;
     }
-    .login-form-overlay input {
+    .login-card-content input {
         width: 100%;
-        padding: 14px 18px;
+        padding: 16px 20px;
         margin-bottom: 1rem;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.25);
-        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
         color: #fff;
-        font-size: 1rem;
+        font-size: 1.1rem;
         box-sizing: border-box;
         transition: all 0.3s;
     }
-    .login-form-overlay input::placeholder {
+    .login-card-content input::placeholder {
         color: rgba(255, 255, 255, 0.4);
     }
-    .login-form-overlay input:focus {
+    .login-card-content input:focus {
         outline: none;
         border-color: #e94560;
-        background: rgba(233, 69, 96, 0.15);
-        box-shadow: 0 0 20px rgba(233, 69, 96, 0.4);
+        background: rgba(233, 69, 96, 0.1);
+        box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
     }
-    .login-form-overlay .btn {
+    .login-card-content .btn {
         width: 100%;
-        padding: 14px;
-        font-size: 1.2rem;
-        margin-top: 0.5rem;
-        background: linear-gradient(135deg, #e94560, #ff6b6b);
+        padding: 16px;
+        font-size: 1.3rem;
+        background: linear-gradient(135deg, #e94560, #c73650);
         border: none;
-        border-radius: 10px;
+        border-radius: 12px;
         cursor: pointer;
         transition: all 0.3s;
         color: #fff;
         font-weight: bold;
-        letter-spacing: 1px;
+        letter-spacing: 2px;
+        margin-top: 0.5rem;
     }
-    .login-form-overlay .btn:hover {
-        transform: scale(1.05);
-        box-shadow: 0 10px 30px rgba(233, 69, 96, 0.5);
+    .login-card-content .btn:hover {
+        transform: scale(1.03);
+        box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
     }
-    .login-form-overlay p {
+    .login-card-content p {
+        text-align: center;
         margin-top: 1.5rem;
         color: rgba(255, 255, 255, 0.6);
     }
-    .login-form-overlay a {
+    .login-card-content a {
         color: #ff6b6b;
         font-weight: bold;
         text-decoration: none;
     }
-    .login-form-overlay a:hover {
+    .login-card-content a:hover {
         text-decoration: underline;
     }
 </style>
 
-<div class="login-fullpage">
-    <div class="login-form-overlay">
-        <h1>IMMORTAL GODS</h1>
-        <p class="subtitle">Tu destino te espera</p>
-        <form method="post">
-            {% csrf_token %}
-            <input type="text" name="username" id="username" placeholder="Usuario" required>
-            <input type="password" name="password" id="password" placeholder="Contraseña" required>
-            <button type="submit" class="btn">ENTRAR</button>
-        </form>
-        <p>
-            ¿No tienes cuenta? <a href="{% url 'core:register' %}">Regístrate</a>
-        </p>
+<div class="login-page">
+    <div class="login-card">
+        <img src="{% static 'images/gods/login.webp' %}" alt="Immortal Gods" class="login-card-image">
+        <div class="login-card-content">
+            <h1>IMMORTAL GODS</h1>
+            <p class="subtitle">Tu destino te espera</p>
+            <form method="post">
+                {% csrf_token %}
+                <input type="text" name="username" id="username" placeholder="Usuario" required>
+                <input type="password" name="password" id="password" placeholder="Contraseña" required>
+                <button type="submit" class="btn">ENTRAR</button>
+            </form>
+            <p>
+                ¿No tienes cuenta? <a href="{% url 'core:register' %}">Regístrate</a>
+            </p>
+        </div>
     </div>
 </div>
 {% endblock %}
