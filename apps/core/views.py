@@ -388,6 +388,8 @@ def shop(request):
             profile.restore_energy(item["amount"])
             messages.success(request, f"¡Compra exitosa! +{item['amount']} energía")
 
+        return redirect("core:shop")
+
     return render(
         request,
         "core/shop.html",
