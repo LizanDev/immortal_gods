@@ -5,40 +5,66 @@
 
 {% block content %}
 <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     .login-page {
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 2rem;
-        background: linear-gradient(135deg, #0a0a1a 0%, #16213e 50%, #1a1a3e 100%);
+        background: #050508;
         position: relative;
         overflow: hidden;
     }
-    .login-page::before {
-        content: '';
+
+    /* Fondo con imagen y overlays */
+    .bg-layer {
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background-image: url("{% static 'images/gods/login.webp' %}?v=2");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        opacity: 0.4;
         z-index: 0;
     }
-    .login-page::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: radial-gradient(circle at center, transparent 0%, rgba(10, 10, 26, 0.8) 100%);
-        z-index: 1;
+    .bg-layer.bg-image {
+        background-image: url("{% static 'images/gods/login.webp' %}?v=3");
+        background-size: cover;
+        background-position: center;
+        opacity: 0.35;
     }
+    .bg-layer.bg-gradient {
+        background: radial-gradient(ellipse at center top, rgba(88,28,135,0.4) 0%, transparent 50%),
+                    radial-gradient(ellipse at center bottom, rgba(233,69,96,0.2) 0%, transparent 50%),
+                    linear-gradient(180deg, #050508 0%, #0f0a1a 50%, #050508 100%);
+    }
+    .bg-layer.bg-vignette {
+        background: radial-gradient(ellipse at center, transparent 0%, #050508 100%);
+    }
+
+    /* Rayos */
+    .lightning {
+        position: absolute;
+        top: -100px;
+        width: 3px;
+        height: 200px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 100%);
+        opacity: 0;
+        z-index: 1;
+        filter: blur(1px);
+    }
+    .lightning.flash {
+        animation: lightningStrike 0.15s ease-out;
+    }
+    @keyframes lightningStrike {
+        0% { opacity: 0; transform: translateY(0); }
+        20% { opacity: 1; transform: translateY(50px); }
+        40% { opacity: 0.5; transform: translateY(100px); }
+        60% { opacity: 1; transform: translateY(150px); }
+        100% { opacity: 0; transform: translateY(200px); }
+    }
+
+    /* Partículas de energía divina */
     .particles {
         position: absolute;
         top: 0;
@@ -47,220 +73,366 @@
         height: 100%;
         z-index: 1;
         pointer-events: none;
+        overflow: hidden;
     }
-    .particle {
+    .energy-particle {
         position: absolute;
-        background: radial-gradient(circle, rgba(233,69,96,0.8) 0%, transparent 70%);
         border-radius: 50%;
-        animation: float 3s ease-in-out infinite;
+        animation: energyFloat 4s ease-in-out infinite;
     }
-    @keyframes float {
-        0%, 100% { transform: translateY(0) scale(1); opacity: 0; }
-        50% { opacity: 0.6; }
-        100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+    @keyframes energyFloat {
+        0%, 100% {
+            transform: translateY(0) translateX(0) scale(1);
+            opacity: 0;
+        }
+        25% { opacity: 0.8; }
+        50% {
+            transform: translateY(-30vh) translateX(10px) scale(1.2);
+            opacity: 0.6;
+        }
+        75% { opacity: 0.3; }
+        100% {
+            transform: translateY(-60vh) translateX(-10px) scale(0.8);
+            opacity: 0;
+        }
     }
+
+    /*Iconos flotantes de dioses */
+    .floating-icons {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+        overflow: hidden;
+    }
+    .floating-icon {
+        position: absolute;
+        font-size: 1.5rem;
+        opacity: 0.15;
+        animation: iconFloat 8s ease-in-out infinite;
+    }
+    @keyframes iconFloat {
+        0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.1; }
+        50% { transform: translateY(-20px) rotate(10deg); opacity: 0.25; }
+    }
+
+    /* Carta principal */
     .login-card {
         position: relative;
-        z-index: 2;
-        background: rgba(6, 10, 26, 0.85);
-        padding: 3rem 2.5rem;
-        border-radius: 20px;
-        border: 2px solid rgba(233, 69, 96, 0.6);
-        box-shadow: 0 0 60px rgba(233, 69, 96, 0.3), inset 0 0 40px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(10px);
-        max-width: 420px;
+        z-index: 10;
         width: 100%;
-        animation: glow 3s ease-in-out infinite, pulse 2s ease-in-out infinite;
+        max-width: 380px;
+        background: linear-gradient(180deg, rgba(20,10,35,0.95) 0%, rgba(10,5,20,0.98) 100%);
+        border-radius: 24px;
+        padding: 2.5rem 2rem;
+        border: 1px solid rgba(233,69,96,0.3);
+        box-shadow:
+            0 0 80px rgba(233,69,96,0.15),
+            0 0 120px rgba(88,28,135,0.1),
+            inset 0 1px 0 rgba(255,255,255,0.1),
+            inset 0 -1px 0 rgba(0,0,0,0.5);
+        backdrop-filter: blur(20px);
     }
-    @keyframes glow {
-        0%, 100% { box-shadow: 0 0 60px rgba(233, 69, 96, 0.3), inset 0 0 40px rgba(0, 0, 0, 0.5); border-color: rgba(233, 69, 96, 0.6); }
-        50% { box-shadow: 0 0 80px rgba(233, 69, 96, 0.5), inset 0 0 60px rgba(0, 0, 0, 0.7); border-color: rgba(233, 69, 96, 1); }
-    }
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.02); }
-    }
-    .login-card h1 {
+
+    /* Logo/Título */
+    .logo-container {
         text-align: center;
-        margin-bottom: 0.5rem;
-        color: #e94560;
-        font-size: 2rem;
-        text-shadow: 0 0 20px rgba(233, 69, 96, 0.8);
-        letter-spacing: 3px;
-        font-weight: 800;
-        animation: titleGlow 2s ease-in-out infinite;
-    }
-    @keyframes titleGlow {
-        0%, 100% { text-shadow: 0 0 20px rgba(233, 69, 96, 0.8); }
-        50% { text-shadow: 0 0 40px rgba(233, 69, 96, 1), 0 0 60px rgba(233, 69, 96, 0.6); }
-    }
-    .login-card .subtitle {
-        text-align: center;
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 0.95rem;
         margin-bottom: 2rem;
-        letter-spacing: 2px;
     }
+    .logo-icon {
+        font-size: 3.5rem;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+        animation: logoPulse 2s ease-in-out infinite;
+        filter: drop-shadow(0 0 20px rgba(255,200,50,0.6));
+    }
+    @keyframes logoPulse {
+        0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(255,200,50,0.6)); }
+        50% { transform: scale(1.1); filter: drop-shadow(0 0 40px rgba(255,200,50,0.9)); }
+    }
+    .logo-title {
+        font-size: 1.8rem;
+        font-weight: 900;
+        letter-spacing: 4px;
+        background: linear-gradient(180deg, #fff 0%, #e94560 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: none;
+        filter: drop-shadow(0 2px 10px rgba(233,69,96,0.5));
+    }
+    .logo-subtitle {
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.5);
+        letter-spacing: 3px;
+        margin-top: 0.3rem;
+        text-transform: uppercase;
+    }
+
+    /* Línea decorativa */
+    .decorative-line {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(233,69,96,0.6), transparent);
+        margin: 1.5rem 0;
+    }
+
+    /* Inputs */
     .input-group {
         position: relative;
-        margin-bottom: 1.2rem;
+        margin-bottom: 1rem;
     }
-    .login-card input {
+    .input-group input {
         width: 100%;
-        padding: 1rem;
-        background: rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(233, 69, 96, 0.3);
-        border-radius: 10px;
+        padding: 1rem 1rem 1rem 3rem;
+        background: rgba(0,0,0,0.5);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
         color: #fff;
         font-size: 1rem;
-        box-sizing: border-box;
         transition: all 0.3s;
     }
-    .login-card input::placeholder {
-        color: rgba(255, 255, 255, 0.4);
+    .input-group input::placeholder {
+        color: rgba(255,255,255,0.35);
     }
-    .login-card input:focus {
+    .input-group input:focus {
         outline: none;
         border-color: #e94560;
-        background: rgba(233, 69, 96, 0.1);
-        box-shadow: 0 0 20px rgba(233, 69, 96, 0.4);
+        background: rgba(233,69,96,0.08);
+        box-shadow: 0 0 20px rgba(233,69,96,0.2), inset 0 0 20px rgba(233,69,96,0.05);
     }
     .input-icon {
         position: absolute;
-        right: 12px;
+        left: 1rem;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         opacity: 0.5;
+        transition: all 0.3s;
+        pointer-events: none;
+    }
+    .input-group input:focus ~ .input-icon {
+        opacity: 1;
+        color: #e94560;
+    }
+    .input-status {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.8rem;
+        opacity: 0;
         transition: opacity 0.3s;
     }
-    .login-card .btn {
+    .input-group input:valid ~ .input-status.valid { opacity: 1; color: #51cf66; }
+    .input-group input:focus ~ .input-status.focus { opacity: 1; }
+
+    /* Botón principal */
+    .btn-invoke {
         width: 100%;
         padding: 1rem;
-        font-size: 1.1rem;
         margin-top: 0.5rem;
-        background: linear-gradient(135deg, #e94560, #ff6b6b);
+        background: linear-gradient(135deg, #e94560 0%, #c73650 50%, #e94560 100%);
+        background-size: 200% 100%;
         border: none;
-        border-radius: 10px;
-        cursor: pointer;
+        border-radius: 12px;
         color: #fff;
-        font-weight: bold;
-        letter-spacing: 2px;
-        transition: all 0.3s;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 3px;
+        cursor: pointer;
         position: relative;
         overflow: hidden;
+        transition: all 0.3s;
+        text-transform: uppercase;
     }
-    .login-card .btn::before {
+    .btn-invoke::before {
         content: '';
         position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-        transform: rotate(45deg);
-        transition: all 0.5s;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s;
     }
-    .login-card .btn:hover::before {
+    .btn-invoke:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(233,69,96,0.5);
+        background-position: 100% 0;
+    }
+    .btn-invoke:hover::before {
         left: 100%;
     }
-    .login-card .btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 40px rgba(233, 69, 96, 0.6);
+    .btn-invoke:active {
+        transform: translateY(0);
     }
-    .login-card p {
+
+    /* Links */
+    .login-links {
         text-align: center;
         margin-top: 1.5rem;
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 0.95rem;
     }
-    .login-card a {
-        color: #ff9aa0;
-        font-weight: bold;
+    .login-links p {
+        color: rgba(255,255,255,0.5);
+        font-size: 0.85rem;
+    }
+    .login-links a {
+        color: #e94560;
+        font-weight: 600;
         text-decoration: none;
         transition: color 0.3s;
     }
-    .login-card a:hover {
-        color: #e94560;
+    .login-links a:hover {
+        color: #ff6b6b;
         text-decoration: underline;
     }
-    .divider {
+
+    /* Footer decorativo */
+    .login-footer {
         text-align: center;
-        margin: 1.5rem 0;
-        position: relative;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255,255,255,0.05);
     }
-    .divider::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(233, 69, 96, 0.5), transparent);
+    .faction-icons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
     }
-    .divider span {
-        background: rgba(6, 10, 26, 0.85);
-        padding: 0 1rem;
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 0.85rem;
-        position: relative;
+    .faction-icons span {
+        font-size: 1.2rem;
+        opacity: 0.3;
+        transition: all 0.3s;
     }
+    .faction-icons span:hover {
+        opacity: 0.7;
+        transform: scale(1.2);
+    }
+    .login-footer p {
+        font-size: 0.65rem;
+        color: rgba(255,255,255,0.3);
+        letter-spacing: 1px;
+    }
+
     @media (max-width: 480px) {
-        .login-card { padding: 2rem 1.5rem; }
-        .login-card h1 { font-size: 1.6rem; }
+        .login-card { padding: 2rem 1.5rem; border-radius: 20px; }
+        .logo-title { font-size: 1.5rem; }
+        .btn-invoke { font-size: 0.9rem; }
     }
 </style>
 
 <div class="login-page">
+    <!-- Capas de fondo -->
+    <div class="bg-layer bg-image"></div>
+    <div class="bg-layer bg-gradient"></div>
+    <div class="bg-layer bg-vignette"></div>
+
+    <!-- Rayos -->
+    <div class="lightning" id="lightning1" style="left: 15%;"></div>
+    <div class="lightning" id="lightning2" style="left: 75%;"></div>
+    <div class="lightning" id="lightning3" style="left: 45%;"></div>
+
+    <!-- Partículas de energía -->
     <div class="particles" id="particles"></div>
+
+    <!-- Iconos flotantes -->
+    <div class="floating-icons" id="floatingIcons"></div>
+
+    <!-- Carta de login -->
     <div class="login-card">
-        <h1>IMMORTAL GODS</h1>
-        <p class="subtitle">El destino de los dioses te espera</p>
+        <div class="logo-container">
+            <div class="logo-icon">⚡</div>
+            <h1 class="logo-title">IMMORTAL GODS</h1>
+            <p class="logo-subtitle">El Olimpo te espera</p>
+        </div>
+
+        <div class="decorative-line"></div>
+
         <form method="post">
             {% csrf_token %}
             <div class="input-group">
-                <input type="text" name="username" id="username" placeholder="Nombre de usuario" required>
+                <input type="text" name="username" id="username" placeholder="Nombre de guerrero" required autocomplete="username">
                 <span class="input-icon">👤</span>
+                <span class="input-status valid">✓</span>
+                <span class="input-status focus">✎</span>
             </div>
             <div class="input-group">
-                <input type="password" name="password" id="password" placeholder="Contraseña" required>
-                <span class="input-icon">🔒</span>
+                <input type="password" name="password" id="password" placeholder="Contraseña divina" required autocomplete="current-password">
+                <span class="input-icon">🔮</span>
+                <span class="input-status focus">✎</span>
             </div>
-            <button type="submit" class="btn">INVOCAR PODER</button>
+            <button type="submit" class="btn-invoke">⚔ Invocar Poder ⚔</button>
         </form>
-        <div class="divider"><span>o</span></div>
-        <p>
-            ¿Nuevo en el Olimpo? <a href="{% url 'core:register' %}">Crea tu leyenda</a>
-        </p>
+
+        <div class="login-links">
+            <p>¿Sin poderes? <a href="{% url 'core:register' %}">Únete al Olimpo</a></p>
+        </div>
+
+        <div class="login-footer">
+            <div class="faction-icons">
+                <span title="Griego">⚔️</span>
+                <span title="Nórdico">🛡️</span>
+                <span title="Egipcio">☥</span>
+                <span title="Chino">☯</span>
+                <span title="Zodiaco">♋</span>
+            </div>
+            <p>78 DIOSES • 5 PANTEONES • INFINITAS POSIBILIDADES</p>
+        </div>
     </div>
 </div>
 
 <script>
-    // Partículas flotantes
+    // Crear partículas de energía divina
     const particlesContainer = document.getElementById('particles');
-    const particleCount = 30;
+    const colors = ['#e94560', '#ffd700', '#4a9eff', '#a855f7', '#51cf66'];
+    const particleCount = 40;
 
     for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
-        particle.className = 'particle';
+        particle.className = 'energy-particle';
         particle.style.left = Math.random() * 100 + '%';
-        particle.style.top = Math.random() * 100 + '%';
-        particle.style.width = (Math.random() * 10 + 5) + 'px';
+        particle.style.top = (Math.random() * 60 + 40) + '%';
+        particle.style.width = (Math.random() * 6 + 2) + 'px';
         particle.style.height = particle.style.width;
-        particle.style.animationDelay = Math.random() * 3 + 's';
-        particle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        particle.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * colors.length)]} 0%, transparent 70%)`;
+        particle.style.animationDelay = Math.random() * 4 + 's';
+        particle.style.animationDuration = (Math.random() * 2 + 3) + 's';
         particlesContainer.appendChild(particle);
     }
 
-    // Efecto en inputs
-    document.querySelectorAll('.login-card input').forEach(input => {
-        input.addEventListener('focus', () => {
-            input.parentElement.querySelector('.input-icon').style.opacity = '1';
-        });
-        input.addEventListener('blur', () => {
-            input.parentElement.querySelector('.input-icon').style.opacity = '0.5';
-        });
+    // Crear iconos flotantes de dioses
+    const iconsContainer = document.getElementById('floatingIcons');
+    const godSymbols = ['⚔️', '🛡️', '⚡', '🔥', '💎', '🌟', '👑', '⚱️', '☯', '♛', '🗡️', '🏹'];
+    const iconCount = 12;
+
+    for (let i = 0; i < iconCount; i++) {
+        const icon = document.createElement('div');
+        icon.className = 'floating-icon';
+        icon.textContent = godSymbols[Math.floor(Math.random() * godSymbols.length)];
+        icon.style.left = Math.random() * 100 + '%';
+        icon.style.top = Math.random() * 100 + '%';
+        icon.style.animationDelay = Math.random() * 8 + 's';
+        icon.style.animationDuration = (Math.random() * 4 + 6) + 's';
+        iconsContainer.appendChild(icon);
+    }
+
+    // Efecto de rayos
+    function triggerLightning() {
+        const lightning = document.getElementById('lightning' + (Math.floor(Math.random() * 3) + 1));
+        lightning.classList.add('flash');
+        setTimeout(() => lightning.classList.remove('flash'), 150);
+    }
+
+    setInterval(triggerLightning, 4000);
+
+    // Efecto de temblor al hacer submit
+    document.querySelector('.btn-invoke').addEventListener('click', function() {
+        this.style.transform = 'scale(0.98)';
+        setTimeout(() => this.style.transform = '', 100);
     });
 </script>
 {% endblock %}
