@@ -14,72 +14,100 @@
         background: linear-gradient(135deg, #0a0a1a 0%, #16213e 50%, #1a1a3e 100%);
     }
     .login-card {
-        background: linear-gradient(145deg, #16213e, #1a1a3e);
-        border-radius: 24px;
-        border: 3px solid #e94560;
-        box-shadow: 0 30px 100px rgba(0, 0, 0, 0.8), 0 0 60px rgba(233, 69, 96, 0.2);
+        position: relative;
+        border-radius: 18px;
+        border: 2px solid #e94560;
+        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.75), 0 0 40px rgba(233, 69, 96, 0.15);
         overflow: hidden;
-        max-width: 600px;
+        max-width: 900px;
         width: 100%;
+        min-height: 480px;
+        background-image: url("{% static 'images/gods/download.png' %}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: transparent;
     }
-    .login-card-image {
-        width: 100%;
-        height: 320px;
-        object-fit: cover;
-        display: block;
-        border-bottom: 3px solid #e94560;
-    }
+    /* .login-card-image not used when using background-image on .login-card */
     .login-card-content {
-        padding: 3rem 3.5rem;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 280px;
+        padding: 1.5rem 1.8rem 1.8rem;
+        background: rgba(6, 10, 20, 0.7);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+        backdrop-filter: blur(6px);
+        z-index: 2;
     }
-    .login-card-content h1 {
-        color: #fff;
-        font-size: 2.5rem;
-        text-align: center;
-        margin-bottom: 0.5rem;
-        text-shadow: 0 0 30px rgba(233, 69, 96, 0.6);
-        letter-spacing: 4px;
-    }
+    .login-card-content h1,
     .login-card-content .subtitle {
-        color: rgba(255, 255, 255, 0.5);
-        text-align: center;
-        font-size: 1rem;
-        margin-bottom: 2.5rem;
+        display: none;
     }
     .login-card-content input {
         width: 100%;
-        padding: 18px 24px;
-        margin-bottom: 1.2rem;
-        background: rgba(0, 0, 0, 0.4);
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        border-radius: 14px;
+        padding: 8px 12px;
+        margin-bottom: 0.7rem;
+        background: rgba(255, 255, 255, 0.06);
+        border: none;
+        border-radius: 8px;
         color: #fff;
-        font-size: 1.2rem;
+        font-size: 0.9rem;
         box-sizing: border-box;
-        transition: all 0.3s;
+        transition: all 0.15s;
+        text-align: center;
     }
     .login-card-content input::placeholder {
-        color: rgba(255, 255, 255, 0.4);
+        color: rgba(255, 255, 255, 0.6);
     }
     .login-card-content input:focus {
         outline: none;
-        border-color: #e94560;
-        background: rgba(233, 69, 96, 0.15);
-        box-shadow: 0 0 25px rgba(233, 69, 96, 0.4);
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: none;
     }
     .login-card-content .btn {
         width: 100%;
-        padding: 18px;
-        font-size: 1.4rem;
-        background: linear-gradient(135deg, #e94560, #ff6b6b);
+        padding: 12px 0;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.08);
         border: none;
-        border-radius: 14px;
+        border-radius: 10px;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.15s;
         color: #fff;
-        font-weight: bold;
-        letter-spacing: 3px;
-        margin-top: 0.5rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-top: 0;
+    }
+
+    @media (max-width: 600px) {
+        .login-card { min-height: 380px; max-width: 420px; }
+        .login-card-image { height: 200px; }
+        .login-card-content { width: 86%; padding: 0.9rem; top: 50%; }
+        .login-card-content h1 { font-size: 1.2rem; }
+        .login-card-content input { padding: 10px 12px; font-size: 0.95rem; }
+        .login-card-content .btn { padding: 10px; font-size: 0.98rem; }
+    }
+    @media (max-width: 380px) {
+        .login-page { padding: 1rem; }
+        .login-card { border-radius: 12px; min-height: 360px; }
+        .login-card-image { height: 160px; }
+        .login-card-content { top: 40%; width: 92%; padding: 0.7rem; }
+        .login-card-content h1 { font-size: 1.1rem; }
+    }
+    .forgot-link {
+        display: block;
+        text-align: center;
+        margin-top: 0.8rem;
+        color: rgba(255,255,255,0.85);
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .forgot-link:hover {
+        text-decoration: underline;
+        color: #ffb3b3;
     }
     .login-card-content .btn:hover {
         transform: scale(1.03);
@@ -87,14 +115,19 @@
     }
     .login-card-content p {
         text-align: center;
-        margin-top: 2rem;
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 1rem;
+        margin-top: 0.5rem;
+        color: rgba(255, 255, 255, 0.95);
+        font-size: 0.95rem;
     }
     .login-card-content a {
-        color: #ff6b6b;
-        font-weight: bold;
+        color: #ffb3b3;
+        font-weight: 700;
         text-decoration: none;
+    }
+    .login-card-content a.register-link {
+        color: #ffb3b3;
+        display: inline-block;
+        margin-top: 0.2rem;
     }
     .login-card-content a:hover {
         text-decoration: underline;
@@ -103,7 +136,6 @@
 
 <div class="login-page">
     <div class="login-card">
-        <img src="{% static 'images/gods/login.webp' %}" alt="Immortal Gods" class="login-card-image">
         <div class="login-card-content">
             <h1>IMMORTAL GODS</h1>
             <p class="subtitle">Tu destino te espera</p>
@@ -112,9 +144,10 @@
                 <input type="text" name="username" id="username" placeholder="Usuario" required>
                 <input type="password" name="password" id="password" placeholder="Contraseña" required>
                 <button type="submit" class="btn">ENTRAR</button>
+                <a href="#" class="forgot-link">¿Olvidaste la contraseña?</a>
             </form>
             <p>
-                ¿No tienes cuenta? <a href="{% url 'core:register' %}">Regístrate</a>
+                ¿No tienes cuenta? <a href="{% url 'core:register' %}" class="register-link">Regístrate</a>
             </p>
         </div>
     </div>
