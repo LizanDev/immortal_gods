@@ -1,279 +1,191 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load passive_filters %}
 
-{% block title %}{% trans "My Gods" %} - Immortal Gods{% endblock %}
+{% block title %}{% trans "My Gods" %}{% endblock %}
 
 {% block content %}
+<!-- DEBUG BAR: If you see this, the new template is loaded. -->
+<div style="background: #ff4444; color: white; padding: 8px; text-align: center; font-weight: bold; margin-bottom: 10px;">
+    ✅ NEW VERSION LOADED - Equipment & Filters Active
+</div>
+
 <h1>{% trans "My Gods" %}</h1>
 
 {% csrf_token %}
 
-<style>
-    .faction-tabs {
-        display: flex; gap: 0.5rem; margin-bottom: 1.5rem;
-        flex-wrap: wrap; border-bottom: 2px solid rgba(255,255,255,0.1);
-        padding-bottom: 0.5rem;
-    }
-    .faction-tab {
-        padding: 0.5rem 1rem; background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.2); border-radius: 6px;
-        color: #aaa; cursor: pointer; transition: all 0.2s;
-        font-size: 0.85rem;
-    }
-    .faction-tab:hover { background: rgba(255,255,255,0.1); color: #fff; }
-    .faction-tab.active { background: rgba(233,69,96,0.3); border-color: #e94560; color: #fff; }
-    .faction-tab .count { font-size: 0.7rem; color: #888; margin-left: 0.3rem; }
-
-    .equip-slots { display: flex; gap: 0.5rem; margin: 0.5rem 0; }
-    .equip-slot {
-        width: 60px; height: 60px;
-        border: 2px dashed rgba(255,255,255,0.3);
-        border-radius: 8px;
-        display: flex; align-items: center; justify-content: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        position: relative;
-        background: rgba(0,0,0,0.2);
-    }
-    .equip-slot:hover { border-color: #e94560; background: rgba(233,69,96,0.1); }
-    .equip-slot.occupied { border-style: solid; border-color: #4a9eff; background: rgba(74,158,255,0.1); }
-    .equip-slot .slot-icon { font-size: 1.5rem; }
-    .equip-slot .slot-label { font-size: 0.6rem; color: #888; position: absolute; bottom: 2px; }
-    .equip-slot .item-preview { font-size: 0.7rem; color: #ffd700; text-align: center; padding: 2px; }
-
-    .modal-overlay {
-        display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.8); z-index: 1000;
-        align-items: center; justify-content: center;
-    }
-    .modal-overlay.active { display: flex; }
-    .modal-content {
-        background: #16213e; border-radius: 12px; padding: 1.5rem;
-        max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;
-        border: 2px solid #e94560;
-    }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-    .modal-close { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
-    .item-option {
-        display: flex; align-items: center; gap: 0.5rem;
-        padding: 0.5rem; margin: 0.3rem 0;
-        background: rgba(255,255,255,0.05); border-radius: 6px;
-        cursor: pointer; transition: background 0.2s;
-    }
-    .item-option:hover { background: rgba(233,69,96,0.2); }
-    .item-option .item-stats { font-size: 0.7rem; color: #aaa; }
-
-    .god-card[data-pantheon] { display: none; }
-    .god-card[data-pantheon].visible { display: block; }
-</style>
-
-<div class="faction-tabs">
-    <div class="faction-tab active" onclick="filterFaction('all', this)">
-        {% trans "All" %} <span class="count">({{ gods|length }})</span>
-    </div>
-    {% for pantheon_value, pantheon_label in pantheons %}
-    <div class="faction-tab" onclick="filterFaction('{{ pantheon_value }}', this)">
-        {{ pantheon_label }} <span class="count">({{ pantheon_counts|get_item:pantheon_value|default:0 }})</span>
-    </div>
+<!-- Faction Filter Tabs -->
+<div style="display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; border-bottom: 1px solid #333;">
+    <button onclick="filterGods('all', this)" class="faction-btn" style="padding: 8px 16px; background: #e94560; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">
+        {% trans "All" %}
+    </button>
+    {% for value, label in pantheons %}
+    <button onclick="filterGods('{{ value }}', this)" class="faction-btn" style="padding: 8px 16px; background: #333; color: #aaa; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">
+        {{ label }}
+    </button>
     {% endfor %}
 </div>
 
-<div class="grid">
+<!-- Gods Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
     {% for pg in gods %}
-    <div class="god-card rarity-{{ pg.god.rarity }} visible" data-pantheon="{{ pg.god.pantheon }}">
-        <div class="god-card-image">
-            <img src="{{ pg.god.image_url }}" alt="{{ pg.god.name }}"
-                 onerror="this.style.display='none'">
+    <div class="god-card" data-pantheon="{{ pg.god.pantheon }}" style="background: #16213e; border-radius: 12px; padding: 15px; border: 1px solid #333; position: relative;">
+        
+        <!-- God Image -->
+        <div style="height: 160px; background: #0f0f1a; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img src="{{ pg.god.image_url }}" alt="{{ pg.god.name }}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
         </div>
-        <div class="god-card-body">
-            <div class="god-card-name">{{ pg.god.name }} <span style="color: #888;">Nv.{{ pg.level }}</span></div>
-            <div class="god-card-info">
-                {{ pg.god.get_pantheon_display }} | {{ pg.god.get_role_display }} | {{ pg.god.get_rarity_display }}
-            </div>
-            <div style="margin-top: 0.5rem; font-size: 0.75rem;">
-                <div class="stat-bar"><span class="stat-label">ATK</span><span class="stat-value" style="color: #ff6b6b;">{{ pg.total_attack }}</span></div>
-                <div class="stat-bar"><span class="stat-label">DEF</span><span class="stat-value" style="color: #4a9eff;">{{ pg.total_defense }}</span></div>
-                <div class="stat-bar"><span class="stat-label">HP</span><span class="stat-value" style="color: #51cf66;">{{ pg.total_hp }}</span></div>
-                <div class="stat-bar"><span class="stat-label">SPD</span><span class="stat-value" style="color: #ffd700;">{{ pg.total_speed }}</span></div>
-            </div>
 
-            <div class="equip-slots">
-                <div class="equip-slot {% if pg.weapon %}occupied{% endif %}"
-                     onclick="handleSlotClick({{ pg.id }}, 'weapon', {% if pg.weapon %}{{ pg.weapon.id }}{% else %}null{% endif %})"
-                     title="{% trans 'Weapon' %}">
-                    {% if pg.weapon %}
-                    <div class="item-preview">⚔️<br>{{ pg.weapon.item.name|truncatechars:8 }}</div>
-                    {% else %}
-                    <span class="slot-icon">️</span>
-                    <span class="slot-label">{% trans "Weapon" %}</span>
-                    {% endif %}
-                </div>
-                <div class="equip-slot {% if pg.armor %}occupied{% endif %}"
-                     onclick="handleSlotClick({{ pg.id }}, 'armor', {% if pg.armor %}{{ pg.armor.id }}{% else %}null{% endif %})"
-                     title="{% trans 'Armor' %}">
-                    {% if pg.armor %}
-                    <div class="item-preview">️<br>{{ pg.armor.item.name|truncatechars:8 }}</div>
-                    {% else %}
-                    <span class="slot-icon">️</span>
-                    <span class="slot-label">{% trans "Armor" %}</span>
-                    {% endif %}
-                </div>
-                <div class="equip-slot {% if pg.amulet %}occupied{% endif %}"
-                     onclick="handleSlotClick({{ pg.id }}, 'amulet', {% if pg.amulet %}{{ pg.amulet.id }}{% else %}null{% endif %})"
-                     title="{% trans 'Amulet' %}">
-                    {% if pg.amulet %}
-                    <div class="item-preview">💎<br>{{ pg.amulet.item.name|truncatechars:8 }}</div>
-                    {% else %}
-                    <span class="slot-icon">💎</span>
-                    <span class="slot-label">{% trans "Amulet" %}</span>
-                    {% endif %}
-                </div>
-            </div>
+        <!-- God Info -->
+        <h3 style="margin: 0 0 5px 0; color: #fff; font-size: 1.2rem;">
+            {{ pg.god.name }} <span style="font-size: 0.9rem; color: #888;">Lv.{{ pg.level }}</span>
+        </h3>
+        <p style="margin: 0 0 12px 0; color: #aaa; font-size: 0.85rem;">
+            {{ pg.god.get_pantheon_display }} | {{ pg.god.get_role_display }} | {{ pg.god.get_rarity_display }}
+        </p>
 
-            {% if pg.active_passives %}
-            <div style="margin-top: 0.5rem;">
-                <p style="font-size: 0.7rem; color: #ffd700;">✨ {% trans "Active Passives" %}:</p>
-                {% for passive in pg.active_passives %}
-                <div style="background: rgba(255,215,0,0.1); padding: 0.4rem; margin-bottom: 0.3rem; border-radius: 4px; border-left: 2px solid #ffd700;">
-                    <strong style="color: #ffd700; font-size: 0.75rem;">{{ passive.name|translate_passive }}</strong>
-                    <p style="margin: 0.2rem 0 0; font-size: 0.7rem; color: #ccc;">{{ passive.desc|translate_passive }}</p>
-                    <p style="margin: 0.2rem 0 0; font-size: 0.65rem; color: #aaa;">
-                        {% if passive.bonuses.atk %}ATK +{{ passive.bonuses.atk }} {% endif %}
-                        {% if passive.bonuses.def %}DEF +{{ passive.bonuses.def }} {% endif %}
-                        {% if passive.bonuses.hp %}HP +{{ passive.bonuses.hp }} {% endif %}
-                        {% if passive.bonuses.spd %}SPD +{{ passive.bonuses.spd }}{% endif %}
-                    </p>
-                </div>
-                {% endfor %}
+        <!-- Equipment Slots -->
+        <div style="display: flex; gap: 12px; margin-bottom: 15px; justify-content: center;">
+            <!-- Weapon -->
+            <div onclick="openEquip({{ pg.id }}, 'weapon')" style="width: 55px; height: 55px; background: #1a1a2e; border: 2px dashed #555; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: all 0.2s;">
+                {% if pg.weapon %}
+                    <span style="font-size: 1.5rem;">⚔️</span>
+                    <div style="position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #ffd700; white-space: nowrap; background: rgba(0,0,0,0.8); padding: 2px 4px; border-radius: 4px;">{{ pg.weapon.item.name|truncatechars:12 }}</div>
+                {% else %}
+                    <span style="font-size: 1.2rem; color: #555;">⚔️</span>
+                {% endif %}
             </div>
-            {% endif %}
+            <!-- Armor -->
+            <div onclick="openEquip({{ pg.id }}, 'armor')" style="width: 55px; height: 55px; background: #1a1a2e; border: 2px dashed #555; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: all 0.2s;">
+                {% if pg.armor %}
+                    <span style="font-size: 1.5rem;">🛡️</span>
+                    <div style="position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #ffd700; white-space: nowrap; background: rgba(0,0,0,0.8); padding: 2px 4px; border-radius: 4px;">{{ pg.armor.item.name|truncatechars:12 }}</div>
+                {% else %}
+                    <span style="font-size: 1.2rem; color: #555;">🛡️</span>
+                {% endif %}
+            </div>
+            <!-- Amulet -->
+            <div onclick="openEquip({{ pg.id }}, 'amulet')" style="width: 55px; height: 55px; background: #1a1a2e; border: 2px dashed #555; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: all 0.2s;">
+                {% if pg.amulet %}
+                    <span style="font-size: 1.5rem;">💎</span>
+                    <div style="position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #ffd700; white-space: nowrap; background: rgba(0,0,0,0.8); padding: 2px 4px; border-radius: 4px;">{{ pg.amulet.item.name|truncatechars:12 }}</div>
+                {% else %}
+                    <span style="font-size: 1.2rem; color: #555;">💎</span>
+                {% endif %}
+            </div>
+        </div>
 
-            <div style="margin-top: 1rem;">
-                <h4 style="font-size: 0.85rem; color: #ddd;">{% trans "Skills" %}</h4>
-                {% for skill in pg.skills %}
-                <div style="background: rgba(255,255,255,0.05); padding: 0.5rem; margin-bottom: 0.4rem; border-radius: 6px; border-left: 3px solid {% if skill.type == 'ultimate' %}#ffd700{% else %}#4a9eff{% endif %};">
-                    <strong style="color: {% if skill.type == 'ultimate' %}#ffd700{% else %}#4a9eff{% endif %}; font-size: 0.8rem;">{{ skill.name }}</strong>
-                    {% if skill.type == 'ultimate' %}<span style="float: right; background: #ffd700; color: #000; padding: 1px 6px; border-radius: 3px; font-size: 0.6rem; font-weight: bold;">ULT</span>{% endif %}
-                    <p style="margin: 0.2rem 0 0; font-size: 0.75rem; color: #aaa;">{{ skill.desc }}</p>
-                </div>
-                {% endfor %}
+        <!-- Stats -->
+        <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; font-size: 0.8rem; color: #ccc;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="color: #ff6b6b;">ATK: {{ pg.total_attack }}</span>
+                <span style="color: #4a9eff;">DEF: {{ pg.total_defense }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: #51cf66;">HP: {{ pg.total_hp }}</span>
+                <span style="color: #ffd700;">SPD: {{ pg.total_speed }}</span>
             </div>
         </div>
     </div>
     {% empty %}
-    <p>{% trans "You don't have any gods yet. Try the gacha!" %}</p>
+    <p style="grid-column: 1/-1; text-align: center; color: #888;">{% trans "No gods found." %}</p>
     {% endfor %}
 </div>
 
-<div id="equipModal" class="modal-overlay" onclick="closeEquipModal(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-header">
-            <h3 id="modalTitle">{% trans "Equip Item" %}</h3>
-            <button class="modal-close" onclick="closeEquipModal()">&times;</button>
+<!-- Equipment Modal -->
+<div id="equipModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="background: #16213e; padding: 20px; border-radius: 12px; max-width: 400px; width: 90%; max-height: 80vh; overflow-y: auto; border: 2px solid #e94560;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 id="modalTitle" style="color: white; margin: 0;">Equip Item</h3>
+            <button onclick="closeModal()" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
         </div>
-        <div id="modalItems"></div>
+        <div id="modalContent" style="color: #aaa;">Loading...</div>
     </div>
 </div>
 
 <script>
-let currentGodId = null;
-let currentSlot = null;
-
-function filterFaction(pantheon, tabElement) {
-    document.querySelectorAll('.faction-tab').forEach(t => t.classList.remove('active'));
-    tabElement.classList.add('active');
-
-    document.querySelectorAll('.god-card').forEach(card => {
-        if (pantheon === 'all' || card.dataset.pantheon === pantheon) {
-            card.classList.add('visible');
-        } else {
-            card.classList.remove('visible');
-        }
-    });
-}
-
-function handleSlotClick(godId, slotType, equippedItemId) {
-    if (equippedItemId) {
-        if (confirm('{% trans "Unequip this item?" %}')) {
-            unequipItem(equippedItemId);
-        }
-    } else {
-        openEquipModal(godId, slotType);
+    // Filter Logic
+    function filterGods(pantheon, btn) {
+        document.querySelectorAll('.faction-btn').forEach(b => {
+            b.style.background = '#333';
+            b.style.color = '#aaa';
+        });
+        btn.style.background = '#e94560';
+        btn.style.color = 'white';
+        
+        document.querySelectorAll('.god-card').forEach(card => {
+            if (pantheon === 'all' || card.dataset.pantheon === pantheon) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
     }
-}
 
-function openEquipModal(godId, slotType) {
-    currentGodId = godId;
-    currentSlot = slotType;
+    // Modal Logic
+    let currentGodId = null;
+    let currentSlot = null;
 
-    const slotNames = { weapon: '{% trans "Weapon" %}', armor: '{% trans "Armor" %}', amulet: '{% trans "Amulet" %}' };
-    document.getElementById('modalTitle').textContent = `{% trans "Equip" %} ${slotNames[slotType]}`;
+    function openEquip(godId, slot) {
+        currentGodId = godId;
+        currentSlot = slot;
+        
+        const names = { 'weapon': 'Weapon', 'armor': 'Armor', 'amulet': 'Amulet' };
+        document.getElementById('modalTitle').innerText = 'Equip ' + (names[slot] || slot);
+        document.getElementById('modalContent').innerHTML = '<p style="text-align:center;">Loading...</p>';
+        document.getElementById('equipModal').style.display = 'flex';
 
-    fetch(`/gods/${godId}/available-items/${slotType}/`)
+        fetch(`/gods/${godId}/available-items/${slot}/`)
+            .then(r => r.json())
+            .then(data => {
+                let html = '';
+                if (!data.items || data.items.length === 0) {
+                    html = '<p style="text-align:center; color: #888;">No items available.</p>';
+                } else {
+                    data.items.forEach(item => {
+                        html += `
+                            <div onclick="equipItem(${godId}, ${item.id})" style="padding: 10px; background: #1a1a2e; margin-bottom: 8px; border-radius: 6px; cursor: pointer; border: 1px solid #333;">
+                                <div style="font-weight: bold; color: #fff;">${item.name} +${item.level}</div>
+                                <div style="font-size: 0.8rem; color: #aaa; margin-top: 4px;">
+                                    ATK:${item.atk} DEF:${item.def} HP:${item.hp} SPD:${item.spd}
+                                </div>
+                                ${item.is_specific ? '<div style="color: #ffd700; font-size: 0.75rem; margin-top: 4px;">✨ Specific Bonus</div>' : ''}
+                            </div>
+                        `;
+                    });
+                }
+                document.getElementById('modalContent').innerHTML = html;
+            })
+            .catch(() => {
+                document.getElementById('modalContent').innerHTML = '<p style="color: red; text-align:center;">Error loading items.</p>';
+            });
+    }
+
+    function closeModal() {
+        document.getElementById('equipModal').style.display = 'none';
+    }
+
+    function equipItem(godId, itemId) {
+        fetch(`/gods/${godId}/equip/${itemId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json'
+            }
+        })
         .then(r => r.json())
         .then(data => {
-            const container = document.getElementById('modalItems');
-            if (data.items.length === 0) {
-                container.innerHTML = '<p style="color: #888; text-align: center;">{% trans "No available items" %}</p>';
+            if (data.status === 'ok') {
+                location.reload();
             } else {
-                container.innerHTML = data.items.map(item => `
-                    <div class="item-option" onclick="equipItem(${godId}, ${item.id})">
-                        <div>
-                            <strong>${item.name} +${item.level}</strong>
-                            <div class="item-stats">
-                                ${item.atk ? 'ATK +' + item.atk + ' ' : ''}
-                                ${item.def ? 'DEF +' + item.def + ' ' : ''}
-                                ${item.hp ? 'HP +' + item.hp + ' ' : ''}
-                                ${item.spd ? 'SPD +' + item.spd : ''}
-                            </div>
-                            ${item.is_specific ? '<span style="color: #ffd700; font-size: 0.7rem;">✨ {% trans "Specific" %}</span>' : ''}
-                        </div>
-                    </div>
-                `).join('');
+                alert(data.message || 'Error');
             }
-            document.getElementById('equipModal').classList.add('active');
-        });
-}
-
-function closeEquipModal(event) {
-    if (!event || event.target === document.getElementById('equipModal')) {
-        document.getElementById('equipModal').classList.remove('active');
+        })
+        .catch(() => alert('Network error'));
     }
-}
 
-function equipItem(godId, itemId) {
-    fetch(`/gods/${godId}/equip/${itemId}/`, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.status === 'ok') {
-            location.reload();
-        } else {
-            alert(data.message);
-        }
+    // Close modal on outside click
+    document.getElementById('equipModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
     });
-}
-
-function unequipItem(itemId) {
-    fetch(`/gods/unequip/${itemId}/`, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.status === 'ok') {
-            location.reload();
-        }
-    });
-}
 </script>
 {% endblock %}
