@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Misiones Diarias - Immortal Gods{% endblock %}
+
+{% block content %}
+<style>
+    .missions-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding: 1rem 1.5rem;
+        background: linear-gradient(135deg, rgba(233,69,96,0.15), rgba(74,158,255,0.1));
+        border: 1px solid rgba(233,69,96,0.3);
+        border-radius: 12px;
+    }
+    .missions-header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: #e94560;
+    }
+    .energy-display {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #4a9eff;
+    }
+    .energy-icon {
+        font-size: 1.5rem;
+    }
+
+    .missions-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .mission-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        background: rgba(20, 20, 40, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        transition: all 0.3s;
+    }
+    .mission-card:hover {
+        border-color: rgba(233, 69, 96, 0.4);
+        transform: translateX(5px);
+    }
+    .mission-card.completed {
+        border-color: rgba(81, 207, 102, 0.4);
+        background: rgba(81, 207, 102, 0.05);
+    }
+    .mission-card.claimed {
+        border-color: rgba(255, 215, 0, 0.3);
+        opacity: 0.7;
+    }
+
+    .mission-icon {
+        font-size: 2rem;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+    }
+
+    .mission-info {
+        flex: 1;
+    }
+    .mission-title {
+        font-size: 1rem;
+        font-weight: bold;
+        color: #fff;
+        margin-bottom: 0.25rem;
+    }
+    .mission-desc {
+        font-size: 0.85rem;
+        color: #aaa;
+        margin-bottom: 0.5rem;
+    }
+    .mission-progress {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .progress-bar {
+        flex: 1;
+        height: 6px;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 3px;
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #e94560, #ff6b6b);
+        border-radius: 3px;
+        transition: width 0.3s;
+    }
+    .progress-text {
+        font-size: 0.75rem;
+        color: #888;
+        min-width: 40px;
+        text-align: right;
+    }
+    .mission-reward {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.5rem 0.8rem;
+        background: rgba(74, 158, 255, 0.2);
+        border-radius: 8px;
+        font-weight: bold;
+        color: #4a9eff;
+        font-size: 0.9rem;
+    }
+
+    .claim-btn {
+        padding: 0.6rem 1.2rem;
+        background: linear-gradient(135deg, #51cf66, #40c057);
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.85rem;
+    }
+    .claim-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 20px rgba(81, 207, 102, 0.4);
+    }
+    .claim-btn:disabled {
+        background: #444;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .claimed-badge {
+        padding: 0.5rem 1rem;
+        background: rgba(255, 215, 0, 0.2);
+        border-radius: 8px;
+        color: #ffd700;
+        font-size: 0.85rem;
+        font-weight: bold;
+    }
+
+    .total-reward {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: linear-gradient(135deg, rgba(233,69,96,0.2), rgba(74,158,255,0.15));
+        border: 1px solid rgba(233,69,96,0.3);
+        border-radius: 12px;
+        text-align: center;
+    }
+    .total-reward p {
+        margin: 0;
+        color: #aaa;
+        font-size: 0.9rem;
+    }
+    .total-reward strong {
+        color: #4a9eff;
+        font-size: 1.1rem;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 1.5rem;
+        color: #e94560;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="missions-header">
+    <h1>⚔️ Misiones Diarias</h1>
+    <div class="energy-display">
+        <span class="energy-icon">⚡</span>
+        <span>{{ profile.energy }}/{{ profile.max_energy }}</span>
+    </div>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div style="padding: 1rem; margin-bottom: 1rem; border-radius: 8px; 
+             {% if message.tags == 'success' %}background: rgba(81,207,102,0.2); border: 1px solid rgba(81,207,102,0.4); color: #51cf66;{% endif %}
+             {% if message.tags == 'error' %}background: rgba(233,69,96,0.2); border: 1px solid rgba(233,69,96,0.4); color: #e94560;{% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="missions-grid">
+    {% for pm in player_missions %}
+    <div class="mission-card {% if pm.claimed %}claimed{% elif pm.completed %}completed{% endif %}">
+        <div class="mission-icon">
+            {% if pm.mission.mission_type == "daily_login" %}🏠
+            {% elif pm.mission.mission_type == "first_pull" %}🎲
+            {% elif pm.mission.mission_type == "gacha_pulls" %}💎
+            {% elif pm.mission.mission_type == "win_battles" %}⚔️
+            {% elif pm.mission.mission_type == "level_up_god" %}⬆️
+            {% elif pm.mission.mission_type == "ascend_god" %}⭐
+            {% elif pm.mission.mission_type == "equip_item" %}🛡️
+            {% elif pm.mission.mission_type == "win_campaign" %}🏆
+            {% else %}📜{% endif %}
+        </div>
+
+        <div class="mission-info">
+            <div class="mission-title">{{ pm.mission.title }}</div>
+            <div class="mission-desc">{{ pm.mission.description }}</div>
+            <div class="mission-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ pm.progress_percentage }}%"></div>
+                </div>
+                <span class="progress-text">{{ pm.progress }}/{{ pm.mission.target }}</span>
+            </div>
+        </div>
+
+        <div class="mission-reward">
+            <span>⚡</span>
+            <span>+{{ pm.mission.energy_reward }}</span>
+        </div>
+
+        {% if pm.claimed %}
+            <span class="claimed-badge">✓ Reclamado</span>
+        {% elif pm.completed %}
+            <form method="post" action="{% url 'core:claim_mission' pm.mission.id %}">
+                {% csrf_token %}
+                <button type="submit" class="claim-btn">Reclamar</button>
+            </form>
+        {% else %}
+            <button class="claim-btn" disabled>En progreso</button>
+        {% endif %}
+    </div>
+    {% empty %}
+    <p style="text-align: center; color: #888; padding: 2rem;">
+        No hay misiones disponibles en este momento.
+    </p>
+    {% endfor %}
+</div>
+
+{% if total_energy_claimable > 0 %}
+<div class="total-reward">
+    <p>Recompensas disponibles: <strong>+{{ total_energy_claimable }} energía</strong></p>
+</div>
+{% endif %}
+
+<a href="{% url 'core:home' %}" class="back-link">← Volver al inicio</a>
+{% endblock %}

@@ -11,6 +11,8 @@ urlpatterns = [
     path("", views.landing, name="landing"),
     path("home/", views.home, name="home"),
     path("inventory/", views.inventory, name="inventory"),
+    path("missions/", views.missions, name="missions"),
+    path("missions/claim/<int:mission_id>/", views.claim_mission, name="claim_mission"),
     path("register/", views.register, name="register"),
     path(
         "login/",

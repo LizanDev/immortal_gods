@@ -13,6 +13,7 @@ from apps.campaign.models import (
     FactionProgress,
     FactionStage,
 )
+from apps.core.models import track_mission
 from apps.items.models import Item, PlayerItem
 
 ITEM_DROP_CHANCE = {
@@ -122,6 +123,8 @@ def campaign_battle(request, level_id):
     if won:
         profile.add_gold(gold_earned)
         profile.add_gems(gems_earned)
+        track_mission(profile, "win_battles")
+        track_mission(profile, "win_campaign")
 
         if level.order == profile.campaign_progress:
             profile.campaign_progress = level.order + 1

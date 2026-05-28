@@ -3,6 +3,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
+from apps.core.models import PlayerMission, track_mission
 from apps.gacha.models import (
     MULTI_PULL_COST,
     SINGLE_PULL_COST,
@@ -29,6 +30,10 @@ def gacha_pull(request):
                 "gacha/insufficient_gems.html",
                 {"profile": profile},
             )
+
+        if pull_type == PullType.SINGLE:
+            track_mission(profile, "first_pull")
+        track_mission(profile, "gacha_pulls", len(results))
 
         return render(
             request,

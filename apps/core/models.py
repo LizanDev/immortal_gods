@@ -96,6 +96,84 @@ class PlayerProfile(models.Model):
         self.energy = min(self.energy + amount, self.max_energy)
         self.save(update_fields=["energy", "updated_at"])
 
+    def add_energy(self, amount: int) -> None:
+        """Add energy up to max."""
+        self.energy = min(self.energy + amount, self.max_energy)
+        self.save(update_fields=["energy", "updated_at"])
+
+
+class DailyMission(models.Model):
+    """Daily missions that reset every 24 hours."""
+
+    MISSION_TYPES = [
+        ("daily_login", "Inicio de Sesión"),
+        ("first_pull", "Primera Invocación"),
+        ("gacha_pulls", "Invocaciones Múltiples"),
+        ("win_battles", "Victorias en Batalla"),
+        ("level_up_god", "Subir de Nivel"),
+        ("ascend_god", "Ascender Dios"),
+        ("equip_item", "Equipar Objeto"),
+        ("win_campaign", "Completar Campaña"),
+    ]
+
+    mission_type = models.CharField(max_length=30, choices=MISSION_TYPES, unique=True)
+    title = models.CharField(max_length=100)
+    description = models.CharField(max_length=255)
+    target = models.PositiveIntegerField(default=1)
+    energy_reward = models.PositiveIntegerField(default=5)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["id"]
+
+    def __str__(self) -> str:
+        return f"{self.title} ({self.energy_reward} energía)"
+
+
+class PlayerMission(models.Model):
+    """Tracks player's daily mission progress."""
+
+    player = models.ForeignKey(
+        PlayerProfile, on_delete=models.CASCADE, related_name="missions"
+    )
+    mission = models.ForeignKey(DailyMission, on_delete=models.CASCADE)
+    progress = models.PositiveIntegerField(default=0)
+    completed = models.BooleanField(default=False)
+    claimed = models.BooleanField(default=False)
+    last_updated = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["player", "mission"]
+
+    def __str__(self) -> str:
+        return f"{self.player.user.username} - {self.mission.title}"
+
+    @property
+    def progress_percentage(self) -> float:
+        """Return progress as percentage."""
+        if self.mission.target == 0:
+            return 100.0
+        return min(100.0, (self.progress / self.mission.target) * 100)
+
+    def add_progress(self, amount: int = 1) -> bool:
+        """Add progress and return True if completed."""
+        if self.completed:
+            return False
+        self.progress = min(self.progress + amount, self.mission.target)
+        if self.progress >= self.mission.target:
+            self.completed = True
+        self.save(update_fields=["progress", "completed", "last_updated"])
+        return self.completed
+
+    def claim_reward(self) -> int:
+        """Claim reward and return energy amount. Returns 0 if already claimed."""
+        if self.claimed or not self.completed:
+            return 0
+        self.claimed = True
+        self.save(update_fields=["claimed"])
+        return self.mission.energy_reward
+
     def recalculate_rank_score(self) -> None:
         """Recalculate rank score based on campaign and faction progress."""
         campaign_score = self.campaign_progress * 100

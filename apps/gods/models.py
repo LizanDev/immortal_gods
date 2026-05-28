@@ -565,10 +565,10 @@ class God(models.Model):
 
 
 ASCENSION_COSTS = {
-    1: 5,
-    2: 10,
-    3: 25,
-    4: 50,
+    1: 15,
+    2: 40,
+    3: 100,
+    4: 250,
 }
 
 ESSENCE_REWARDS = {

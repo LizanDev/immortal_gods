@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
+from apps.core.models import track_mission
 from apps.items.models import PlayerItem
 
 from .models import God, PlayerGod
@@ -57,6 +58,7 @@ def level_up_god(request, god_id):
 
     if request.method == "POST":
         if pg.level_up_with_gold():
+            track_mission(request.user.profile, "level_up_god")
             messages.success(
                 request,
                 f"{pg.god.name} leveled up to Lv.{pg.level}!",
@@ -77,6 +79,7 @@ def ascend_god(request, god_id):
 
     if request.method == "POST":
         if pg.ascend():
+            track_mission(request.user.profile, "ascend_god")
             messages.success(
                 request,
                 f"{pg.god.name} ascended to Tier {pg.quality_tier}!",
@@ -102,6 +105,7 @@ def equip_item(request, god_id, item_id):
     if request.method == "POST":
         success = pi.equip(pg)
         if success:
+            track_mission(request.user.profile, "equip_item")
             return JsonResponse({
                 "status": "ok",
                 "message": f"{pi.item.name} equipped to {pg.god.name}",

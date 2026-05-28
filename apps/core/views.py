@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from apps.campaign.models import FactionLadder, FactionProgress
-from apps.core.models import PlayerProfile, ReferralCode
+from apps.core.models import DailyMission, PlayerMission, PlayerProfile, ReferralCode
 
 
 @login_required
@@ -145,3 +145,67 @@ def leaderboard(request):
             "user_rank": user_rank,
         },
     )
+
+
+@login_required
+def missions(request):
+    """Show daily missions and allow claiming rewards."""
+    profile = request.user.profile
+
+    track_mission(profile, "daily_login")
+
+    active_missions = DailyMission.objects.filter(is_active=True)
+
+    player_missions = []
+    for mission in active_missions:
+        pm, created = PlayerMission.objects.get_or_create(
+            player=profile, mission=mission
+        )
+        player_missions.append(pm)
+
+    total_energy_claimable = sum(
+        pm.mission.energy_reward for pm in player_missions if pm.completed and not pm.claimed
+    )
+
+    return render(
+        request,
+        "core/missions.html",
+        {
+            "profile": profile,
+            "player_missions": player_missions,
+            "total_energy_claimable": total_energy_claimable,
+        },
+    )
+
+
+@login_required
+def claim_mission(request, mission_id):
+    """Claim reward for a completed mission."""
+    if request.method == "POST":
+        profile = request.user.profile
+        try:
+            pm = PlayerMission.objects.get(
+                player=profile, mission_id=mission_id
+            )
+            if pm.completed and not pm.claimed:
+                energy = pm.claim_reward()
+                profile.add_energy(energy)
+                messages.success(
+                    request, f"¡Recompensa reclamada! +{energy} energía"
+                )
+            else:
+                messages.error(request, "Esta misión no está lista para reclamar")
+        except PlayerMission.DoesNotExist:
+            messages.error(request, "Misión no encontrada")
+
+    return redirect("core:missions")
+
+
+def track_mission(player, mission_type: str, amount: int = 1):
+    """Track mission progress for a player. Called by other apps."""
+    try:
+        mission = DailyMission.objects.get(mission_type=mission_type, is_active=True)
+        pm, _ = PlayerMission.objects.get_or_create(player=player, mission=mission)
+        pm.add_progress(amount)
+    except DailyMission.DoesNotExist:
+        pass
