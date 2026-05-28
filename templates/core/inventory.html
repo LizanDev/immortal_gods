@@ -90,6 +90,23 @@
                     </div>
                     {% endfor %}
                 </div>
+                {% if pg.active_passives %}
+                <div style="margin-top: 0.5rem;">
+                    <p style="font-size: 0.7rem; color: #ffd700;">✨ Pasivas activas:</p>
+                    {% for passive in pg.active_passives %}
+                    <div style="background: rgba(255,215,0,0.1); padding: 0.4rem; margin-bottom: 0.3rem; border-radius: 4px; border-left: 2px solid #ffd700;">
+                        <strong style="color: #ffd700; font-size: 0.75rem;">{{ passive.name }}</strong>
+                        <p style="margin: 0.2rem 0 0; font-size: 0.7rem; color: #ccc;">{{ passive.desc }}</p>
+                        <p style="margin: 0.2rem 0 0; font-size: 0.65rem; color: #aaa;">
+                            {% if passive.bonuses.atk %}ATK +{{ passive.bonuses.atk }} {% endif %}
+                            {% if passive.bonuses.def %}DEF +{{ passive.bonuses.def }} {% endif %}
+                            {% if passive.bonuses.hp %}HP +{{ passive.bonuses.hp }} {% endif %}
+                            {% if passive.bonuses.spd %}SPD +{{ passive.bonuses.spd }}{% endif %}
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
             </div>
         </div>
         {% empty %}

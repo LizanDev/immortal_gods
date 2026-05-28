@@ -692,3 +692,22 @@ class PlayerGod(models.Model):
         self.level += 1
         self.save(update_fields=["level"])
         return True
+
+    @property
+    def active_passives(self) -> list[dict]:
+        """Get list of active item passives for this god."""
+        passives = []
+        for eq in self.equipped_items.all():
+            if eq.item.has_passive_for(self.god.name):
+                passives.append({
+                    "name": eq.item.passive_name,
+                    "desc": eq.item.passive_desc,
+                    "item_name": eq.item.name,
+                    "bonuses": {
+                        "atk": eq.item.passive_atk * eq.level,
+                        "def": eq.item.passive_def * eq.level,
+                        "hp": eq.item.passive_hp * eq.level,
+                        "spd": eq.item.passive_spd * eq.level,
+                    }
+                })
+        return passives
