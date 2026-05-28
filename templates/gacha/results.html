@@ -9,9 +9,8 @@
     {% for result in results %}
     {% if result.type == "god" %}
     <div class="god-card rarity-{{ result.god.rarity }}">
-        <div class="god-card-image" style="background: #1a1a3e;">
+        <div class="god-card-image">
             <img src="{{ result.god.image_url }}" alt="{{ result.god.name }}"
-                 style="width: 100%; height: 100%; object-fit: cover; object-position: center;"
                  onerror="this.style.display='none'">
         </div>
         <div class="god-card-body">

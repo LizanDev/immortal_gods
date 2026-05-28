@@ -4,9 +4,8 @@
 
 {% block content %}
 <div class="god-card rarity-{{ god.rarity }}" style="max-width: 500px; margin: 0 auto;">
-    <div class="god-card-image" style="height: 250px; background: #1a1a3e;">
+    <div class="god-card-image" style="height: 250px;">
         <img src="{{ god.image_url }}" alt="{{ god.name }}"
-             style="width: 100%; height: 100%; object-fit: cover; object-position: center;"
              onerror="this.style.display='none'">
     </div>
     <div class="god-card-body">
