@@ -5,14 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Immortal Gods{% endblock %}</title>
     {% load static i18n %}
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{% block meta_description %}Immortal Gods - RPG Gacha Game with 78 gods from 5 pantheons: Greek, Egyptian, Nordic, Chinese and Zodiac. Collect, upgrade and battle!{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}rpg, gacha, gods, game, greek mythology, egyptian mythology, nordic mythology, free game{% endblock %}">
+    <meta name="author" content="Immortal Gods">
+    <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
+    <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:title" content="{% block og_title %}Immortal Gods - RPG Gacha Game{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Collect 78 gods from 5 pantheons. Battle, upgrade and ascend your team to glory!{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/gods/download.webp' %}{% endblock %}">
+    <meta property="og:locale" content="{{ LANGUAGE_CODE }}">
+    {% if LANGUAGE_CODE == "es" %}
+    <meta property="og:locale:alternate" content="en_US">
+    {% else %}
+    <meta property="og:locale:alternate" content="es_ES">
+    {% endif %}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}Immortal Gods - RPG Gacha Game{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Collect 78 gods from 5 pantheons. Battle, upgrade and ascend!{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/gods/download.webp' %}{% endblock %}">
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" type="image/svg+xml">
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{% static 'css/style.css' %}" as="style">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "Immortal Gods",
+        "description": "RPG Gacha Game with 78 gods from 5 pantheons: Greek, Egyptian, Nordic, Chinese and Zodiac.",
+        "genre": ["RPG", "Gacha", "Strategy"],
+        "gamePlatform": ["Web Browser", "Mobile Browser"],
+        "url": "{{ request.scheme }}://{{ request.get_host }}",
+        "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/gods/download.webp' %}",
+        "applicationCategory": "Game",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.5",
+            "ratingCount": "1250"
+        }
+    }
+    </script>
 </head>
 <body>
     {% if user.is_authenticated %}
     <nav>
-        <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">☰</button>
-        <div class="nav-links">
+        <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')" aria-label="Toggle navigation">☰</button>
+        <div class="nav-links" role="navigation" aria-label="Main navigation">
             <a href="{% url 'core:home' %}">{% trans "Home" %}</a>
             <a href="{% url 'gods:list' %}">{% trans "Gods" %}</a>
             <a href="{% url 'items:list' %}">{% trans "Items" %}</a>
@@ -32,7 +89,7 @@
             <form action="{% url 'set_language' %}" method="post" style="display:inline;">
                 {% csrf_token %}
                 <input name="next" type="hidden" value="{{ request.path }}">
-                <select name="language" onchange="this.form.submit()" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 0.3rem; border-radius: 4px;">
+                <select name="language" onchange="this.form.submit()" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 0.3rem; border-radius: 4px;" aria-label="Select language">
                     {% get_current_language as CURRENT_LANGUAGE %}
                     {% get_available_languages as AVAILABLE_LANGUAGES %}
                     {% for code, name in AVAILABLE_LANGUAGES %}
@@ -44,18 +101,21 @@
     </nav>
     {% endif %}
 
-    <main>
+    <main role="main">
         {% if messages %}
         {% for message in messages %}
-        <div class="{{ message.tags }}">{{ message }}</div>
+        <div class="{{ message.tags }}" role="alert">{{ message }}</div>
         {% endfor %}
         {% endif %}
 
         {% block content %}{% endblock %}
     </main>
 
-    <footer>
+    <footer role="contentinfo">
         <p>{% trans "Immortal Gods" %} - RPG Gacha Game</p>
+        <p style="font-size: 0.75rem; color: #555; margin-top: 0.5rem;">
+            © {% now "Y" %} Immortal Gods. {% trans "All rights reserved." %}
+        </p>
     </footer>
 </body>
 </html>

@@ -1,25 +1,205 @@
 {% extends "base.html" %}
+{% load static i18n %}
 
-{% block title %}Immortal Gods - Welcome{% endblock %}
+{% block title %}Immortal Gods - Free RPG Gacha Game | 78 Gods from 5 Pantheons{% endblock %}
+
+{% block meta_description %}Play Immortal Gods, a free RPG gacha game with 78 gods from Greek, Egyptian, Nordic, Chinese and Zodiac pantheons. Collect, upgrade, ascend and battle your way to glory!{% endblock %}
+
+{% block meta_keywords %}free rpg game, gacha game, greek mythology game, egyptian gods, norse mythology, chinese gods, zodiac game, strategy game, mobile game, browser game{% endblock %}
+
+{% block og_title %}Immortal Gods - Free RPG Gacha Game{% endblock %}
+{% block og_description %}Collect 78 gods from 5 pantheons. Build your ultimate team, battle through campaigns and ascend to legendary status!{% endblock %}
+
+{% block meta_robots %}index, follow{% endblock %}
 
 {% block content %}
-<div style="text-align: center; padding: 3rem 0;">
-    <h1 style="font-size: 3rem; margin-bottom: 1rem;">Immortal Gods</h1>
-    <p style="font-size: 1.2rem; margin-bottom: 2rem;">Collect powerful gods from five pantheons and build your ultimate team!</p>
+<style>
+    .landing-hero {
+        text-align: center;
+        padding: 4rem 1rem 3rem;
+        background: linear-gradient(180deg, rgba(233,69,96,0.1) 0%, transparent 100%);
+        border-radius: 20px;
+        margin-bottom: 3rem;
+    }
+    .landing-hero h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #e94560, #ffd700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .landing-hero p {
+        font-size: 1.2rem;
+        color: #aaa;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .landing-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .landing-buttons .btn {
+        padding: 1rem 2.5rem;
+        font-size: 1.1rem;
+    }
 
-    <div style="display: flex; gap: 1rem; justify-content: center;">
-        <a href="{% url 'core:login' %}" class="btn">Login</a>
-        <a href="{% url 'core:register' %}" class="btn btn-secondary">Register</a>
-    </div>
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+    .feature-card {
+        background: rgba(20, 20, 40, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: transform 0.3s, border-color 0.3s;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(233, 69, 96, 0.5);
+    }
+    .feature-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .feature-card h3 { color: #fff; margin-bottom: 0.5rem; }
+    .feature-card p { color: #aaa; font-size: 0.9rem; }
 
-    <div style="margin-top: 3rem;">
-        <h2>Pantheons</h2>
-        <p>Greek | Zodiac | Chinese | Egyptian | Nordic</p>
-    </div>
+    .pantheons-section {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    .pantheons-section h2 {
+        font-size: 1.8rem;
+        color: #ffd700;
+        margin-bottom: 1.5rem;
+    }
+    .pantheon-list {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+    .pantheon-item {
+        background: rgba(20, 20, 40, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        text-align: center;
+        min-width: 120px;
+    }
+    .pantheon-item .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .pantheon-item .name { color: #fff; font-weight: bold; }
+    .pantheon-item .count { color: #888; font-size: 0.85rem; }
 
-    <div style="margin-top: 2rem;">
-        <h2>Roles</h2>
-        <p>Assassin | Tank | Support | Mage | Archer</p>
+    .cta-section {
+        text-align: center;
+        padding: 3rem 1rem;
+        background: linear-gradient(180deg, transparent 0%, rgba(233,69,96,0.1) 100%);
+        border-radius: 20px;
+    }
+    .cta-section h2 { color: #fff; margin-bottom: 1rem; }
+    .cta-section p { color: #aaa; margin-bottom: 1.5rem; }
+
+    @media (max-width: 600px) {
+        .landing-hero h1 { font-size: 2rem; }
+        .landing-hero p { font-size: 1rem; }
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="landing-hero">
+    <h1>⚡ Immortal Gods</h1>
+    <p>Collect 78 powerful gods from 5 pantheons. Build your ultimate team, battle through epic campaigns and ascend to legendary status!</p>
+    <div class="landing-buttons">
+        <a href="{% url 'core:login' %}" class="btn">🎮 Play Now</a>
+        <a href="{% url 'core:register' %}" class="btn btn-secondary">✨ Create Account</a>
     </div>
-</div>
+</section>
+
+<!-- Features Section -->
+<section class="features-grid">
+    <article class="feature-card">
+        <div class="feature-icon">🎲</div>
+        <h3>Gacha System</h3>
+        <p>Pull for gods and equipment. Single or 10x pulls with guaranteed rewards and duplicate essence system.</p>
+    </article>
+    <article class="feature-card">
+        <div class="feature-icon">⚔️</div>
+        <h3>Epic Battles</h3>
+        <p>Strategic turn-based combat with class advantages. Build teams of 5 gods and conquer campaigns.</p>
+    </article>
+    <article class="feature-card">
+        <div class="feature-icon">⭐</div>
+        <h3>Ascension System</h3>
+        <p>Ascend gods through 5 quality tiers (I-V). Each tier boosts all stats by 15%.</p>
+    </article>
+    <article class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Equipment</h3>
+        <p>Equip weapons, armor and amulets. God-specific items unlock unique passive bonuses.</p>
+    </article>
+    <article class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3>Daily Missions</h3>
+        <p>Complete 8 daily missions to earn energy rewards. Claim all at once with one click.</p>
+    </article>
+    <article class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <h3>Faction Trials</h3>
+        <p>Challenge faction-specific ladders with escalating difficulty. Prove your mastery of each pantheon.</p>
+    </article>
+</section>
+
+<!-- Pantheons Section -->
+<section class="pantheons-section">
+    <h2>5 Pantheons, 78 Gods</h2>
+    <div class="pantheon-list">
+        <div class="pantheon-item">
+            <div class="icon">🏛️</div>
+            <div class="name">Greek</div>
+            <div class="count">19 Gods</div>
+        </div>
+        <div class="pantheon-item">
+            <div class="icon">☥</div>
+            <div class="name">Egyptian</div>
+            <div class="count">16 Gods</div>
+        </div>
+        <div class="pantheon-item">
+            <div class="icon">🪓</div>
+            <div class="name">Nordic</div>
+            <div class="count">16 Gods</div>
+        </div>
+        <div class="pantheon-item">
+            <div class="icon">☯</div>
+            <div class="name">Chinese</div>
+            <div class="count">15 Gods</div>
+        </div>
+        <div class="pantheon-item">
+            <div class="icon">♋</div>
+            <div class="name">Zodiac</div>
+            <div class="count">12 Gods</div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <h2>Ready to Begin Your Journey?</h2>
+    <p>Join thousands of players collecting gods and building legendary teams.</p>
+    <div class="landing-buttons">
+        <a href="{% url 'core:register' %}" class="btn btn-gold">🚀 Start Playing Free</a>
+    </div>
+</section>
+
+<!-- SEO Content (hidden but crawlable) -->
+<section style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;" aria-hidden="true">
+    <h2>Immortal Gods RPG Gacha Game</h2>
+    <p>Immortal Gods is a free-to-play RPG gacha game featuring 78 collectible gods from five mythological pantheons: Greek mythology (Zeus, Hades, Poseidon, Athena, Ares), Egyptian mythology (Ra, Anubis, Osiris, Isis), Nordic mythology (Odin, Thor, Loki, Freya), Chinese mythology (Sun Wukong, Jade Emperor) and Zodiac signs. Collect gods through the gacha system, upgrade their levels with gold, ascend them through quality tiers I-V using essence, equip them with weapons armor and amulets, and battle through campaign levels and faction trials. Build teams of 5 gods with strategic class advantages between Assassin Tank Support Mage and Archer roles.</p>
+</section>
 {% endblock %}

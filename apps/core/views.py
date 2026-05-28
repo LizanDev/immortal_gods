@@ -5,6 +5,8 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
+from django.http import HttpResponse
+from django.urls import reverse
 
 from apps.campaign.models import FactionLadder, FactionProgress
 from apps.core.models import DailyMission, PlayerMission, PlayerProfile, ReferralCode, track_mission
@@ -58,8 +60,10 @@ def inventory(request):
 
 
 def landing(request):
-    """Redirect to login page."""
-    return redirect("core:login")
+    """Landing page for non-authenticated users."""
+    if request.user.is_authenticated:
+        return redirect("core:home")
+    return render(request, "core/landing.html")
 
 
 def register(request):
@@ -392,3 +396,43 @@ def shop(request):
             "shop_items": SHOP_ITEMS,
         },
     )
+
+
+def robots_txt(request):
+    """Serve robots.txt for search engines."""
+    return render(request, "core/robots.txt", content_type="text/plain")
+
+
+def sitemap(request):
+    """Generate XML sitemap for search engines."""
+    from apps.gods.models import God
+
+    urls = [
+        {"loc": request.build_absolute_uri(reverse("core:landing")), "priority": "1.0", "changefreq": "daily"},
+        {"loc": request.build_absolute_uri(reverse("core:login")), "priority": "0.9", "changefreq": "daily"},
+        {"loc": request.build_absolute_uri(reverse("core:register")), "priority": "0.9", "changefreq": "weekly"},
+        {"loc": request.build_absolute_uri(reverse("gods:list")), "priority": "0.8", "changefreq": "weekly"},
+        {"loc": request.build_absolute_uri(reverse("items:list")), "priority": "0.7", "changefreq": "weekly"},
+        {"loc": request.build_absolute_uri(reverse("campaign:list")), "priority": "0.7", "changefreq": "weekly"},
+        {"loc": request.build_absolute_uri(reverse("teams:list")), "priority": "0.6", "changefreq": "weekly"},
+    ]
+
+    gods = God.objects.all()
+    for god in gods:
+        urls.append({
+            "loc": request.build_absolute_uri(reverse("gods:detail", args=[god.id])),
+            "priority": "0.6",
+            "changefreq": "monthly",
+        })
+
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    for url in urls:
+        xml += "  <url>\n"
+        xml += f"    <loc>{url['loc']}</loc>\n"
+        xml += f"    <changefreq>{url['changefreq']}</changefreq>\n"
+        xml += f"    <priority>{url['priority']}</priority>\n"
+        xml += "  </url>\n"
+    xml += "</urlset>"
+
+    return HttpResponse(xml, content_type="application/xml")

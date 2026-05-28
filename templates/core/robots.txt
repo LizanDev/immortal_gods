@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+Allow: /login/
+Allow: /register/
+Disallow: /home/
+Disallow: /inventory/
+Disallow: /missions/
+Disallow: /shop/
+Disallow: /gacha/
+Disallow: /campaign/
+Disallow: /teams/
+Disallow: /gods/*/
+Disallow: /items/*/
+Disallow: /admin/
+Disallow: /logout/
+Disallow: /redeem/
+
+Sitemap: https://immortal-gods.onrender.com/sitemap.xml

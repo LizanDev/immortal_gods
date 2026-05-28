@@ -9,6 +9,8 @@ app_name = "core"
 
 urlpatterns = [
     path("", views.landing, name="landing"),
+    path("robots.txt", views.robots_txt, name="robots_txt"),
+    path("sitemap.xml", views.sitemap, name="sitemap"),
     path("home/", views.home, name="home"),
     path("inventory/", views.inventory, name="inventory"),
     path("missions/", views.missions, name="missions"),
