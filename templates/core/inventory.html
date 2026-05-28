@@ -318,6 +318,9 @@
         <div class="item-card {{ pi.item.item_type }}">
             <h3>{{ pi.item.name }} +{{ pi.level }}</h3>
             <p>{{ pi.item.get_item_type_display }}</p>
+            {% if pi.item.belongs_to_god %}
+            <p style="color: #e94560; font-weight: bold; font-size: 0.85rem;">⚡ Pertenece a: {{ pi.item.belongs_to_god }}</p>
+            {% endif %}
             <p style="font-size: 0.8rem; margin: 0.5rem 0;">
                 ATK +{{ pi.item.attack_bonus }} | DEF +{{ pi.item.defense_bonus }} | HP +{{ pi.item.hp_bonus }} | SPD +{{ pi.item.speed_bonus }}
             </p>
@@ -421,6 +424,7 @@ function openEquip(godId, slot) {
                     html += `
                         <div class="item-option" onclick="equipItem(${godId}, ${item.id})">
                             <div style="font-weight: bold; color: #fff;">${item.name} +${item.level}</div>
+                            ${item.belongs_to_god ? `<div style="color: #e94560; font-size: 0.75rem; font-weight: bold;">⚡ ${item.belongs_to_god}</div>` : ''}
                             <div style="font-size: 0.8rem; color: #aaa; margin-top: 4px;">
                                 ATK:${item.atk} DEF:${item.def} HP:${item.hp} SPD:${item.spd}
                             </div>
