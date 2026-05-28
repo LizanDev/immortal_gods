@@ -97,26 +97,34 @@
         }
     }
 
-    /*Iconos flotantes de dioses */
-    .floating-icons {
+    /* Imagen del dios decorativa */
+    .god-image-container {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        right: -50px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 350px;
+        height: 450px;
+        opacity: 0.2;
         z-index: 1;
         pointer-events: none;
-        overflow: hidden;
+        mask-image: linear-gradient(to left, rgba(0,0,0,0.6) 0%, transparent 80%);
+        -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.6) 0%, transparent 80%);
     }
-    .floating-icon {
-        position: absolute;
-        font-size: 1.5rem;
-        opacity: 0.15;
-        animation: iconFloat 8s ease-in-out infinite;
+    .god-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: drop-shadow(0 0 40px rgba(233,69,96,0.6));
+        animation: godFloat 6s ease-in-out infinite;
     }
-    @keyframes iconFloat {
-        0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.1; }
-        50% { transform: translateY(-20px) rotate(10deg); opacity: 0.25; }
+    @keyframes godFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    @media (max-width: 900px) {
+        .god-image-container { display: none; }
     }
 
     /* Carta principal */
@@ -339,8 +347,10 @@
     <!-- Partículas de energía -->
     <div class="particles" id="particles"></div>
 
-    <!-- Iconos flotantes -->
-    <div class="floating-icons" id="floatingIcons"></div>
+    <!-- Imagen del dios -->
+    <div class="god-image-container">
+        <img src="{% static 'images/gods/download.png' %}" alt="God">
+    </div>
 
     <!-- Carta de login -->
     <div class="login-card">
@@ -402,22 +412,6 @@
         particle.style.animationDelay = Math.random() * 4 + 's';
         particle.style.animationDuration = (Math.random() * 2 + 3) + 's';
         particlesContainer.appendChild(particle);
-    }
-
-    // Crear iconos flotantes de dioses
-    const iconsContainer = document.getElementById('floatingIcons');
-    const godSymbols = ['⚔️', '🛡️', '⚡', '🔥', '💎', '🌟', '👑', '⚱️', '☯', '♛', '🗡️', '🏹'];
-    const iconCount = 12;
-
-    for (let i = 0; i < iconCount; i++) {
-        const icon = document.createElement('div');
-        icon.className = 'floating-icon';
-        icon.textContent = godSymbols[Math.floor(Math.random() * godSymbols.length)];
-        icon.style.left = Math.random() * 100 + '%';
-        icon.style.top = Math.random() * 100 + '%';
-        icon.style.animationDelay = Math.random() * 8 + 's';
-        icon.style.animationDuration = (Math.random() * 4 + 6) + 's';
-        iconsContainer.appendChild(icon);
     }
 
     // Efecto de rayos
