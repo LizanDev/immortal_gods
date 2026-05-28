@@ -518,11 +518,13 @@ class God(models.Model):
         """Get image URL for this god (static if available, AI fallback)."""
         import urllib.parse
 
-        filename = self.name.lower().replace(" ", "_") + ".png"
-        static_path = settings.BASE_DIR / "static" / "images" / "gods" / filename
+        filename_base = self.name.lower().replace(" ", "_")
+        static_dir = settings.BASE_DIR / "static" / "images" / "gods"
 
-        if static_path.exists():
-            return f"{settings.STATIC_URL}images/gods/{filename}"
+        for ext in [".png", ".webp", ".jpg", ".jpeg"]:
+            path = static_dir / f"{filename_base}{ext}"
+            if path.exists():
+                return f"{settings.STATIC_URL}images/gods/{filename_base}{ext}"
 
         prompt = self.GOD_PROMPTS.get(self.name, "epic fantasy god portrait")
         encoded = urllib.parse.quote(prompt)
