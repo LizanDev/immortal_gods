@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Tienda - Immortal Gods{% endblock %}
+
+{% block content %}
+<style>
+    .shop-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding: 1rem 1.5rem;
+        background: linear-gradient(135deg, rgba(233,69,96,0.15), rgba(74,158,255,0.1));
+        border: 1px solid rgba(233,69,96,0.3);
+        border-radius: 12px;
+    }
+    .shop-header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: #e94560;
+    }
+    .gems-display {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #4a9eff;
+    }
+    .gems-icon { font-size: 1.5rem; }
+
+    .shop-section {
+        margin-bottom: 2rem;
+    }
+    .shop-section h2 {
+        font-size: 1.2rem;
+        color: #ffd700;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid rgba(255,215,0,0.3);
+    }
+
+    .shop-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1rem;
+    }
+
+    .shop-card {
+        background: rgba(20, 20, 40, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1.25rem;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    .shop-card:hover {
+        border-color: rgba(233, 69, 96, 0.5);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    .shop-card.rarity-common { border-top: 3px solid #888; }
+    .shop-card.rarity-rare { border-top: 3px solid #4a9eff; }
+    .shop-card.rarity-epic { border-top: 3px solid #a855f7; }
+    .shop-card.rarity-legendary { border-top: 3px solid #ffd700; }
+
+    .shop-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .shop-name {
+        font-size: 1rem;
+        font-weight: bold;
+        color: #fff;
+        margin-bottom: 0.25rem;
+    }
+    .shop-desc {
+        font-size: 0.85rem;
+        color: #aaa;
+        margin-bottom: 1rem;
+    }
+    .shop-price {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.3rem;
+        font-size: 1rem;
+        font-weight: bold;
+        color: #4a9eff;
+        margin-bottom: 0.75rem;
+    }
+    .buy-btn {
+        width: 100%;
+        padding: 0.6rem;
+        background: linear-gradient(135deg, #e94560, #c73650);
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+    }
+    .buy-btn:hover {
+        transform: scale(1.03);
+        box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+    }
+    .buy-btn:disabled {
+        background: #444;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 1.5rem;
+        color: #e94560;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .back-link:hover { text-decoration: underline; }
+</style>
+
+<div class="shop-header">
+    <h1>🏪 Tienda</h1>
+    <div class="gems-display">
+        <span class="gems-icon">💎</span>
+        <span>{{ profile.gems }}</span>
+    </div>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div style="padding: 1rem; margin-bottom: 1rem; border-radius: 8px;
+             {% if message.tags == 'success' %}background: rgba(81,207,102,0.2); border: 1px solid rgba(81,207,102,0.4); color: #51cf66;{% endif %}
+             {% if message.tags == 'error' %}background: rgba(233,69,96,0.2); border: 1px solid rgba(233,69,96,0.4); color: #e94560;{% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Esencia Section -->
+<div class="shop-section">
+    <h2>💎 Esencia</h2>
+    <div class="shop-grid">
+        {% for item in shop_items %}
+        {% if item.type == "essence" %}
+        <div class="shop-card rarity-{{ item.rarity }}">
+            <div class="shop-icon">{{ item.icon }}</div>
+            <div class="shop-name">{{ item.name }}</div>
+            <div class="shop-desc">{{ item.desc }}</div>
+            <div class="shop-price">💎 {{ item.cost }}</div>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="shop_id" value="{{ item.id }}">
+                <button type="submit" class="buy-btn" {% if profile.gems < item.cost %}disabled{% endif %}>
+                    Comprar
+                </button>
+            </form>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Equipamiento Section -->
+<div class="shop-section">
+    <h2>⚔️ Equipamiento</h2>
+    <div class="shop-grid">
+        {% for item in shop_items %}
+        {% if item.type == "item" %}
+        <div class="shop-card rarity-{{ item.rarity }}">
+            <div class="shop-icon">{{ item.icon }}</div>
+            <div class="shop-name">{{ item.name }}</div>
+            <div class="shop-desc">{{ item.desc }}</div>
+            <div class="shop-price">💎 {{ item.cost }}</div>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="shop_id" value="{{ item.id }}">
+                <button type="submit" class="buy-btn" {% if profile.gems < item.cost %}disabled{% endif %}>
+                    Comprar
+                </button>
+            </form>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Energía Section -->
+<div class="shop-section">
+    <h2>⚡ Energía</h2>
+    <div class="shop-grid">
+        {% for item in shop_items %}
+        {% if item.type == "energy" %}
+        <div class="shop-card rarity-{{ item.rarity }}">
+            <div class="shop-icon">{{ item.icon }}</div>
+            <div class="shop-name">{{ item.name }}</div>
+            <div class="shop-desc">{{ item.desc }}</div>
+            <div class="shop-price">💎 {{ item.cost }}</div>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="shop_id" value="{{ item.id }}">
+                <button type="submit" class="buy-btn" {% if profile.gems < item.cost %}disabled{% endif %}>
+                    Comprar
+                </button>
+            </form>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<a href="{% url 'core:home' %}" class="back-link">← Volver al inicio</a>
+{% endblock %}

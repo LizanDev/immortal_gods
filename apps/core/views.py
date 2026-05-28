@@ -6,7 +6,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from apps.campaign.models import FactionLadder, FactionProgress
-from apps.core.models import DailyMission, PlayerMission, PlayerProfile, ReferralCode
+from apps.core.models import DailyMission, PlayerMission, PlayerProfile, ReferralCode, track_mission
+from apps.gods.models import ASCENSION_COSTS, ESSENCE_REWARDS
+from apps.items.models import Item, ItemType, PlayerItem
 
 
 @login_required
@@ -202,3 +204,148 @@ def claim_mission(request, mission_id):
             messages.error(request, "Misión no encontrada")
 
     return redirect("core:missions")
+
+
+SHOP_ITEMS = [
+    {
+        "id": "essence_small",
+        "name": "Esencia Menor",
+        "desc": "+10 Esencia",
+        "cost": 100,
+        "type": "essence",
+        "amount": 10,
+        "icon": "💎",
+        "rarity": "common",
+    },
+    {
+        "id": "essence_medium",
+        "name": "Esencia Media",
+        "desc": "+30 Esencia",
+        "cost": 250,
+        "type": "essence",
+        "amount": 30,
+        "icon": "💎",
+        "rarity": "rare",
+    },
+    {
+        "id": "essence_large",
+        "name": "Esencia Mayor",
+        "desc": "+100 Esencia",
+        "cost": 800,
+        "type": "essence",
+        "amount": 100,
+        "icon": "💎",
+        "rarity": "epic",
+    },
+    {
+        "id": "essence_mega",
+        "name": "Esencia Legendaria",
+        "desc": "+300 Esencia",
+        "cost": 2000,
+        "type": "essence",
+        "amount": 300,
+        "icon": "💎",
+        "rarity": "legendary",
+    },
+    {
+        "id": "weapon_pack",
+        "name": "Pack de Arma",
+        "desc": "Arma aleatoria",
+        "cost": 150,
+        "type": "item",
+        "item_type": ItemType.WEAPON,
+        "icon": "⚔️",
+        "rarity": "rare",
+    },
+    {
+        "id": "armor_pack",
+        "name": "Pack de Armadura",
+        "desc": "Armadura aleatoria",
+        "cost": 150,
+        "type": "item",
+        "item_type": ItemType.ARMOR,
+        "icon": "🛡️",
+        "rarity": "rare",
+    },
+    {
+        "id": "amulet_pack",
+        "name": "Pack de Amuleto",
+        "desc": "Amuleto aleatorio",
+        "cost": 150,
+        "type": "item",
+        "item_type": ItemType.AMULET,
+        "icon": "📿",
+        "rarity": "rare",
+    },
+    {
+        "id": "energy_pack",
+        "name": "Pack de Energía",
+        "desc": "+50 Energía",
+        "cost": 100,
+        "type": "energy",
+        "amount": 50,
+        "icon": "⚡",
+        "rarity": "common",
+    },
+]
+
+
+@login_required
+def shop(request):
+    """Show shop with items purchasable with gems."""
+    profile = request.user.profile
+
+    if request.method == "POST":
+        shop_id = request.POST.get("shop_id")
+        item = next((i for i in SHOP_ITEMS if i["id"] == shop_id), None)
+
+        if not item:
+            messages.error(request, "Producto no encontrado")
+            return redirect("core:shop")
+
+        if profile.gems < item["cost"]:
+            messages.error(request, f"Gemas insuficientes. Necesitas {item['cost']}")
+            return redirect("core:shop")
+
+        profile.spend_gems(item["cost"])
+
+        if item["type"] == "essence":
+            random_god = profile.gods.first()
+            if random_god:
+                random_god.add_essence(item["amount"])
+                messages.success(
+                    request, f"¡Compra exitosa! +{item['amount']} esencia para {random_god.god.name}"
+                )
+            else:
+                profile.gems += item["cost"]
+                profile.save(update_fields=["gems"])
+                messages.error(request, "Necesitas al menos un dios para comprar esencia")
+                return redirect("core:shop")
+
+        elif item["type"] == "item":
+            templates = Item.objects.filter(item_type=item["item_type"])
+            if templates.exists():
+                import random
+                template = random.choice(list(templates))
+                PlayerItem.objects.create(player=profile, item=template)
+                messages.success(
+                    request, f"¡Compra exitosa! Obtuviste {template.name}"
+                )
+            else:
+                profile.gems += item["cost"]
+                profile.save(update_fields=["gems"])
+                messages.error(request, "No hay items disponibles en este momento")
+                return redirect("core:shop")
+
+        elif item["type"] == "energy":
+            profile.restore_energy(item["amount"])
+            messages.success(request, f"¡Compra exitosa! +{item['amount']} energía")
+
+    return render(
+        request,
+        "core/shop.html",
+        {
+            "profile": profile,
+            "shop_items": SHOP_ITEMS,
+        },
+    )

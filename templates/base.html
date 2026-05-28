@@ -20,6 +20,7 @@
             <a href="{% url 'gacha:pull' %}">{% trans "Gacha" %}</a>
             <a href="{% url 'campaign:list' %}">{% trans "Campaign" %}</a>
             <a href="{% url 'core:inventory' %}">{% trans "Inventory" %}</a>
+            <a href="{% url 'core:shop' %}" style="color: #4a9eff;">🏪 {% trans "Shop" %}</a>
             <a href="{% url 'core:missions' %}" style="color: #ffd700;">⚔️ {% trans "Missions" %}</a>
             <span class="user">{{ user.username }}</span>
             <form method="post" action="{% url 'core:logout' %}" style="display:inline">

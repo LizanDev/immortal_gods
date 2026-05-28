@@ -13,6 +13,7 @@ urlpatterns = [
     path("inventory/", views.inventory, name="inventory"),
     path("missions/", views.missions, name="missions"),
     path("missions/claim/<int:mission_id>/", views.claim_mission, name="claim_mission"),
+    path("shop/", views.shop, name="shop"),
     path("register/", views.register, name="register"),
     path(
         "login/",
