@@ -3,13 +3,8 @@ services:
     name: immortal-gods
     env: python
     plan: free
-    buildCommand: |
-      pip install uv
-      uv sync --frozen
-      uv run python manage.py collectstatic --noinput
-      uv run python manage.py migrate
-      uv run python manage.py create_superuser
-    startCommand: uv run python manage.py runserver 0.0.0.0:$PORT
+    buildCommand: pip install uv && uv sync --frozen
+    startCommand: bash entrypoint.sh
     envVars:
       - key: PYTHON_VERSION
         value: "3.13.0"
