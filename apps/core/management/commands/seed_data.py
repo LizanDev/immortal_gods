@@ -4,6 +4,71 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.gods.models import God, Pantheon, Rarity, Role
 from apps.items.models import Item, ItemType
+from apps.campaign.models import FactionLadder, FactionStage
+
+
+FACTION_TRIAL_NAMES = {
+    "greek": [
+        "Olympus Gate", "Temple of Zeus", "Hades' Domain", "Poseidon's Depths",
+        "Athena's Wisdom", "Ares' Battlefield", "Apollo's Light", "Artemis' Hunt",
+        "Hermes' Trial", "Hephaestus' Forge", "Demeter's Harvest", "Dionysus' Feast",
+        "Persephone's Return", "Prometheus' Fire", "Atlas' Burden", "Nike's Victory",
+        "Eros' Arrow", "Thanatos' Touch", "Nemesis' Judgment", "Helios' Chariot",
+        "Selene's Glow", "Iris' Rainbow", "Hestia's Flame", "Hera's Wrath",
+        "Leto's Grace", "Astraeus' Stars", "Oceanus' Tides", "Hyperion's Light",
+        "Theia's Sight", "Coeus' Mind", "Crius' Might", "Iapetus' Chain",
+        "Rhea's Flow", "Mnemosyne's Memory", "Phoebe's Moon", "Themis' Law",
+        "Cronus' Fall", "Gaia's Blessing", "Uranus' Sky", "Tartarus' Pit",
+    ],
+    "zodiac": [
+        "Aries Flame", "Taurus Ground", "Gemini Twin", "Cancer Shell",
+        "Leo Roar", "Virgo Harvest", "Libra Scale", "Scorpio Sting",
+        "Sagittarius Arrow", "Capricorn Climb", "Aquarius Wave", "Pisces Dream",
+        "Star Forge", "Constellation Path", "Zodiac Wheel", "Celestial Map",
+        "Horizon Line", "Eclipse Gate", "Meteor Shower", "Nova Burst",
+        "Comet Trail", "Nebula Cloud", "Aurora Light", "Solar Wind",
+        "Lunar Tide", "Planetary Ring", "Galaxy Core", "Void Star",
+        "Cosmic Dust", "Dark Matter", "Light Year", "Time Warp",
+        "Space Bend", "Gravity Well", "Pulsar Beat", "Quasar Glow",
+        "Black Hole", "White Dwarf", "Red Giant", "Supernova",
+    ],
+    "chinese": [
+        "Jade Palace", "Monkey Mountain", "Lotus Pond", "Dragon Gate",
+        "Phoenix Nest", "Tiger Valley", "Crane Peak", "Turtle Island",
+        "Silk Road", "Tea House", "Bamboo Forest", "Paper Lantern",
+        "Incense Temple", "Kung Fu Dojo", "Yin Yang Hall", "Tai Chi Garden",
+        "Great Wall", "Forbidden City", "Heavenly Market", "Earthly Branch",
+        "Celestial River", "Moon Rabbit", "Sun Crow", "Cloud Dragon",
+        "Wind Tiger", "Fire Bird", "Water Snake", "Metal Ox",
+        "Wood Snake", "Stone Monkey", "Gold Rooster", "Silver Rat",
+        "Jade Rabbit", "Pearl Dragon", "Crystal Phoenix", "Amber Tiger",
+        "Obsidian Snake", "Ruby Dragon", "Emerald Crane", "Sapphire Turtle",
+    ],
+    "egyptian": [
+        "Ra's Sunrise", "Osiris' Tomb", "Anubis' Scale", "Horus' Eye",
+        "Isis' Magic", "Set's Storm", "Thoth's Library", "Sekhmet's Fury",
+        "Bastet's Grace", "Ptah's Craft", "Ma'at's Feather", "Hathor's Song",
+        "Sobek's River", "Khonsu's Moon", "Nut's Sky", "Geb's Earth",
+        "Shu's Wind", "Tefnut's Rain", "Atum's Creation", "Nefertem's Lotus",
+        "Wadjet's Cobra", "Nekhbet's Wing", "Serqet's Sting", "Neith's Web",
+        "Seshat's Mark", "Imhotep's Stone", "Djedi's Spell", "Kheruef's Key",
+        "Nefertari's Crown", "Cleopatra's Pearl", "Ramses' Sword", "Thutmose' Shield",
+        "Akhenaten's Sun", "Tutankhamun's Gold", "Hatshepsut's Obelisk", "Seti's Star",
+        "Ptolemy's Map", "Alexander's Flame", "Caesar's Shadow", "Nile's Flood",
+    ],
+    "nordic": [
+        "Odin's Eye", "Thor's Hammer", "Loki's Trick", "Freya's Love",
+        "Tyr's Hand", "Heimdall's Watch", "Frigg's Wisdom", "Baldr's Light",
+        "Skadi's Snow", "Vidar's Vengeance", "Idun's Apple", "Sif's Hair",
+        "Ullr's Bow", "Forseti's Court", "Bragi's Song", "Eir's Healing",
+        "Gefjon's Plow", "Njord's Ship", "Ran's Net", "Aegir's Brew",
+        "Hel's Gate", "Fenrir's Chain", "Jormungandr's Coil", "Sleipnir's Ride",
+        "Ragnarok's Dawn", "Yggdrasil's Root", "Bifrost's Arc", "Valhalla's Hall",
+        "Folkvangr's Field", "Niflheim's Ice", "Muspelheim's Fire", "Asgard's Wall",
+        "Midgard's Shield", "Jotunheim's Frost", "Vanaheim's Bloom", "Alfheim's Glow",
+        "Svartalfheim's Forge", "Helheim's Mist", "Ginnungagap's Void", "Wyrd's Thread",
+    ],
+}
 
 
 GODS_DATA = [
@@ -354,4 +419,35 @@ class Command(BaseCommand):
                 levels_created += 1
         self.stdout.write(self.style.SUCCESS(f"Created {levels_created} campaign levels"))
 
+        self.stdout.write("Seeding faction ladders...")
+        ladders_created = 0
+        for pantheon_value, pantheon_label in Pantheon.choices:
+            ladder, created = FactionLadder.objects.get_or_create(
+                pantheon=pantheon_value,
+                defaults={
+                    "name": f"{pantheon_label} Trials",
+                    "description": f"Challenge the {pantheon_label} pantheon",
+                    "color": "#4a9eff",
+                }
+            )
+            if created:
+                ladders_created += 1
+
+            stages_created = 0
+            trial_names = FACTION_TRIAL_NAMES.get(pantheon_value, [])
+            for floor, name in enumerate(trial_names, start=1):
+                _, created = FactionStage.objects.get_or_create(
+                    ladder=ladder,
+                    floor=floor,
+                    defaults={
+                        "name": name,
+                        "required_power": 500 + (floor * 250),
+                        "is_boss": floor % 10 == 0,
+                    }
+                )
+                if created:
+                    stages_created += 1
+            self.stdout.write(f"  {pantheon_label}: {stages_created} stages")
+
+        self.stdout.write(self.style.SUCCESS(f"Created {ladders_created} faction ladders"))
         self.stdout.write(self.style.SUCCESS("Seeding complete!"))

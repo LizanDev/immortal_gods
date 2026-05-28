@@ -43,7 +43,6 @@ def gacha_pull(request):
         {
             "profile": profile,
             "history": history,
-            "banners": Banner.choices,
             "SINGLE_PULL_COST": SINGLE_PULL_COST,
             "MULTI_PULL_COST": MULTI_PULL_COST,
         },

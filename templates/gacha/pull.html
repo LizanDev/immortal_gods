@@ -19,11 +19,6 @@
     <form method="post" style="max-width: 100%; margin-top: 1rem;">
         {% csrf_token %}
         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-            <select name="banner" style="min-width: 200px;">
-                {% for value, label in banners %}
-                <option value="{{ value }}">{{ label }}</option>
-                {% endfor %}
-            </select>
             <button type="submit" name="pull_type" value="single" class="btn">Tirada simple ({{ SINGLE_PULL_COST }} 💎)</button>
             <button type="submit" name="pull_type" value="multi" class="btn btn-gold">Tirada múltiple (x10) ({{ MULTI_PULL_COST }} 💎)</button>
         </div>

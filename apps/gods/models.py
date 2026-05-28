@@ -399,6 +399,17 @@ class God(models.Model):
         "Baldr": "Baldr Norse god of light with golden hair, mistletoe, radiant aura, Norse paradise, pure beautiful expression",
         "Skadi": "Skadi Norse goddess of winter with bow, mountain snow background, hunting gear, fierce independent expression",
         "Vidar": "Vidar Norse god of vengeance with thick shoe, silent warrior, Norse battlefield, strong determined presence",
+        # Mythic gods
+        "Chronos": "Chronos primordial god of time, cosmic clockwork, swirling galaxies, ancient Greek cosmic background, timeless powerful presence",
+        "Gaia": "Gaia mother earth goddess, flowing nature robes, mountains and forests growing from her form, primordial creation background",
+        "Amun-Ra": "Amun-Ra hidden king of Egyptian gods, dual crown sun and feathers, golden divine light, Egyptian cosmic temple background",
+        "Apophis": "Apophis serpent of chaos, massive snake form, red eyes, desert storm background, destructive ancient Egyptian mythology",
+        "Yggdrasil": "Yggdrasil the World Tree, cosmic tree connecting nine realms, glowing roots and branches, Norse cosmic background, ancient powerful presence",
+        "Ragnarok": "Ragnarok destroyer of worlds, apocalyptic warrior, fire and ice effects, Norse battlefield end times, fierce devastating expression",
+        "Pangu": "Pangu creator who separated heaven and earth, giant cosmic figure, axe in hand, Chinese cosmic background, primordial powerful presence",
+        "Fuxi": "Fuxi creator of humanity, serpent tail, eight trigrams floating, Chinese cosmic background, divine wise expression",
+        "Ophiuchus": "Ophiuchus the serpent bearer, zodiac healer with snake staff, star constellation background, mystical powerful presence",
+        "Cetus": "Cetus the sea monster, massive cosmic whale form, ocean storm background, zodiac constellation, terrifying powerful presence",
     }
 
     class Meta:

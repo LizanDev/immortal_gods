@@ -15,11 +15,6 @@ class Banner(models.TextChoices):
     """Available gacha banners."""
 
     STANDARD = "standard", "Standard"
-    GREEK = "greek", "Greek Pantheon"
-    ZODIAC = "zodiac", "Zodiac Pantheon"
-    CHINESE = "chinese", "Chinese Pantheon"
-    EGYPTIAN = "egyptian", "Egyptian Pantheon"
-    NORDIC = "nordic", "Nordic Pantheon"
 
 
 class PullType(models.TextChoices):
