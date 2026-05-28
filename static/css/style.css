@@ -8,6 +8,8 @@ nav { background: linear-gradient(135deg, #16213e, #1a1a3e); padding: 1rem; disp
 nav a { color: #eee; font-weight: bold; padding: 0.3rem 0.8rem; border-radius: 4px; transition: background 0.2s; }
 nav a:hover { background: rgba(233, 69, 96, 0.3); text-decoration: none; }
 nav .user { margin-left: auto; color: #ffd700; }
+.nav-toggle { display: none; background: none; border: none; color: #eee; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; }
+.nav-links { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
 
 /* Main */
 main { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
@@ -380,51 +382,29 @@ ul { list-style: none; }
 
 /* Responsive */
 @media (max-width: 768px) {
-    nav {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 0.5rem;
-        padding: 0.5rem;
+    .nav-toggle { display: block; }
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        gap: 0;
     }
-    nav a {
-        font-size: 0.85rem;
-        padding: 0.4rem 0.6rem;
-    }
-    nav .user {
+    .nav-links.active { display: flex; }
+    .nav-links a, .nav-links .user, .nav-links form {
         width: 100%;
         text-align: center;
-        margin: 0.5rem 0 0 0;
-        order: -1;
+        padding: 0.8rem;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
     }
-    nav form {
-        width: 100%;
-        justify-content: center;
-        margin-top: 0.5rem;
-    }
-    main {
-        margin: 1rem auto;
-        padding: 0 0.5rem;
-    }
-    .grid {
-        flex-direction: column;
-        align-items: center;
-    }
-    .god-card {
-        width: 100%;
-        max-width: 300px;
-    }
-    .resources {
-        flex-wrap: wrap;
-        gap: 1rem;
-        justify-content: center;
-    }
-    form {
-        max-width: 100%;
-    }
-    .gacha-banner {
-        padding: 1rem;
-    }
-    .level-card {
-        padding: 1rem;
-    }
+    .nav-links a:hover { background: rgba(233, 69, 96, 0.2); }
+    .nav-links .user { color: #ffd700; font-weight: bold; }
+    .nav-links form { border-bottom: none; padding: 0.5rem; }
+    nav { flex-wrap: wrap; padding: 0.5rem; }
+    main { margin: 1rem auto; padding: 0 0.5rem; }
+    .grid { flex-direction: column; align-items: center; }
+    .god-card { width: 100%; max-width: 300px; }
+    .resources { flex-wrap: wrap; gap: 1rem; justify-content: center; }
+    form { max-width: 100%; }
+    .gacha-banner { padding: 1rem; }
+    .level-card { padding: 1rem; }
 }

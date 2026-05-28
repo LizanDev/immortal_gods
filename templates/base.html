@@ -10,29 +10,32 @@
 <body>
     {% if user.is_authenticated %}
     <nav>
-        <a href="{% url 'core:home' %}">{% trans "Home" %}</a>
-        <a href="{% url 'gods:list' %}">{% trans "Gods" %}</a>
-        <a href="{% url 'items:list' %}">{% trans "Items" %}</a>
-        <a href="{% url 'teams:list' %}">{% trans "Teams" %}</a>
-        <a href="{% url 'gacha:pull' %}">{% trans "Gacha" %}</a>
-        <a href="{% url 'campaign:list' %}">{% trans "Campaign" %}</a>
-        <a href="{% url 'core:inventory' %}">{% trans "Inventory" %}</a>
-        <span class="user">{{ user.username }}</span>
-        <form method="post" action="{% url 'core:logout' %}" style="display:inline">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-secondary">{% trans "Logout" %}</button>
-        </form>
-        <form action="{% url 'set_language' %}" method="post" style="display:inline; margin-left: 1rem;">
-            {% csrf_token %}
-            <input name="next" type="hidden" value="{{ request.path }}">
-            <select name="language" onchange="this.form.submit()" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 0.3rem; border-radius: 4px;">
-                {% get_current_language as CURRENT_LANGUAGE %}
-                {% get_available_languages as AVAILABLE_LANGUAGES %}
-                {% for code, name in AVAILABLE_LANGUAGES %}
-                <option value="{{ code }}" {% if code == CURRENT_LANGUAGE %}selected{% endif %}>{{ name }}</option>
-                {% endfor %}
-            </select>
-        </form>
+        <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">☰</button>
+        <div class="nav-links">
+            <a href="{% url 'core:home' %}">{% trans "Home" %}</a>
+            <a href="{% url 'gods:list' %}">{% trans "Gods" %}</a>
+            <a href="{% url 'items:list' %}">{% trans "Items" %}</a>
+            <a href="{% url 'teams:list' %}">{% trans "Teams" %}</a>
+            <a href="{% url 'gacha:pull' %}">{% trans "Gacha" %}</a>
+            <a href="{% url 'campaign:list' %}">{% trans "Campaign" %}</a>
+            <a href="{% url 'core:inventory' %}">{% trans "Inventory" %}</a>
+            <span class="user">{{ user.username }}</span>
+            <form method="post" action="{% url 'core:logout' %}" style="display:inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary">{% trans "Logout" %}</button>
+            </form>
+            <form action="{% url 'set_language' %}" method="post" style="display:inline; margin-left: 1rem;">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.path }}">
+                <select name="language" onchange="this.form.submit()" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 0.3rem; border-radius: 4px;">
+                    {% get_current_language as CURRENT_LANGUAGE %}
+                    {% get_available_languages as AVAILABLE_LANGUAGES %}
+                    {% for code, name in AVAILABLE_LANGUAGES %}
+                    <option value="{{ code }}" {% if code == CURRENT_LANGUAGE %}selected{% endif %}>{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
     </nav>
     {% endif %}
 
