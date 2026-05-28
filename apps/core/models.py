@@ -208,3 +208,13 @@ class ReferralCode(models.Model):
     @property
     def is_used(self) -> bool:
         return self.used_by is not None
+
+
+def track_mission(player: "PlayerProfile", mission_type: str, amount: int = 1) -> None:
+    """Track mission progress for a player. Called by other apps."""
+    try:
+        mission = DailyMission.objects.get(mission_type=mission_type, is_active=True)
+        pm, _ = PlayerMission.objects.get_or_create(player=player, mission=mission)
+        pm.add_progress(amount)
+    except DailyMission.DoesNotExist:
+        pass

@@ -199,13 +199,3 @@ def claim_mission(request, mission_id):
             messages.error(request, "Misión no encontrada")
 
     return redirect("core:missions")
-
-
-def track_mission(player, mission_type: str, amount: int = 1):
-    """Track mission progress for a player. Called by other apps."""
-    try:
-        mission = DailyMission.objects.get(mission_type=mission_type, is_active=True)
-        pm, _ = PlayerMission.objects.get_or_create(player=player, mission=mission)
-        pm.add_progress(amount)
-    except DailyMission.DoesNotExist:
-        pass
