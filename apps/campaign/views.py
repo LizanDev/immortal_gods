@@ -234,72 +234,76 @@ def faction_ladder_detail(request, ladder_id):
 @login_required
 def faction_battle(request, stage_id):
     """Battle a faction ladder stage."""
-    stage = get_object_or_404(FactionStage, pk=stage_id)
-    ladder = stage.ladder
-    profile = request.user.profile
+    try:
+        stage = get_object_or_404(FactionStage, pk=stage_id)
+        ladder = stage.ladder
+        profile = request.user.profile
 
-    progress, _ = FactionProgress.objects.get_or_create(
-        player=profile, ladder=ladder
-    )
-
-    if stage.floor > progress.highest_floor + 1:
-        messages.error(request, "Completa los pisos anteriores primero.")
-        return redirect("campaign:faction_ladder_detail", ladder_id=ladder.id)
-
-    team_id = request.session.get("campaign_team_id")
-    team = profile.teams.filter(id=team_id).first()
-    if not team:
-        team = profile.teams.first()
-
-    if not team or team.god_count() == 0:
-        messages.error(request, "Crea un equipo primero.")
-        return redirect("teams:list")
-
-    faction_gods = []
-    for member in team.members.all():
-        if member.god.god.pantheon == ladder.pantheon:
-            faction_gods.append(member.god)
-
-    if not faction_gods:
-        messages.error(
-            request,
-            f"Tu equipo no tiene dioses {ladder.pantheon_label}.",
+        progress, _ = FactionProgress.objects.get_or_create(
+            player=profile, ladder=ladder
         )
-        return redirect("campaign:faction_ladder_detail", ladder_id=ladder.id)
 
-    team_power = sum(
-        god.total_attack + god.total_defense
-        for god in faction_gods
-    )
+        if stage.floor > progress.highest_floor + 1:
+            messages.error(request, "Completa los pisos anteriores primero.")
+            return redirect("campaign:faction_ladder_detail", ladder_id=ladder.id)
 
-    power_ratio = team_power / stage.required_power if stage.required_power > 0 else 1
+        team_id = request.session.get("campaign_team_id")
+        team = profile.teams.filter(id=team_id).first()
+        if not team:
+            team = profile.teams.first()
 
-    if power_ratio >= 1.0:
-        won = True
-    elif power_ratio >= 0.7:
-        won = random.random() < (power_ratio - 0.5)
-    else:
-        won = False
+        if not team or team.god_count() == 0:
+            messages.error(request, "Crea un equipo primero.")
+            return redirect("teams:list")
 
-    if won and stage.floor > progress.highest_floor:
-        progress.highest_floor = stage.floor
-        progress.save(update_fields=["highest_floor"])
-        profile.recalculate_rank_score()
+        faction_gods = []
+        for member in team.members.select_related("god__god").all():
+            if member.god and member.god.god.pantheon == ladder.pantheon:
+                faction_gods.append(member.god)
 
-    next_stage = None
-    if won:
-        next_stage = FactionStage.objects.filter(
-            ladder=ladder, floor=stage.floor + 1
-        ).first()
+        if not faction_gods:
+            messages.error(
+                request,
+                f"Tu equipo no tiene dioses {ladder.pantheon_label}.",
+            )
+            return redirect("campaign:faction_ladder_detail", ladder_id=ladder.id)
 
-    return render(
-        request,
-        "campaign/faction_battle_result.html",
-        {
-            "ladder": ladder,
-            "stage": stage,
-            "won": won,
-            "progress": progress,
-            "next_stage": next_stage,
-        },
-    )
+        team_power = sum(
+            god.total_attack + god.total_defense
+            for god in faction_gods
+        )
+
+        power_ratio = team_power / stage.required_power if stage.required_power > 0 else 1
+
+        if power_ratio >= 1.0:
+            won = True
+        elif power_ratio >= 0.7:
+            won = random.random() < (power_ratio - 0.5)
+        else:
+            won = False
+
+        if won and stage.floor > progress.highest_floor:
+            progress.highest_floor = stage.floor
+            progress.save(update_fields=["highest_floor"])
+            profile.recalculate_rank_score()
+
+        next_stage = None
+        if won:
+            next_stage = FactionStage.objects.filter(
+                ladder=ladder, floor=stage.floor + 1
+            ).first()
+
+        return render(
+            request,
+            "campaign/faction_battle_result.html",
+            {
+                "ladder": ladder,
+                "stage": stage,
+                "won": won,
+                "progress": progress,
+                "next_stage": next_stage,
+            },
+        )
+    except Exception as e:
+        messages.error(request, f"Error en la batalla: {str(e)}")
+        return redirect("campaign:faction_ladders")
