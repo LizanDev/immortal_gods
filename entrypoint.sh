@@ -18,5 +18,5 @@ uv run python manage.py seed_missions
 echo "Creating superuser..."
 uv run python manage.py create_superuser
 
-echo "Starting server..."
-exec uv run python manage.py runserver 0.0.0.0:$PORT
+echo "Starting server with gunicorn..."
+exec uv run gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120

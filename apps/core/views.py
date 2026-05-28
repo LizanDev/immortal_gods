@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_POST
 
 from apps.campaign.models import FactionLadder, FactionProgress
 from apps.core.models import DailyMission, PlayerMission, PlayerProfile, ReferralCode, track_mission
@@ -89,13 +90,17 @@ def register(request):
         referral_code = request.POST.get("referral_code", "").strip().upper()
         if referral_code:
             try:
-                ref = ReferralCode.objects.get(code=referral_code, used_by__isnull=True)
-                ref.used_by = user
-                ref.save(update_fields=["used_by", "used_at"])
-                user.profile.add_gems(ref.gems_reward)
-                messages.success(
-                    request, f"Referral code applied! +{ref.gems_reward} gems"
-                )
+                from django.db import transaction
+                with transaction.atomic():
+                    ref = ReferralCode.objects.select_for_update().get(
+                        code=referral_code, used_by__isnull=True
+                    )
+                    ref.used_by = user
+                    ref.save(update_fields=["used_by", "used_at"])
+                    user.profile.add_gems(ref.gems_reward)
+                    messages.success(
+                        request, f"Referral code applied! +{ref.gems_reward} gems"
+                    )
             except ReferralCode.DoesNotExist:
                 messages.error(request, "Invalid or already used referral code")
         login(request, user)
@@ -105,6 +110,7 @@ def register(request):
 
 
 @login_required
+@require_POST
 def redeem_referral(request):
     """Redeem a referral code for gems."""
     if request.method == "POST":
@@ -114,11 +120,15 @@ def redeem_referral(request):
             return redirect("core:inventory")
 
         try:
-            ref = ReferralCode.objects.get(code=code, used_by__isnull=True)
-            ref.used_by = request.user
-            ref.save(update_fields=["used_by", "used_at"])
-            request.user.profile.add_gems(ref.gems_reward)
-            messages.success(request, f"Code redeemed! +{ref.gems_reward} gems")
+            from django.db import transaction
+            with transaction.atomic():
+                ref = ReferralCode.objects.select_for_update().get(
+                    code=code, used_by__isnull=True
+                )
+                ref.used_by = request.user
+                ref.save(update_fields=["used_by", "used_at"])
+                request.user.profile.add_gems(ref.gems_reward)
+                messages.success(request, f"Code redeemed! +{ref.gems_reward} gems")
         except ReferralCode.DoesNotExist:
             messages.error(request, "Invalid or already used referral code")
 
@@ -184,6 +194,7 @@ def missions(request):
 
 
 @login_required
+@require_POST
 def claim_mission(request, mission_id):
     """Claim reward for a completed mission."""
     if request.method == "POST":
@@ -207,6 +218,7 @@ def claim_mission(request, mission_id):
 
 
 @login_required
+@require_POST
 def claim_all_missions(request):
     """Claim all completed mission rewards at once."""
     if request.method == "POST":

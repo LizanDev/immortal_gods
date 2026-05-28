@@ -21,10 +21,6 @@ db.sqlite3
 media/
 staticfiles/
 
-# Temporary files
-*.png
-*.jpg
-*.webp
-!static/**/*.jpg
-!static/images/**/*.png
-!static/images/**/*.webp
+# OS files
+.DS_Store
+Thumbs.db

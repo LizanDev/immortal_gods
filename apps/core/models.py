@@ -58,11 +58,6 @@ class PlayerProfile(models.Model):
         self.energy -= amount
         self.save(update_fields=["energy", "updated_at"])
         return True
-        if self.gems < amount:
-            return False
-        self.gems -= amount
-        self.save(update_fields=["gems", "updated_at"])
-        return True
 
     def add_gold(self, amount: int) -> None:
         """Add gold to the player's balance."""
@@ -70,26 +65,6 @@ class PlayerProfile(models.Model):
             raise ValueError("Cannot add negative gold")
         self.gold += amount
         self.save(update_fields=["gold", "updated_at"])
-
-    def spend_gold(self, amount: int) -> bool:
-        """Spend gold if player has enough. Returns success status."""
-        if self.user.is_superuser:
-            return True
-        if self.gold < amount:
-            return False
-        self.gold -= amount
-        self.save(update_fields=["gold", "updated_at"])
-        return True
-
-    def spend_energy(self, amount: int) -> bool:
-        """Spend energy if player has enough. Returns success status."""
-        if self.user.is_superuser:
-            return True
-        if self.energy < amount:
-            return False
-        self.energy -= amount
-        self.save(update_fields=["energy", "updated_at"])
-        return True
 
     def restore_energy(self, amount: int) -> None:
         """Restore energy up to max."""

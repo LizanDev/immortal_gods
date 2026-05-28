@@ -43,7 +43,13 @@ def team_add_member(request, team_id):
 
     if request.method == "POST":
         god_id = request.POST.get("god_id")
-        position = int(request.POST.get("position", 1))
+        try:
+            position = int(request.POST.get("position", 1))
+        except (ValueError, TypeError):
+            position = 1
+
+        if position < 1 or position > MAX_TEAM_SIZE:
+            position = 1
 
         player_god = get_object_or_404(
             PlayerGod, pk=god_id, player=request.user.profile
