@@ -4,7 +4,8 @@ services:
     env: python
     plan: free
     buildCommand: pip install uv && uv sync --frozen
-    startCommand: bash entrypoint.sh
+    preDeployCommand: uv run python manage.py migrate --noinput && uv run python manage.py collectstatic --noinput && uv run python manage.py seed_data && uv run python manage.py create_superuser
+    startCommand: uv run gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
     envVars:
       - key: PYTHON_VERSION
         value: "3.13.0"
