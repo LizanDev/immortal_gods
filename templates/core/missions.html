@@ -200,16 +200,6 @@
     </div>
 </div>
 
-{% if messages %}
-    {% for message in messages %}
-        <div style="padding: 1rem; margin-bottom: 1rem; border-radius: 8px; 
-             {% if message.tags == 'success' %}background: rgba(81,207,102,0.2); border: 1px solid rgba(81,207,102,0.4); color: #51cf66;{% endif %}
-             {% if message.tags == 'error' %}background: rgba(233,69,96,0.2); border: 1px solid rgba(233,69,96,0.4); color: #e94560;{% endif %}">
-            {{ message }}
-        </div>
-    {% endfor %}
-{% endif %}
-
 <div class="missions-grid">
     {% for pm in player_missions %}
     <div class="mission-card {% if pm.claimed %}claimed{% elif pm.completed %}completed{% endif %}">
