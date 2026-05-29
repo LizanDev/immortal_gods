@@ -12,7 +12,7 @@ from .models import PlayerProfile, ReferralCode
 class PlayerProfileAdmin(admin.ModelAdmin):
     """Admin interface for PlayerProfile model."""
 
-    list_display = ("user", "gems", "gold", "energy", "campaign_progress")
+    list_display = ("user", "gems", "gold", "campaign_progress")
     search_fields = ("user__username",)
 
 
@@ -33,7 +33,9 @@ class ReferralCodeAdmin(admin.ModelAdmin):
         created = 0
         for _ in range(count):
             code = "".join(secrets.choice(chars) for _ in range(8))
-            ReferralCode.objects.get_or_create(code=code, defaults={"gems_reward": 4000})
+            ReferralCode.objects.get_or_create(
+                code=code, defaults={"gems_reward": 4000}
+            )
             created += 1
         self.message_user(request, f"Generated {created} new referral codes.")
 

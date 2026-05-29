@@ -19,7 +19,6 @@ class CampaignLevel(models.Model):
     description = models.TextField(blank=True)
     difficulty = models.CharField(max_length=10, choices=Difficulty.choices)
     order = models.PositiveIntegerField(unique=True)
-    energy_cost = models.PositiveIntegerField(default=10)
     gold_reward = models.PositiveIntegerField(default=200)
     gems_reward = models.PositiveIntegerField(default=10)
     exp_reward = models.PositiveIntegerField(default=50)

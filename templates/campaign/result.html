@@ -32,8 +32,6 @@
     <p>Tu equipo no era lo suficientemente fuerte. ¡Mejora tus dioses y equipamiento!</p>
     {% endif %}
 
-    <p style="margin-top: 1rem;"> gastada: {{ battle.level.energy_cost }}</p>
-
     <div style="margin-top: 1rem; display: flex; gap: 0.75rem; justify-content: center;">
         {% if won and next_level %}
         <a href="{% url 'campaign:battle' next_level.id %}" class="btn btn-gold">

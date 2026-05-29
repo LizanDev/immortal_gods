@@ -71,13 +71,6 @@ def campaign_battle(request, level_id):
         profile = request.user.profile
         level = get_object_or_404(CampaignLevel, pk=level_id)
 
-        if profile.energy < level.energy_cost:
-            return render(
-                request,
-                "campaign/insufficient_energy.html",
-                {"level": level, "profile": profile},
-            )
-
         if level.order > profile.campaign_progress and not request.user.is_superuser:
             return render(
                 request,
@@ -104,9 +97,9 @@ def campaign_battle(request, level_id):
         class_multiplier = team.get_class_advantage_multiplier()
         team_power = int(team_power * class_multiplier)
 
-        profile.spend_energy(level.energy_cost)
-
-        power_ratio = team_power / level.required_power if level.required_power > 0 else 1
+        power_ratio = (
+            team_power / level.required_power if level.required_power > 0 else 1
+        )
 
         if power_ratio >= 1.0:
             won = True
@@ -273,12 +266,11 @@ def faction_battle(request, stage_id):
             )
             return redirect("campaign:faction_ladder_detail", ladder_id=ladder.id)
 
-        team_power = sum(
-            god.total_attack + god.total_defense
-            for god in faction_gods
-        )
+        team_power = sum(god.total_attack + god.total_defense for god in faction_gods)
 
-        power_ratio = team_power / stage.required_power if stage.required_power > 0 else 1
+        power_ratio = (
+            team_power / stage.required_power if stage.required_power > 0 else 1
+        )
 
         if power_ratio >= 1.0:
             won = True

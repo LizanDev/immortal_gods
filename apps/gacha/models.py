@@ -95,12 +95,16 @@ def perform_pull(player, banner: str, pull_type: str) -> list[dict]:
                 pull_type=pull_type,
                 god=god,
             )
-            results.append({
-                "type": "god",
-                "god": god,
-                "new": created,
-                "duplicate": not created,
-                "essence_reward": ESSENCE_REWARDS.get(god.rarity, 1) if not created else 0,
-            })
+            results.append(
+                {
+                    "type": "god",
+                    "god": god,
+                    "new": created,
+                    "duplicate": not created,
+                    "essence_reward": ESSENCE_REWARDS.get(god.rarity, 1)
+                    if not created
+                    else 0,
+                }
+            )
 
     return results

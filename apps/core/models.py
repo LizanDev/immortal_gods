@@ -1,5 +1,7 @@
 """Core models."""
 
+from datetime import date, timedelta
+
 from django.conf import settings
 from django.db import models
 
@@ -12,8 +14,6 @@ class PlayerProfile(models.Model):
     )
     gems = models.PositiveIntegerField(default=1350)
     gold = models.PositiveIntegerField(default=5000)
-    energy = models.PositiveIntegerField(default=120)
-    max_energy = models.PositiveIntegerField(default=120)
     campaign_progress = models.PositiveIntegerField(default=1)
     rank_score = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -49,16 +49,6 @@ class PlayerProfile(models.Model):
         self.save(update_fields=["gold", "updated_at"])
         return True
 
-    def spend_energy(self, amount: int) -> bool:
-        """Spend energy if player has enough. Returns success status."""
-        if self.user.is_superuser:
-            return True
-        if self.energy < amount:
-            return False
-        self.energy -= amount
-        self.save(update_fields=["energy", "updated_at"])
-        return True
-
     def add_gold(self, amount: int) -> None:
         """Add gold to the player's balance."""
         if amount < 0:
@@ -66,15 +56,17 @@ class PlayerProfile(models.Model):
         self.gold += amount
         self.save(update_fields=["gold", "updated_at"])
 
-    def restore_energy(self, amount: int) -> None:
-        """Restore energy up to max."""
-        self.energy = min(self.energy + amount, self.max_energy)
-        self.save(update_fields=["energy", "updated_at"])
-
-    def add_energy(self, amount: int) -> None:
-        """Add energy up to max."""
-        self.energy = min(self.energy + amount, self.max_energy)
-        self.save(update_fields=["energy", "updated_at"])
+    def recalculate_rank_score(self) -> None:
+        """Recalculate rank score based on campaign and faction progress."""
+        try:
+            campaign_score = self.campaign_progress * 100
+            faction_score = sum(
+                fp.highest_floor * 50 for fp in self.faction_progress.all()
+            )
+            self.rank_score = campaign_score + faction_score
+            self.save(update_fields=["rank_score", "updated_at"])
+        except Exception:
+            pass  # Fail silently to avoid breaking battles
 
 
 class DailyMission(models.Model):
@@ -95,14 +87,14 @@ class DailyMission(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=255)
     target = models.PositiveIntegerField(default=1)
-    energy_reward = models.PositiveIntegerField(default=5)
+    gem_reward = models.PositiveIntegerField(default=5)
     is_active = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["id"]
 
     def __str__(self) -> str:
-        return f"{self.title} ({self.energy_reward} energía)"
+        return f"{self.title} ({self.gem_reward} gemas)"
 
 
 class PlayerMission(models.Model):
@@ -142,24 +134,77 @@ class PlayerMission(models.Model):
         return self.completed
 
     def claim_reward(self) -> int:
-        """Claim reward and return energy amount. Returns 0 if already claimed."""
+        """Claim reward and return gem amount. Returns 0 if already claimed."""
         if self.claimed or not self.completed:
             return 0
         self.claimed = True
         self.save(update_fields=["claimed"])
-        return self.mission.energy_reward
+        return self.mission.gem_reward
 
-    def recalculate_rank_score(self) -> None:
-        """Recalculate rank score based on campaign and faction progress."""
-        try:
-            campaign_score = self.campaign_progress * 100
-            faction_score = sum(
-                fp.highest_floor * 50 for fp in self.faction_progress.all()
-            )
-            self.rank_score = campaign_score + faction_score
-            self.save(update_fields=["rank_score", "updated_at"])
-        except Exception:
-            pass  # Fail silently to avoid breaking battles
+class DailyLoginStreak(models.Model):
+    """Tracks daily login streaks and rewards."""
+
+    STREAK_REWARDS: dict[int, dict[str, int]] = {
+        1: {"gems": 30, "gold": 300},
+        2: {"gems": 50, "gold": 500},
+        3: {"gems": 80, "gold": 800},
+        4: {"gems": 120, "gold": 1200},
+        5: {"gems": 180, "gold": 1800},
+        6: {"gems": 250, "gold": 2500},
+        7: {"gems": 500, "gold": 5000, "essence": 30},
+    }
+
+    player = models.OneToOneField(
+        PlayerProfile, on_delete=models.CASCADE, related_name="streak"
+    )
+    current_streak = models.PositiveIntegerField(default=0)
+    longest_streak = models.PositiveIntegerField(default=0)
+    last_login_date = models.DateField(null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"Streak({self.player.user.username}): {self.current_streak} days"
+
+    def check_in(self) -> dict:
+        """Process daily login and return reward info."""
+        today = date.today()
+
+        if self.last_login_date == today:
+            return {
+                "new_day": False,
+                "reward": None,
+                "day": 0,
+                "streak": self.current_streak,
+            }
+
+        if self.last_login_date == today - timedelta(days=1):
+            self.current_streak += 1
+        else:
+            self.current_streak = 1
+
+        self.last_login_date = today
+        self.longest_streak = max(self.longest_streak, self.current_streak)
+
+        day_in_cycle = ((self.current_streak - 1) % 7) + 1
+        reward = dict(self.STREAK_REWARDS[day_in_cycle])
+
+        self.player.add_gems(reward["gems"])
+        self.player.add_gold(reward["gold"])
+
+        essence = reward.pop("essence", None)
+        if essence:
+            first_god = self.player.gods.first()
+            if first_god:
+                first_god.add_essence(essence)
+                reward["essence"] = essence
+
+        self.save(update_fields=["current_streak", "longest_streak", "last_login_date"])
+
+        return {
+            "new_day": True,
+            "day": day_in_cycle,
+            "reward": reward,
+            "streak": self.current_streak,
+        }
 
 
 class ReferralCode(models.Model):

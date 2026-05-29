@@ -184,29 +184,5 @@
     </div>
 </div>
 
-<!-- Energía Section -->
-<div class="shop-section">
-    <h2>⚡ Energía</h2>
-    <div class="shop-grid">
-        {% for item in shop_items %}
-        {% if item.type == "energy" %}
-        <div class="shop-card rarity-{{ item.rarity }}">
-            <div class="shop-icon">{{ item.icon }}</div>
-            <div class="shop-name">{{ item.name }}</div>
-            <div class="shop-desc">{{ item.desc }}</div>
-            <div class="shop-price">💎 {{ item.cost }}</div>
-            <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="shop_id" value="{{ item.id }}">
-                <button type="submit" class="buy-btn" {% if profile.gems < item.cost %}disabled{% endif %}>
-                    Comprar
-                </button>
-            </form>
-        </div>
-        {% endif %}
-        {% endfor %}
-    </div>
-</div>
-
 <a href="{% url 'core:home' %}" class="back-link">← Volver al inicio</a>
 {% endblock %}

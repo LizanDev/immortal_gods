@@ -14,9 +14,27 @@
         <span class="resource-icon"></span>
         <span class="resource-value">{% if user.is_superuser %}∞{% else %}{{ profile.gold }}{% endif %}</span>
     </div>
-    <div class="resource resource-energy">
-        <span class="resource-icon"></span>
-        <span class="resource-value">{% if user.is_superuser %}∞{% else %}{{ profile.energy }}/{{ profile.max_energy }}{% endif %}</span>
+</div>  <!-- end resources -->
+
+<div class="card" style="background: linear-gradient(135deg, rgba(255,165,0,0.15), rgba(255,215,0,0.08)); border: 1px solid rgba(255,215,0,0.3);">
+    <h2 style="color: #ffd700;">🔥 Racha Diaria</h2>
+    <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+        <div style="text-align: center;">
+            <div style="font-size: 2.5rem; font-weight: bold; color: #ffd700;">{{ streak.current_streak }}</div>
+            <div style="font-size: 0.8rem; color: #aaa;">días seguidos</div>
+        </div>
+        <div style="flex: 1; min-width: 150px;">
+            <div style="display: flex; gap: 0.25rem; margin-bottom: 0.5rem;">
+                {% for d in "1234567" %}
+                <div style="flex: 1; height: 6px; border-radius: 3px; {% if forloop.counter <= streak_day %}background: #ffd700;{% else %}background: rgba(255,255,255,0.1);{% endif %}"></div>
+                {% endfor %}
+            </div>
+            <div style="font-size: 0.85rem; color: #aaa;">
+                Día {{ streak_day }}/7 ·
+                Siguiente: +{{ next_reward.gems }} 💎 +{{ next_reward.gold }} oro
+                {% if next_reward.essence %}+{{ next_reward.essence }} esencia{% endif %}
+            </div>
+        </div>
     </div>
 </div>
 

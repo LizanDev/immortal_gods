@@ -20,18 +20,6 @@
         font-size: 1.5rem;
         color: #e94560;
     }
-    .energy-display {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #4a9eff;
-    }
-    .energy-icon {
-        font-size: 1.5rem;
-    }
-
     .missions-grid {
         display: grid;
         gap: 1rem;
@@ -114,10 +102,10 @@
         align-items: center;
         gap: 0.3rem;
         padding: 0.5rem 0.8rem;
-        background: rgba(74, 158, 255, 0.2);
+        background: rgba(255, 215, 0, 0.15);
         border-radius: 8px;
         font-weight: bold;
-        color: #4a9eff;
+        color: #ffd700;
         font-size: 0.9rem;
     }
 
@@ -185,18 +173,14 @@
 <div class="missions-header">
     <h1>⚔️ Misiones Diarias</h1>
     <div style="display: flex; align-items: center; gap: 1rem;">
-        {% if total_energy_claimable > 0 %}
+        {% if total_gem_claimable > 0 %}
         <form method="post" action="{% url 'core:claim_all_missions' %}">
             {% csrf_token %}
             <button type="submit" class="claim-btn" style="padding: 0.7rem 1.5rem; font-size: 1rem;">
-                ⚡ Reclamar todo (+{{ total_energy_claimable }})
+                💎 Reclamar todo (+{{ total_gem_claimable }})
             </button>
         </form>
         {% endif %}
-        <div class="energy-display">
-            <span class="energy-icon">⚡</span>
-            <span>{{ profile.energy }}/{{ profile.max_energy }}</span>
-        </div>
     </div>
 </div>
 
@@ -227,8 +211,8 @@
         </div>
 
         <div class="mission-reward">
-            <span>⚡</span>
-            <span>+{{ pm.mission.energy_reward }}</span>
+            <span>💎</span>
+            <span>+{{ pm.mission.gem_reward }}</span>
         </div>
 
         {% if pm.claimed %}
@@ -249,9 +233,9 @@
     {% endfor %}
 </div>
 
-{% if total_energy_claimable > 0 %}
+{% if total_gem_claimable > 0 %}
 <div class="total-reward">
-    <p>Recompensas disponibles: <strong>+{{ total_energy_claimable }} energía</strong></p>
+    <p>Recompensas disponibles: <strong>+{{ total_gem_claimable }} gemas</strong></p>
 </div>
 {% endif %}
 

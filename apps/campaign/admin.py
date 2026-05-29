@@ -15,7 +15,7 @@ from .models import (
 class CampaignLevelAdmin(admin.ModelAdmin):
     """Admin interface for CampaignLevel model."""
 
-    list_display = ("order", "name", "difficulty", "energy_cost", "is_boss_level")
+    list_display = ("order", "name", "difficulty", "gold_reward", "is_boss_level")
     list_filter = ("difficulty", "is_boss_level")
     ordering = ("order",)
 

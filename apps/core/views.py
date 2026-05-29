@@ -3,14 +3,20 @@
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
-from django.views.decorators.http import require_POST
 from django.http import HttpResponse
+from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 from apps.campaign.models import FactionLadder, FactionProgress
-from apps.core.models import DailyMission, PlayerMission, PlayerProfile, ReferralCode, track_mission
-from apps.gods.models import ASCENSION_COSTS, ESSENCE_REWARDS
+from apps.core.models import (
+    DailyLoginStreak,
+    DailyMission,
+    PlayerMission,
+    PlayerProfile,
+    ReferralCode,
+    track_mission,
+)
 from apps.items.models import Item, ItemType, PlayerItem
 
 
@@ -21,12 +27,29 @@ def home(request):
     god_count = profile.gods.count()
     team_count = profile.teams.count()
 
+    streak, created = DailyLoginStreak.objects.get_or_create(player=profile)
+    streak_info = streak.check_in()
+
+    if streak_info["new_day"]:
+        day = streak_info["day"]
+        reward = streak_info["reward"]
+        parts = []
+        if reward["gems"]:
+            parts.append(f"+{reward['gems']} gemas")
+        if reward["gold"]:
+            parts.append(f"+{reward['gold']} oro")
+        if reward.get("essence"):
+            parts.append(f"+{reward['essence']} esencia")
+        messages.success(
+            request,
+            f"🔥 Racha: día {day}/7 — Streak de {streak_info['streak']} días! "
+            + " | ".join(parts),
+        )
+
     ladders = FactionLadder.objects.all()
     ladder_data = []
     for ladder in ladders:
-        prog, _ = FactionProgress.objects.get_or_create(
-            player=profile, ladder=ladder
-        )
+        prog, _ = FactionProgress.objects.get_or_create(player=profile, ladder=ladder)
         ladder_data.append({"ladder": ladder, "progress": prog})
 
     return render(
@@ -37,6 +60,14 @@ def home(request):
             "god_count": god_count,
             "team_count": team_count,
             "ladder_data": ladder_data,
+            "streak": streak,
+            "streak_day": ((streak.current_streak - 1) % 7) + 1
+            if streak.current_streak > 0
+            else 1,
+            "next_reward": DailyLoginStreak.STREAK_REWARDS.get(
+                ((streak.current_streak) % 7) + 1,
+                DailyLoginStreak.STREAK_REWARDS[1],
+            ),
         },
     )
 
@@ -95,6 +126,7 @@ def register(request):
         if referral_code:
             try:
                 from django.db import transaction
+
                 with transaction.atomic():
                     ref = ReferralCode.objects.select_for_update().get(
                         code=referral_code, used_by__isnull=True
@@ -125,6 +157,7 @@ def redeem_referral(request):
 
         try:
             from django.db import transaction
+
             with transaction.atomic():
                 ref = ReferralCode.objects.select_for_update().get(
                     code=code, used_by__isnull=True
@@ -142,7 +175,9 @@ def redeem_referral(request):
 @login_required
 def leaderboard(request):
     """Show player ranking leaderboard."""
-    top_players = PlayerProfile.objects.select_related("user").order_by("-rank_score")[:50]
+    top_players = PlayerProfile.objects.select_related("user").order_by("-rank_score")[
+        :50
+    ]
     user_rank = None
     user_position = None
     for i, p in enumerate(top_players, 1):
@@ -151,7 +186,12 @@ def leaderboard(request):
             user_position = i
             break
     if user_position is None:
-        user_position = PlayerProfile.objects.filter(rank_score__gt=request.user.profile.rank_score).count() + 1
+        user_position = (
+            PlayerProfile.objects.filter(
+                rank_score__gt=request.user.profile.rank_score
+            ).count()
+            + 1
+        )
     return render(
         request,
         "core/leaderboard.html",
@@ -182,8 +222,10 @@ def missions(request):
         )
         player_missions.append(pm)
 
-    total_energy_claimable = sum(
-        pm.mission.energy_reward for pm in player_missions if pm.completed and not pm.claimed
+    total_gem_claimable = sum(
+        pm.mission.gem_reward
+        for pm in player_missions
+        if pm.completed and not pm.claimed
     )
 
     return render(
@@ -192,7 +234,7 @@ def missions(request):
         {
             "profile": profile,
             "player_missions": player_missions,
-            "total_energy_claimable": total_energy_claimable,
+            "total_gem_claimable": total_gem_claimable,
         },
     )
 
@@ -204,15 +246,11 @@ def claim_mission(request, mission_id):
     if request.method == "POST":
         profile = request.user.profile
         try:
-            pm = PlayerMission.objects.get(
-                player=profile, mission_id=mission_id
-            )
+            pm = PlayerMission.objects.get(player=profile, mission_id=mission_id)
             if pm.completed and not pm.claimed:
-                energy = pm.claim_reward()
-                profile.add_energy(energy)
-                messages.success(
-                    request, f"¡Recompensa reclamada! +{energy} energía"
-                )
+                gems = pm.claim_reward()
+                profile.add_gems(gems)
+                messages.success(request, f"¡Recompensa reclamada! +{gems} gemas")
             else:
                 messages.error(request, "Esta misión no está lista para reclamar")
         except PlayerMission.DoesNotExist:
@@ -227,20 +265,20 @@ def claim_all_missions(request):
     """Claim all completed mission rewards at once."""
     if request.method == "POST":
         profile = request.user.profile
-        total_energy = 0
+        total_gems = 0
         claimed_count = 0
 
         for pm in PlayerMission.objects.filter(
             player=profile, completed=True, claimed=False
         ):
-            energy = pm.claim_reward()
-            total_energy += energy
+            gems = pm.claim_reward()
+            total_gems += gems
             claimed_count += 1
 
         if claimed_count > 0:
-            profile.add_energy(total_energy)
+            profile.add_gems(total_gems)
             messages.success(
-                request, f"¡{claimed_count} misiones reclamadas! +{total_energy} energía"
+                request, f"¡{claimed_count} misiones reclamadas! +{total_gems} gemas"
             )
         else:
             messages.info(request, "No hay misiones para reclamar")
@@ -319,16 +357,6 @@ SHOP_ITEMS = [
         "icon": "📿",
         "rarity": "rare",
     },
-    {
-        "id": "energy_pack",
-        "name": "Pack de Energía",
-        "desc": "+50 Energía",
-        "cost": 100,
-        "type": "energy",
-        "amount": 50,
-        "icon": "⚡",
-        "rarity": "common",
-    },
 ]
 
 
@@ -361,32 +389,30 @@ def shop(request):
             if target_god:
                 target_god.add_essence(item["amount"])
                 messages.success(
-                    request, f"¡Compra exitosa! +{item['amount']} esencia para {target_god.god.name}"
+                    request,
+                    f"¡Compra exitosa! +{item['amount']} esencia para {target_god.god.name}",
                 )
             else:
                 profile.gems += item["cost"]
                 profile.save(update_fields=["gems"])
-                messages.error(request, "Necesitas al menos un dios para comprar esencia")
+                messages.error(
+                    request, "Necesitas al menos un dios para comprar esencia"
+                )
                 return redirect("core:shop")
 
         elif item["type"] == "item":
             templates = Item.objects.filter(item_type=item["item_type"])
             if templates.exists():
                 import random
+
                 template = random.choice(list(templates))
                 PlayerItem.objects.create(player=profile, item=template)
-                messages.success(
-                    request, f"¡Compra exitosa! Obtuviste {template.name}"
-                )
+                messages.success(request, f"¡Compra exitosa! Obtuviste {template.name}")
             else:
                 profile.gems += item["cost"]
                 profile.save(update_fields=["gems"])
                 messages.error(request, "No hay items disponibles en este momento")
                 return redirect("core:shop")
-
-        elif item["type"] == "energy":
-            profile.restore_energy(item["amount"])
-            messages.success(request, f"¡Compra exitosa! +{item['amount']} energía")
 
         return redirect("core:shop")
 
@@ -410,22 +436,54 @@ def sitemap(request):
     from apps.gods.models import God
 
     urls = [
-        {"loc": request.build_absolute_uri(reverse("core:landing")), "priority": "1.0", "changefreq": "daily"},
-        {"loc": request.build_absolute_uri(reverse("core:login")), "priority": "0.9", "changefreq": "daily"},
-        {"loc": request.build_absolute_uri(reverse("core:register")), "priority": "0.9", "changefreq": "weekly"},
-        {"loc": request.build_absolute_uri(reverse("gods:list")), "priority": "0.8", "changefreq": "weekly"},
-        {"loc": request.build_absolute_uri(reverse("items:list")), "priority": "0.7", "changefreq": "weekly"},
-        {"loc": request.build_absolute_uri(reverse("campaign:list")), "priority": "0.7", "changefreq": "weekly"},
-        {"loc": request.build_absolute_uri(reverse("teams:list")), "priority": "0.6", "changefreq": "weekly"},
+        {
+            "loc": request.build_absolute_uri(reverse("core:landing")),
+            "priority": "1.0",
+            "changefreq": "daily",
+        },
+        {
+            "loc": request.build_absolute_uri(reverse("core:login")),
+            "priority": "0.9",
+            "changefreq": "daily",
+        },
+        {
+            "loc": request.build_absolute_uri(reverse("core:register")),
+            "priority": "0.9",
+            "changefreq": "weekly",
+        },
+        {
+            "loc": request.build_absolute_uri(reverse("gods:list")),
+            "priority": "0.8",
+            "changefreq": "weekly",
+        },
+        {
+            "loc": request.build_absolute_uri(reverse("items:list")),
+            "priority": "0.7",
+            "changefreq": "weekly",
+        },
+        {
+            "loc": request.build_absolute_uri(reverse("campaign:list")),
+            "priority": "0.7",
+            "changefreq": "weekly",
+        },
+        {
+            "loc": request.build_absolute_uri(reverse("teams:list")),
+            "priority": "0.6",
+            "changefreq": "weekly",
+        },
     ]
 
     gods = God.objects.all()
     for god in gods:
-        urls.append({
-            "loc": request.build_absolute_uri(reverse("gods:detail", args=[god.id])),
-            "priority": "0.6",
-            "changefreq": "monthly",
-        })
+        urls.append(
+            {
+                "loc": request.build_absolute_uri(
+                    reverse("gods:detail", args=[god.id])
+                ),
+                "priority": "0.6",
+                "changefreq": "monthly",
+            }
+        )
 
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'

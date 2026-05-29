@@ -8,12 +8,29 @@
 <div class="resources">
     <div class="resource resource-gems">
         <span class="resource-icon">💎</span>
-        <span class="resource-value">{% if user.is_superuser %}{% else %}{{ profile.gems }}{% endif %}</span>
+        <span class="resource-value">{% if user.is_superuser %}∞{% else %}{{ profile.gems }}{% endif %}</span>
     </div>
 </div>
 
 <div class="gacha-banner">
     <h2>Invocar Dioses</h2>
+
+    {% if pulls_since_legendary is not None %}
+    <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); border-radius: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <span style="font-size: 0.85rem; color: #ffd700;">⚡ Próximo legendario</span>
+            <span style="font-size: 0.85rem; color: #aaa;">{{ pulls_since_legendary }}/{{ pity_threshold }}</span>
+        </div>
+        <div style="height: 8px; background: rgba(0,0,0,0.4); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: {{ pity_percent }}%; background: linear-gradient(90deg, #ffd700, #ff6b00); border-radius: 4px; transition: width 0.5s;"></div>
+        </div>
+        <div style="margin-top: 0.3rem; font-size: 0.75rem; color: #888;">
+            {% if pity_percent >= 100 %}¡Garatizado! La próxima tirada contiene un legendario ✨
+            {% else %}Más tiradas = más probabilidad de legendario/mítico
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
     <p>Tirada simple: {{ SINGLE_PULL_COST }} gemas | Tirada múltiple (x10): {{ MULTI_PULL_COST }} gemas</p>
 
     <form method="post" style="max-width: 100%; margin-top: 1rem;">
