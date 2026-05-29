@@ -67,103 +67,108 @@ def campaign_list(request):
 @login_required
 def campaign_battle(request, level_id):
     """Execute a battle for a campaign level."""
-    profile = request.user.profile
-    level = get_object_or_404(CampaignLevel, pk=level_id)
+    try:
+        profile = request.user.profile
+        level = get_object_or_404(CampaignLevel, pk=level_id)
 
-    if profile.energy < level.energy_cost:
-        return render(
-            request,
-            "campaign/insufficient_energy.html",
-            {"level": level, "profile": profile},
+        if profile.energy < level.energy_cost:
+            return render(
+                request,
+                "campaign/insufficient_energy.html",
+                {"level": level, "profile": profile},
+            )
+
+        if level.order > profile.campaign_progress and not request.user.is_superuser:
+            return render(
+                request,
+                "campaign/locked.html",
+                {"level": level, "profile": profile},
+            )
+
+        team_id = request.session.get("campaign_team_id")
+        team = profile.teams.filter(id=team_id).first()
+        if not team or team.god_count() == 0:
+            team = profile.teams.first()
+            if team:
+                request.session["campaign_team_id"] = team.id
+
+        if not team or team.god_count() == 0:
+            return redirect("teams:list")
+
+        team_power = sum(
+            member.god.total_attack + member.god.total_defense
+            for member in team.members.select_related("god").all()
+            if member.god
         )
 
-    if level.order > profile.campaign_progress and not request.user.is_superuser:
-        return render(
-            request,
-            "campaign/locked.html",
-            {"level": level, "profile": profile},
+        class_multiplier = team.get_class_advantage_multiplier()
+        team_power = int(team_power * class_multiplier)
+
+        profile.spend_energy(level.energy_cost)
+
+        power_ratio = team_power / level.required_power if level.required_power > 0 else 1
+
+        if power_ratio >= 1.0:
+            won = True
+        elif power_ratio >= 0.7:
+            won = random.random() < (power_ratio - 0.5)
+        else:
+            won = False
+
+        gold_var = random.randint(0, int(level.gold_reward * 0.2))
+        gems_var = random.randint(0, max(1, int(level.gems_reward * 0.3)))
+
+        gold_earned = level.gold_reward + gold_var
+        gems_earned = level.gems_reward + gems_var
+
+        dropped_item = None
+        if won:
+            profile.add_gold(gold_earned)
+            profile.add_gems(gems_earned)
+            track_mission(profile, "win_battles")
+            track_mission(profile, "win_campaign")
+
+            if level.order == profile.campaign_progress:
+                profile.campaign_progress = level.order + 1
+                profile.save(update_fields=["campaign_progress"])
+                profile.recalculate_rank_score()
+
+            drop_chance = ITEM_DROP_CHANCE.get(level.difficulty, 0.05)
+            if random.random() < drop_chance:
+                all_items = list(Item.objects.all())
+                if all_items:
+                    item = random.choice(all_items)
+                    PlayerItem.objects.create(player=profile, item=item)
+                    dropped_item = item
+
+        battle = CampaignBattle.objects.create(
+            player=profile,
+            level=level,
+            team=team,
+            won=won,
+            turns=random.randint(1, 10),
+            gold_earned=gold_earned if won else 0,
+            gems_earned=gems_earned if won else 0,
         )
 
-    team_id = request.session.get("campaign_team_id")
-    team = profile.teams.filter(id=team_id).first()
-    if not team or team.god_count() == 0:
-        team = profile.teams.first()
-        if team:
-            request.session["campaign_team_id"] = team.id
+        next_level = None
+        if won:
+            next_level = CampaignLevel.objects.filter(order=level.order + 1).first()
 
-    if not team or team.god_count() == 0:
-        return redirect("teams:list")
-
-    team_power = sum(
-        member.god.total_attack + member.god.total_defense
-        for member in team.members.all()
-    )
-
-    class_multiplier = team.get_class_advantage_multiplier()
-    team_power = int(team_power * class_multiplier)
-
-    profile.spend_energy(level.energy_cost)
-
-    power_ratio = team_power / level.required_power if level.required_power > 0 else 1
-
-    if power_ratio >= 1.0:
-        won = True
-    elif power_ratio >= 0.7:
-        won = random.random() < (power_ratio - 0.5)
-    else:
-        won = False
-
-    gold_var = random.randint(0, int(level.gold_reward * 0.2))
-    gems_var = random.randint(0, max(1, int(level.gems_reward * 0.3)))
-
-    gold_earned = level.gold_reward + gold_var
-    gems_earned = level.gems_reward + gems_var
-
-    dropped_item = None
-    if won:
-        profile.add_gold(gold_earned)
-        profile.add_gems(gems_earned)
-        track_mission(profile, "win_battles")
-        track_mission(profile, "win_campaign")
-
-        if level.order == profile.campaign_progress:
-            profile.campaign_progress = level.order + 1
-            profile.save(update_fields=["campaign_progress"])
-            profile.recalculate_rank_score()
-
-        drop_chance = ITEM_DROP_CHANCE.get(level.difficulty, 0.05)
-        if random.random() < drop_chance:
-            all_items = list(Item.objects.all())
-            if all_items:
-                item = random.choice(all_items)
-                PlayerItem.objects.create(player=profile, item=item)
-                dropped_item = item
-
-    battle = CampaignBattle.objects.create(
-        player=profile,
-        level=level,
-        team=team,
-        won=won,
-        turns=random.randint(1, 10),
-        gold_earned=gold_earned if won else 0,
-        gems_earned=gems_earned if won else 0,
-    )
-
-    next_level = None
-    if won:
-        next_level = CampaignLevel.objects.filter(order=level.order + 1).first()
-
-    return render(
-        request,
-        "campaign/result.html",
-        {
-            "battle": battle,
-            "won": won,
-            "profile": profile,
-            "dropped_item": dropped_item,
-            "next_level": next_level,
-        },
-    )
+        return render(
+            request,
+            "campaign/result.html",
+            {
+                "battle": battle,
+                "won": won,
+                "profile": profile,
+                "dropped_item": dropped_item,
+                "next_level": next_level,
+            },
+        )
+    except Exception as e:
+        messages.error(request, f"Error en la batalla: {str(e)}")
+        return redirect("campaign:list")
 
 
 @login_required

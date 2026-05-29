@@ -32,19 +32,15 @@ class Team(models.Model):
         return self.god_count() >= MAX_TEAM_SIZE
 
     def get_class_advantage_multiplier(self) -> float:
-        """Calculate class advantage bonus for battle power.
-
-        Returns a multiplier (1.0 + bonus) based on role composition.
-        Each member with a role that counters another member's role
-        in the enemy team gets a bonus. For campaign, assumes balanced enemy.
-        """
+        """Calculate class advantage bonus for battle power."""
         if self.god_count() == 0:
             return 1.0
 
         role_counts: dict[str, int] = {}
-        for member in self.members.all():
-            role = member.god.god.role
-            role_counts[role] = role_counts.get(role, 0) + 1
+        for member in self.members.select_related("god__god").all():
+            if member.god and member.god.god:
+                role = member.god.god.role
+                role_counts[role] = role_counts.get(role, 0) + 1
 
         bonus = 0.0
         for role, count in role_counts.items():
