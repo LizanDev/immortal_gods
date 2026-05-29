@@ -16,7 +16,7 @@ if not SECRET_KEY:
     raise ValueError("SECRET_KEY environment variable must be set")
 DEBUG = os.getenv("APP_DEBUG", "false").lower() == "true"
 ALLOWED_HOSTS = os.getenv(
-    "ALLOWED_HOSTS", "localhost,127.0.0.1,immortal-gods.onrender.com"
+    "ALLOWED_HOSTS", "localhost,127.0.0.1,immortal-gods.onrender.com,.vercel.app"
 ).split(",")
 ALLOWED_HOSTS = [h.strip() for h in ALLOWED_HOSTS if h.strip()]
 
