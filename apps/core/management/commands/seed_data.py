@@ -4921,6 +4921,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Execute the seeding command."""
+        self.stdout.write("Cleaning up old Zodiac data...")
+        zodiac_deleted = God.objects.filter(pantheon="zodiac").delete()[0]
+        Item.objects.filter(belongs_to_god__in=[
+            "Aries", "Taurus", "Gemini", "Cancer", "Leo",
+            "Virgo", "Libra", "Scorpio", "Sagittarius",
+            "Capricorn", "Aquarius", "Pisces",
+        ]).delete()
+        self.stdout.write(self.style.SUCCESS(f"Deleted {zodiac_deleted} old Zodiac gods"))
+
         self.stdout.write("Seeding gods...")
         gods_created = 0
         for data in GODS_DATA:
