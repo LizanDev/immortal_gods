@@ -1334,9 +1334,9 @@ class God(models.Model):
         suffix = "dramatic lighting, digital painting, fantasy art style"
         return f"{base}, {suffix}, detailed character portrait, 4k"
 
-    @property
     _image_url_cache: str | None = None
 
+    @property
     def image_url(self) -> str:
         """Get image URL for this god (static if available, AI fallback)."""
         if self._image_url_cache is not None:
