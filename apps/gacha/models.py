@@ -9,6 +9,7 @@ from apps.items.models import Item
 
 SINGLE_PULL_COST = 150
 MULTI_PULL_COST = 1350
+PITY_LIMIT = 50
 
 
 class Banner(models.TextChoices):
@@ -51,6 +52,18 @@ def roll_rarity() -> str:
     return random.choices(rarities, weights=weights, k=1)[0]
 
 
+def get_pulls_since_last_high(player) -> int:
+    """Count consecutive pulls since last legendary or mythic."""
+    last_high = (
+        PullHistory.objects.filter(player=player, god__rarity__in=["legendary", "mythic"])
+        .order_by("-created_at")
+        .first()
+    )
+    if last_high:
+        return PullHistory.objects.filter(player=player, created_at__gt=last_high.created_at).count()
+    return PullHistory.objects.filter(player=player).count()
+
+
 def perform_pull(player, banner: str, pull_type: str) -> list[dict]:
     """Execute a gacha pull and return results."""
     cost = MULTI_PULL_COST if pull_type == PullType.MULTI else SINGLE_PULL_COST
@@ -66,7 +79,14 @@ def perform_pull(player, banner: str, pull_type: str) -> list[dict]:
         pantheon_filter = {"pantheon": banner}
 
     for _ in range(pulls_count):
-        rarity = roll_rarity()
+        pulls_since = get_pulls_since_last_high(player)
+
+        if pulls_since >= PITY_LIMIT:
+            rarity = random.choices(
+                ["legendary", "mythic"], weights=[80, 20], k=1
+            )[0]
+        else:
+            rarity = roll_rarity()
 
         gods = list(God.objects.filter(rarity=rarity, **pantheon_filter))
 

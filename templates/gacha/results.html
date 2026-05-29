@@ -5,6 +5,12 @@
 {% block content %}
 <h1>Pull Results</h1>
 
+{% if pulls_since_legendary is not None and pulls_since_legendary < 10 %}
+<div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: rgba(255,215,0,0.15); border: 1px solid rgba(255,215,0,0.4); border-radius: 10px; text-align: center;">
+    <span style="font-size: 1.2rem;">✨ ¡Pity reiniciado! Próximo legendario en <strong>{{ pulls_since_legendary }}/{{ pity_threshold }}</strong> tiradas</span>
+</div>
+{% endif %}
+
 <div class="grid" style="justify-content: center;">
     {% for result in results %}
     {% if result.type == "god" %}
