@@ -26,6 +26,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.devtunnels.ms",
     "https://*.onrender.com",
     "https://immortal-gods.onrender.com",
+    "https://*.vercel.app",
 ]
 
 # Security headers
@@ -97,6 +98,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+# Platform detection
+IS_VERCEL = os.getenv("VERCEL", "false").lower() in ("1", "true")
+IS_RENDER = os.getenv("RENDER", "false").lower() in ("true", "1")
+
 # Database
 DATABASES = {
     "default": {
@@ -108,8 +113,12 @@ DATABASES = {
 if os.getenv("DATABASE_URL"):
     import dj_database_url
 
+    # Serverless (Vercel) no puede usar conexiones persistentes.
+    # Render (gunicorn) sí se beneficia de conexiones recicladas.
+    conn_max_age = 0 if IS_VERCEL else 600
+
     DATABASES["default"] = dj_database_url.config(
-        conn_max_age=600,
+        conn_max_age=conn_max_age,
         ssl_require=True,
     )
 

@@ -448,6 +448,27 @@ def shop(request):
     )
 
 
+def health_check(request):
+    """Lightweight health check for warm-up and monitoring."""
+    import json
+
+    from django.db import connections
+    from django.db.utils import OperationalError
+
+    db_ok = True
+    try:
+        connections["default"].cursor().execute("SELECT 1")
+    except OperationalError:
+        db_ok = False
+
+    status = 200 if db_ok else 503
+    return HttpResponse(
+        json.dumps({"status": "ok" if db_ok else "db_error"}),
+        content_type="application/json",
+        status=status,
+    )
+
+
 def robots_txt(request):
     """Serve robots.txt for search engines."""
     return render(request, "core/robots.txt", content_type="text/plain")

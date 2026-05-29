@@ -1,0 +1,15 @@
+{
+  "buildCommand": "uv sync --frozen && python manage.py collectstatic --noinput && python manage.py migrate --noinput",
+  "outputDirectory": "staticfiles",
+  "devCommand": "python manage.py runserver",
+  "framework": null,
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 30,
+      "memory": 512
+    }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api/index.py" }
+  ]
+}
