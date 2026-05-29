@@ -81,21 +81,9 @@ def team_add_member(request, team_id):
             return redirect("teams:detail", team_id=team.id)
 
         TeamMember.objects.create(team=team, god=player_god, position=position)
+        return redirect("teams:detail", team_id=team.id)
 
-    available_gods = PlayerGod.objects.filter(player=request.user.profile).exclude(
-        id__in=team.members.values_list("god_id", flat=True)
-    )
-    positions = [
-        i
-        for i in range(1, MAX_TEAM_SIZE + 1)
-        if not team.members.filter(position=i).exists()
-    ]
-
-    return render(
-        request,
-        "teams/add_member.html",
-        {"team": team, "gods": available_gods, "positions": positions},
-    )
+    return redirect("teams:detail", team_id=team.id)
 
 
 @login_required
