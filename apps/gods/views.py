@@ -224,7 +224,7 @@ def god_detail_json(request, pg_id):
             "rarity": pg.god.get_rarity_display(),
             "rarity_value": pg.god.rarity,
             "description": pg.god.description,
-            "image_url": pg.god.image_url(),
+            "image_url": pg.god.image_url,
             "level": pg.level,
             "quality_roman": pg.quality_roman,
             "quality_tier": pg.quality_tier,
