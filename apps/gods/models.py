@@ -13,7 +13,7 @@ class Pantheon(models.TextChoices):
     """Available pantheons for gods."""
 
     GREEK = "greek", "Greek"
-    ZODIAC = "zodiac", "Zodiac"
+    AZTEC = "aztec", "Aztec"
     CHINESE = "chinese", "Chinese"
     EGYPTIAN = "egyptian", "Egyptian"
     NORDIC = "nordic", "Nordic"
@@ -91,11 +91,66 @@ GOD_SKILLS: dict[str, dict[str, dict[str, Any]]] = {
         "basic2": {"name": _("Harvest Blessing"), "desc": _("Heals ally for {dmg} HP"), "multiplier": 0.5},
         "ultimate": {"name": _("Earth's Embrace"), "desc": _("Regenerates team, deals {dmg} damage to enemies"), "multiplier": 2.2},
     },
-    # Zodiac Gods
-    "Aries": {
-        "basic1": {"name": _("Ram Charge"), "desc": _("Headbutt dealing {dmg} damage + stun"), "multiplier": 0.85},
-        "basic2": {"name": _("Fire Horns"), "desc": _("Flaming horns dealing {dmg} damage"), "multiplier": 1.0},
-        "ultimate": {"name": _("Constellation Fury"), "desc": _("Cosmic ram charge dealing {dmg} damage to all"), "multiplier": 2.8},
+    # Aztec Gods
+    "Huitzilopochtli": {
+        "basic1": {"name": _("Sun Spear"), "desc": _("Solar lance dealing {dmg} damage"), "multiplier": 0.85},
+        "basic2": {"name": _("Hummingbird Strike"), "desc": _("Swift attack dealing {dmg} damage"), "multiplier": 1.0},
+        "ultimate": {"name": _("War of the Sun"), "desc": _("Summons solar fire dealing {dmg} damage to all"), "multiplier": 3.0},
+    },
+    "Quetzalcoatl": {
+        "basic1": {"name": _("Feather Wind"), "desc": _("Wind blade dealing {dmg} damage"), "multiplier": 0.7},
+        "basic2": {"name": _("Serpent Coil"), "desc": _("Heals ally for {dmg} HP"), "multiplier": 0.5},
+        "ultimate": {"name": _("Plumed Serpent"), "desc": _("Transforms into dragon, deals {dmg} damage to all"), "multiplier": 3.5},
+    },
+    "Tezcatlipoca": {
+        "basic1": {"name": _("Shadow Claw"), "desc": _("Dark strike dealing {dmg} damage"), "multiplier": 0.85},
+        "basic2": {"name": _("Smoke Mirror"), "desc": _("Creates illusion, blocks {dmg} damage"), "multiplier": 0.6},
+        "ultimate": {"name": _("Night Jaguar"), "desc": _("Becomes invisible, deals {dmg} damage to all"), "multiplier": 3.2},
+    },
+    "Tlaloc": {
+        "basic1": {"name": _("Rain Drop"), "desc": _("Water bolt dealing {dmg} damage"), "multiplier": 0.75},
+        "basic2": {"name": _("Storm Cloud"), "desc": _("Heals team for {dmg} HP"), "multiplier": 0.5},
+        "ultimate": {"name": _("Great Flood"), "desc": _("Drowns battlefield dealing {dmg} damage to all"), "multiplier": 2.8},
+    },
+    "Xipe Totec": {
+        "basic1": {"name": _("Flayed Strike"), "desc": _("Skinning blow dealing {dmg} damage"), "multiplier": 0.8},
+        "basic2": {"name": _("Rebirth Skin"), "desc": _("Sheds skin, heals {dmg} HP"), "multiplier": 0.6},
+        "ultimate": {"name": _("Lord of Flayed"), "desc": _("Wears enemy skin, deals {dmg} damage to all"), "multiplier": 3.0},
+    },
+    "Coatlicue": {
+        "basic1": {"name": _("Serpent Skirt"), "desc": _("Snake bite dealing {dmg} damage"), "multiplier": 0.7},
+        "basic2": {"name": _("Earth Mother"), "desc": _("Raises defense, blocks {dmg} damage"), "multiplier": 0.5},
+        "ultimate": {"name": _("Mother of Gods"), "desc": _("Consumes all, deals {dmg} damage to enemies"), "multiplier": 2.5},
+    },
+    "Mictlantecuhtli": {
+        "basic1": {"name": _("Bone Spear"), "desc": _("Skeletal lance dealing {dmg} damage"), "multiplier": 0.85},
+        "basic2": {"name": _("Death Gaze"), "desc": _("Terrifying stare dealing {dmg} damage"), "multiplier": 1.1},
+        "ultimate": {"name": _("Underworld Gate"), "desc": _("Opens portal to Mictlan, deals {dmg} damage to all"), "multiplier": 3.0},
+    },
+    "Xochiquetzal": {
+        "basic1": {"name": _("Flower Petal"), "desc": _("Petal storm dealing {dmg} damage"), "multiplier": 0.7},
+        "basic2": {"name": _("Beauty's Charm"), "desc": _("Charms enemy, heals {dmg} HP"), "multiplier": 0.5},
+        "ultimate": {"name": _("Garden of Eden"), "desc": _("Summons paradise garden, deals {dmg} damage to all"), "multiplier": 2.8},
+    },
+    "Xiuhtecuhtli": {
+        "basic1": {"name": _("Obsidian Blade"), "desc": _("Volcanic glass dealing {dmg} damage"), "multiplier": 0.9},
+        "basic2": {"name": _("Fire Walker"), "desc": _("Lava step dealing {dmg} damage"), "multiplier": 0.8},
+        "ultimate": {"name": _("Volcanic Eruption"), "desc": _("Destroys mountain dealing {dmg} damage to all"), "multiplier": 3.2},
+    },
+    "Coyolxauhqui": {
+        "basic1": {"name": _("Moon Disk"), "desc": _("Lunar throw dealing {dmg} damage"), "multiplier": 0.75},
+        "basic2": {"name": _("Silver Light"), "desc": _("Moonbeam healing {dmg} HP"), "multiplier": 0.5},
+        "ultimate": {"name": _("Dismembered Moon"), "desc": _("Shatters moon, deals {dmg} damage to all"), "multiplier": 2.5},
+    },
+    "Ehecatl": {
+        "basic1": {"name": _("Wind Gust"), "desc": _("Hurricane blast dealing {dmg} damage"), "multiplier": 0.85},
+        "basic2": {"name": _("Breath of Life"), "desc": _("Heals ally for {dmg} HP"), "multiplier": 0.5},
+        "ultimate": {"name": _("Great Hurricane"), "desc": _("Summons storm dealing {dmg} damage to all"), "multiplier": 3.0},
+    },
+    "Tonatiuh": {
+        "basic1": {"name": _("Sun Ray"), "desc": _("Solar beam dealing {dmg} damage"), "multiplier": 0.8},
+        "basic2": {"name": _("Fifth Sun"), "desc": _("Raises attack by {dmg}"), "multiplier": 0.6},
+        "ultimate": {"name": _("Solar Eclipse"), "desc": _("Darkens sun, deals {dmg} damage to all"), "multiplier": 2.8},
     },
     "Taurus": {
         "basic1": {"name": _("Earth Stomp"), "desc": _("Ground shake dealing {dmg} damage"), "multiplier": 0.7},
@@ -360,18 +415,18 @@ class God(models.Model):
         "Hermes": "Hermes messenger god with winged sandals, caduceus staff, traveler cloak, Mount Olympus path, youthful mischievous expression",
         "Hephaestus": "Hephaestus god of the forge at his anvil, hammer in hand, volcanic fire background, muscular blacksmith, soot-covered face",
         "Demeter": "Demeter goddess of harvest with wheat crown, golden fields background, flowing green robes, nurturing expression, autumn atmosphere",
-        "Aries": "Aries zodiac warrior with ram horns, red battle armor, fiery constellation background, aggressive stance, cosmic energy",
-        "Taurus": "Taurus zodiac warrior with bull horns, heavy green armor, earth magic aura, mountain background, stoic powerful expression",
-        "Gemini": "Gemini zodiac twin warriors, matching silver armor, dual swords, starry constellation background, synchronized poses",
-        "Cancer": "Cancer zodiac warrior with crab shell armor, water magic effects, ocean background, protective stance, blue energy aura",
-        "Leo": "Leo zodiac king with golden lion mane, royal purple armor, crown, sun constellation background, majestic powerful presence",
-        "Virgo": "Virgo zodiac maiden in pure white robes, healing magic aura, wheat field background, serene graceful expression",
-        "Libra": "Libra zodiac warrior with golden scales, balanced dual weapons, justice theme, air magic effects, harmonious composition",
-        "Scorpio": "Scorpio zodiac assassin in dark armor, scorpion tail weapon, poison magic effects, night sky background, dangerous aura",
-        "Sagittarius": "Sagittarius zodiac centaur archer, bow drawn, star constellation background, fire arrow, adventurous expression",
-        "Capricorn": "Capricorn zodiac warrior with goat horns, mountain peak background, earth and sea magic, determined expression",
-        "Aquarius": "Aquarius zodiac mage with water vessel, cosmic water magic, starry background, flowing blue robes, mystical aura",
-        "Pisces": "Pisces zodiac mage with dual fish companions, ocean magic effects, dreamy underwater background, ethereal presence",
+        "Huitzilopochtli": "Huitzilopochtli Aztec god of war and sun, hummingbird headdress, turquoise shield, obsidian spear, Tenochtitlan temple background, fierce warrior expression, Mesoamerican art style",
+        "Quetzalcoatl": "Quetzalcoatl feathered serpent god, emerald and quetzal feathers, wind god mask, Mesoamerican temple background, divine serpent form, ancient Mexican art",
+        "Tezcatlipoca": "Tezcatlipoca Aztec god of night and sorcery, obsidian mirror, jaguar skin, smoking foot, dark mystical background, menacing powerful presence, Aztec mythology",
+        "Tlaloc": "Tlaloc Aztec rain god, goggle eyes, fanged mouth, water serpent, storm clouds, rain effects, Mesoamerican temple, divine water deity",
+        "Xipe Totec": "Xipe Totec Aztec god of rebirth, flayed skin garment, golden body, corn and seeds, spring renewal theme, Mesoamerican ritual background",
+        "Coatlicue": "Coatlicue Aztec earth mother goddess, serpent skirt, skull necklace, clawed hands, powerful maternal presence, Mesoamerican stone sculpture style",
+        "Mictlantecuhtli": "Mictlantecuhtli Aztec god of the underworld, skeletal body, blood bowl headdress, bone accessories, dark underworld background, terrifying death deity",
+        "Xochiquetzal": "Xochiquetzal Aztec goddess of beauty and flowers, floral headdress, butterfly wings, colorful feathers, paradise garden background, beautiful divine presence",
+        "Xiuhtecuhtli": "Xiuhtecuhtli Aztec god of fire and volcanoes, fire mask, turquoise mosaic, volcanic background, flame effects, powerful fire deity, Mesoamerican art",
+        "Coyolxauhqui": "Coyolxauhqui Aztec moon goddess, bell-adorned face, dismembered form, lunar disk, night sky background, tragic divine beauty, Aztec stone carving style",
+        "Ehecatl": "Ehecatl Aztec wind god, duck-billed mask, wind effects, feathered costume, sweeping storm background, invisible force personified, Mesoamerican mythology",
+        "Tonatiuh": "Tonatiuh Aztec sun god, sun disk face, eagle claw hands, solar rays, temple sacrifice background, powerful celestial presence, Aztec calendar stone style",
         "Jade Emperor": "Jade Emperor celestial ruler on dragon throne, golden imperial robes, Chinese celestial palace background, divine authority",
         "Sun Wukong": "Sun Wukong Monkey King with golden staff, cloud somersault, Chinese armor, mischievous powerful expression, Journey to the West",
         "Nezha": "Nezha young deity with fire wheels, lotus armor, Chinese mythological warrior, fierce determined expression, flame effects",
@@ -440,18 +495,18 @@ class God(models.Model):
             "Hermes": "Hermes Greek god speed winged sandals messenger staff traveler",
             "Hephaestus": "Hephaestus Greek god forge blacksmith hammer anvil fire",
             "Demeter": "Demeter Greek goddess harvest wheat crown green robes nature",
-            "Aries": "Aries zodiac ram warrior red armor horns battle ready",
-            "Taurus": "Taurus zodiac bull warrior heavy armor horns strong",
-            "Gemini": "Gemini zodiac twins dual swords matching armor mystical",
-            "Cancer": "Cancer zodiac crab warrior shell armor water magic",
-            "Leo": "Leo zodiac lion king golden mane crown royal armor",
-            "Virgo": "Virgo zodiac maiden pure white robes healing magic",
-            "Libra": "Libra zodiac scales justice balanced armor golden scales",
-            "Scorpio": "Scorpio zodiac scorpion warrior dark armor stinger weapon",
-            "Sagittarius": "Sagittarius zodiac archer centaur bow stars constellation",
-            "Capricorn": "Capricorn zodiac goat warrior mountain armor sea horns",
-            "Aquarius": "Aquarius zodiac water bearer blue robes cosmic water",
-            "Pisces": "Pisces zodiac fish dual fish armor ocean magic",
+            "Huitzilopochtli": "Huitzilopochtli Aztec god war sun hummingbird headdress turquoise shield obsidian spear",
+            "Quetzalcoatl": "Quetzalcoatl Aztec feathered serpent god emerald feathers wind mask divine",
+            "Tezcatlipoca": "Tezcatlipoca Aztec god night sorcery obsidian mirror jaguar skin smoking foot",
+            "Tlaloc": "Tlaloc Aztec rain god goggle eyes fangs water serpent storm clouds",
+            "Xipe Totec": "Xipe Totec Aztec god rebirth flayed skin golden body corn seeds",
+            "Coatlicue": "Coatlicue Aztec earth mother serpent skirt skull necklace clawed hands",
+            "Mictlantecuhtli": "Mictlantecuhtli Aztec god underworld skeletal blood bowl headdress bone accessories",
+            "Xochiquetzal": "Xochiquetzal Aztec goddess beauty flowers floral headdress butterfly wings",
+            "Xiuhtecuhtli": "Xiuhtecuhtli Aztec god fire volcanoes fire mask turquoise mosaic flames",
+            "Coyolxauhqui": "Coyolxauhqui Aztec moon goddess bells face lunar disk night sky",
+            "Ehecatl": "Ehecatl Aztec wind god duck-billed mask wind effects feathered costume",
+            "Tonatiuh": "Tonatiuh Aztec sun god sun disk eagle claws solar rays temple",
             "Jade Emperor": "Jade Emperor Chinese celestial dragon throne golden robes",
             "Sun Wukong": "Sun Wukong Monkey King golden staff cloud armor mischievous",
             "Nezha": "Nezha Chinese deity fire wheels lotus armor young warrior",
