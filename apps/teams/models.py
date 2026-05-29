@@ -112,6 +112,7 @@ class Team(models.Model):
                         "count": count,
                         "threshold": threshold,
                         "bonus_pct": bonus,
+                        "bonus_pct_display": int(bonus * 100),
                     }
                     details.append(detail)
                     break
