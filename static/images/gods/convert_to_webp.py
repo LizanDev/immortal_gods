@@ -30,7 +30,9 @@ def convert_images_to_webp(directory: str = ".") -> None:
             with Image.open(image_file) as img:
                 img.save(webp_file, "WEBP", quality=85)
             image_file.unlink()
-            logger.info("Converted and removed: %s -> %s", image_file.name, webp_file.name)
+            logger.info(
+                "Converted and removed: %s -> %s", image_file.name, webp_file.name
+            )
         except Exception as e:
             logger.error("Failed to convert %s: %s", image_file.name, e)
 

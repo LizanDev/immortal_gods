@@ -1,10 +1,12 @@
 import os
+
 import django
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
 
 import urllib.request
+
 from apps.gods.models import God
 
 media_dir = "media/gods"
