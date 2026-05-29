@@ -7,7 +7,7 @@
 
 <div class="grid">
     {% for pi in items %}
-    <div class="item-card {{ pi.item.item_type }}">
+    <div class="item-card {{ pi.item.item_type }}" id="item-{{ pi.id }}">
         <h3>{{ pi.item.name }} +{{ pi.level }}</h3>
         <p>{{ pi.item.get_item_type_display }}</p>
         <p style="font-size: 0.8rem; margin: 0.5rem 0;">

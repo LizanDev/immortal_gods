@@ -69,7 +69,7 @@ def level_up_god(request, god_id):
                 f"Not enough gold. Need {pg.gold_upgrade_cost} ",
             )
 
-    return redirect(request.META.get("HTTP_REFERER", "core:inventory"))
+    return redirect(request.META.get("HTTP_REFERER", "core:inventory") + f"#god-{god_id}")
 
 
 @login_required
@@ -93,7 +93,7 @@ def ascend_god(request, god_id):
                     f"Not enough essence. Need {pg.ascension_cost}, have {pg.essence}",
                 )
 
-    return redirect(request.META.get("HTTP_REFERER", "core:inventory"))
+    return redirect(request.META.get("HTTP_REFERER", "core:inventory") + f"#god-{god_id}")
 
 
 @login_required

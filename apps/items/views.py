@@ -48,7 +48,7 @@ def equip_item(request, item_id):
         success = player_item.equip(player_god)
 
         if success:
-            return redirect(request.META.get("HTTP_REFERER", "core:inventory"))
+    return redirect(request.META.get("HTTP_REFERER", "core:inventory") + f"#item-{item_id}")
 
     gods = PlayerGod.objects.filter(player=request.user.profile)
     return render(

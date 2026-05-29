@@ -207,7 +207,7 @@
 
     <div class="grid" id="gods-grid">
         {% for pg in gods %}
-        <div class="god-card rarity-{{ pg.god.rarity }} god-card-filter" data-pantheon="{{ pg.god.pantheon }}">
+        <div class="god-card rarity-{{ pg.god.rarity }} god-card-filter" data-pantheon="{{ pg.god.pantheon }}" id="god-{{ pg.id }}">
             <div class="god-card-image">
                 <img src="{{ pg.god.image_url }}" alt="{{ pg.god.name }}"
                      onerror="this.style.display='none'">
