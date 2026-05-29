@@ -1,44 +1,10 @@
-asgiref==3.11.1
-    # via django
-babel==2.18.0
-    # via immortal-gods
-certifi==2026.5.20
-    # via requests
-charset-normalizer==3.4.7
-    # via requests
-dj-database-url==3.1.2
-    # via immortal-gods
-django==5.2.14 ; python_full_version < '3.12'
-    # via
-    #   dj-database-url
-    #   immortal-gods
-django==6.0.5 ; python_full_version >= '3.12'
-    # via
-    #   dj-database-url
-    #   immortal-gods
-idna==3.16
-    # via requests
-pillow==12.2.0
-    # via immortal-gods
-polib==1.2.0
-    # via immortal-gods
-psycopg==3.3.4
-    # via immortal-gods
-psycopg-binary==3.3.4 ; implementation_name != 'pypy'
-    # via psycopg
-python-dotenv==1.2.2
-    # via immortal-gods
-requests==2.34.2
-    # via immortal-gods
-sqlparse==0.5.5
-    # via django
-typing-extensions==4.15.0 ; python_full_version < '3.13'
-    # via psycopg
-tzdata==2026.2 ; sys_platform == 'win32'
-    # via
-    #   django
-    #   psycopg
-urllib3==2.7.0
-    # via requests
-whitenoise==6.12.0
-    # via immortal-gods
+django>=5.2.14
+python-dotenv>=1.0
+pillow>=10.0
+babel>=2.18.0
+polib>=1.2.0
+requests>=2.34.2
+whitenoise>=6.12.0
+psycopg2-binary>=2.9.10
+dj-database-url>=3.1.2
+gunicorn>=26.0.0
