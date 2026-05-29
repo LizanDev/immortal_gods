@@ -18,8 +18,30 @@ def team_list(request):
 @login_required
 def team_detail(request, team_id):
     """Show details for a specific team."""
-    team = get_object_or_404(Team, pk=team_id, player=request.user.profile)
-    return render(request, "teams/detail.html", {"team": team})
+    profile = request.user.profile
+    team = get_object_or_404(Team, pk=team_id, player=profile)
+
+    members = team.members.select_related("god__god").all()
+    members_by_pos = {m.position: m for m in members}
+    slots = [
+        {"position": i, "member": members_by_pos.get(i)}
+        for i in range(1, MAX_TEAM_SIZE + 1)
+    ]
+
+    available_gods = PlayerGod.objects.filter(player=profile).exclude(
+        id__in=team.members.values_list("god_id", flat=True)
+    )
+
+    return render(
+        request,
+        "teams/detail.html",
+        {
+            "team": team,
+            "slots": slots,
+            "available_gods": available_gods,
+            "profile": profile,
+        },
+    )
 
 
 @login_required

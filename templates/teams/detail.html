@@ -6,10 +6,6 @@
 {% block content %}
 <h1>{{ team.name }}</h1>
 
-{% if not team.is_full %}
-<a href="{% url 'teams:add_member' team.id %}" class="btn">Añadir miembro</a>
-{% endif %}
-
 {% with synergies=team.get_synergy_details %}
 {% if synergies %}
 <div class="card" style="background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(74,158,255,0.05)); border-color: #a855f7;">
@@ -31,42 +27,76 @@
 {% endwith %}
 
 <div class="card">
-    {% for member in team.members.all %}
-    <div class="team-member">
-        <div class="god-card rarity-{{ member.god.god.rarity }}" style="width: 120px; flex-shrink: 0;">
-            <div class="god-card-image" style="height: 100px;">
-                <img src="{{ member.god.god.image_url }}" alt="{{ member.god.god.name }}"
-                     onerror="this.style.display='none'">
+    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        {% for slot in slots %}
+        {% with pos=slot.position member=slot.member %}
+        {% with pg=member.god %}
+        <div class="team-member" style="border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 0.75rem; background: rgba(255,255,255,0.02);">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: {% if member %}linear-gradient(135deg, #a855f7, #7c3aed){% else %}rgba(255,255,255,0.08){% endif %}; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; color: #fff; flex-shrink: 0;">
+                    {{ pos }}
+                </div>
+
+                {% if member %}
+                <div style="width: 60px; height: 60px; border-radius: 8px; overflow: hidden; border: 2px solid {% if pg.god.rarity == 'mythic' %}#ff4444{% elif pg.god.rarity == 'legendary' %}#ffd700{% elif pg.god.rarity == 'epic' %}#a855f7{% elif pg.god.rarity == 'rare' %}#4a9eff{% else %}#666{% endif %}; flex-shrink: 0; background: #1a1a3e;">
+                    <img src="{{ pg.god.image_url }}" alt="{{ pg.god.name }}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.style.display='none'">
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                    <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                        <strong style="color: #fff; font-size: 0.9rem;">{{ pg.god.name }}</strong>
+                        <span style="font-size: 0.65rem; color: {% if pg.god.rarity == 'mythic' %}#ff4444{% elif pg.god.rarity == 'legendary' %}#ffd700{% elif pg.god.rarity == 'epic' %}#a855f7{% elif pg.god.rarity == 'rare' %}#4a9eff{% else %}#888{% endif %}; background: rgba(0,0,0,0.3); padding: 0.1rem 0.4rem; border-radius: 4px;">
+                            {{ pg.god.get_rarity_display }}
+                        </span>
+                        <span style="font-size: 0.7rem; color: #aaa;">Nv.{{ pg.level }} {{ pg.god.get_role_display }}</span>
+                        <span style="font-size: 0.7rem; color: #888;">{{ pg.quality_roman }}</span>
+                    </div>
+                    <div style="font-size: 0.7rem; color: #999; margin-top: 0.15rem;">
+                        ⚔️{{ pg.total_attack }} 🛡️{{ pg.total_defense }} ❤️{{ pg.total_hp }} 💨{{ pg.total_speed }}
+                    </div>
+                    {% with tags=pg.god.synergy_tags.all %}
+                    {% if tags %}
+                    <div style="margin-top: 0.25rem; display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                        {% for t in tags %}
+                        <span style="font-size: 0.55rem; background: rgba(168,85,247,0.15); color: #c084fc; padding: 0.05rem 0.35rem; border-radius: 4px;">🏷️ {{ t.tag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+                <form method="post" action="{% url 'teams:remove_member' team.id member.id %}" onsubmit="return confirm('¿Eliminar a {{ pg.god.name }} del equipo?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary" style="font-size: 0.7rem; padding: 0.2rem 0.5rem; white-space: nowrap; background: rgba(255,68,68,0.15); color: #ff6b6b; border-color: rgba(255,68,68,0.3);">✕</button>
+                </form>
+                {% else %}
+                <div style="flex: 1; color: #444; font-size: 0.8rem; font-style: italic;">Vacío</div>
+                {% if available_gods %}
+                <form method="post" action="{% url 'teams:add_member' team.id %}" style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
+                    {% csrf_token %}
+                    <input type="hidden" name="position" value="{{ pos }}">
+                    <select name="god_id" required style="padding: 0.3rem 0.5rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: #1a1a3e; color: #fff; font-size: 0.75rem; max-width: 190px;">
+                        <option value="">— Asignar —</option>
+                        {% for g in available_gods %}
+                        <option value="{{ g.id }}">
+                            {{ g.god.name }} (Nv.{{ g.level }}) {{ g.god.get_rarity_display }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn" style="font-size: 0.7rem; padding: 0.25rem 0.6rem; white-space: nowrap;">+</button>
+                </form>
+                {% else %}
+                <span style="font-size: 0.7rem; color: #555;">Sin dioses libres</span>
+                {% endif %}
+                {% endif %}
             </div>
         </div>
-        <div style="flex: 1;">
-            <p style="font-weight: bold;">Posición {{ member.position }}: {{ member.god.god.name }} (Lv.{{ member.god.level }}) <span style="color: {% if member.god.god.rarity == 'mythic' %}#ff4444{% elif member.god.god.rarity == 'legendary' %}#ffd700{% elif member.god.god.rarity == 'epic' %}#a855f7{% else %}#aaa{% endif %}; font-size: 0.75rem;">{{ member.god.god.get_rarity_display }}</span></p>
-            <p style="font-size: 0.8rem;">
-                ATK: {{ member.god.total_attack }} | DEF: {{ member.god.total_defense }} | HP: {{ member.god.total_hp }} | SPD: {{ member.god.total_speed }}
-            </p>
-            {% with member.god.god.synergy_tags.all as tags %}
-            {% if tags %}
-            <div style="margin-top: 0.3rem; display: flex; gap: 0.3rem; flex-wrap: wrap;">
-                {% for t in tags %}
-                <span style="font-size: 0.65rem; background: rgba(168,85,247,0.15); color: #c084fc; padding: 0.1rem 0.4rem; border-radius: 4px;">🏷️ {{ t.tag }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
-            {% endwith %}
-            <div style="margin-top: 0.5rem;">
-                {% for skill in member.god.skills %}
-                <span style="display: inline-block; background: rgba(255,255,255,0.05); padding: 0.2rem 0.5rem; margin: 0.1rem; border-radius: 4px; font-size: 0.7rem; border-left: 2px solid {% if skill.type == 'ultimate' %}#ffd700{% else %}#4a9eff{% endif %};">
-                    <strong style="color: {% if skill.type == 'ultimate' %}#ffd700{% else %}#4a9eff{% endif %};">{{ skill.name }}</strong>
-                </span>
-                {% endfor %}
-            </div>
-            <a href="{% url 'teams:remove_member' team.id member.id %}" class="btn btn-secondary" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">Eliminar</a>
-        </div>
+        {% endwith %}
+        {% endwith %}
+        {% endfor %}
     </div>
-    {% empty %}
-    <p>No hay dioses asignados a este equipo.</p>
-    {% endfor %}
 </div>
 
-<a href="{% url 'teams:list' %}" class="btn btn-secondary" style="margin-top: 1rem;">Volver a equipos</a>
+<div style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap;">
+    <a href="{% url 'teams:list' %}" class="btn btn-secondary">← Volver a equipos</a>
+    <a href="{% url 'teams:delete' team.id %}" class="btn btn-secondary" style="background: rgba(255,68,68,0.15); color: #ff6b6b; border-color: rgba(255,68,68,0.3);">🗑️ Borrar equipo</a>
+</div>
 {% endblock %}
