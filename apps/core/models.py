@@ -239,6 +239,13 @@ class GiftNotification(models.Model):
     player = models.ForeignKey(
         "PlayerProfile", on_delete=models.CASCADE, related_name="gift_notifications"
     )
+    sender = models.ForeignKey(
+        "auth.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="sent_gifts",
+    )
     message = models.CharField(max_length=255)
     gems = models.PositiveIntegerField(default=0)
     gold = models.PositiveIntegerField(default=0)

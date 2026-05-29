@@ -10,7 +10,9 @@ def gift_notifications(request):
     try:
         profile = request.user.profile
         notifications = list(
-            GiftNotification.objects.filter(player=profile, seen=False)[:5]
+            GiftNotification.objects.filter(
+                player=profile, seen=False, sender__is_staff=True
+            )[:5]
         )
         return {"gift_notifications": notifications}
     except Exception:

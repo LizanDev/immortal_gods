@@ -29,7 +29,11 @@ class PlayerProfileAdmin(admin.ModelAdmin):
             count = 0
             for profile in queryset:
                 GiftNotification.objects.create(
-                    player=profile, gems=gems, gold=gold, message=message_text
+                    player=profile,
+                    sender=request.user if request.user.is_staff else None,
+                    gems=gems,
+                    gold=gold,
+                    message=message_text,
                 )
                 profile.add_gems(gems)
                 profile.add_gold(gold)

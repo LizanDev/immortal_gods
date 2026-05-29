@@ -191,11 +191,7 @@ def god_detail_json(request, pg_id):
         pk=pg_id,
         player=request.user.profile,
     )
-    skills = []
-    for s in pg.skills:
-        s["desc"] = s["desc"].replace("{dmg}", str(s["multiplier"]))
-        skills.append(s)
-
+    skills = pg.skills
     equipment = []
     for eq in pg._equipment_list():
         equipment.append(
