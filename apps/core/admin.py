@@ -92,3 +92,11 @@ class GiftNotificationAdmin(admin.ModelAdmin):
     list_filter = ("seen", "created_at")
     search_fields = ("player__user__username", "message")
     readonly_fields = ("seen",)
+    raw_id_fields = ("player", "sender")
+
+    def save_model(self, request, obj, form, change):
+        """Auto-add gems/gold to player when creating a notification."""
+        if not change:
+            obj.player.add_gems(obj.gems)
+            obj.player.add_gold(obj.gold)
+        super().save_model(request, obj, form, change)
