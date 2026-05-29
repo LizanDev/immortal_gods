@@ -207,7 +207,7 @@
 
     <div class="grid" id="gods-grid">
         {% for pg in gods %}
-        <div class="god-card rarity-{{ pg.god.rarity }} god-card-filter" data-pantheon="{{ pg.god.pantheon }}" id="god-{{ pg.id }}">
+        <div class="god-card rarity-{{ pg.god.rarity }} god-card-filter" data-pantheon="{{ pg.god.pantheon }}" data-god-id="{{ pg.id }}" id="god-{{ pg.id }}" onclick="openHeroModal({{ pg.id }})" style="cursor: pointer;">
             <div class="god-card-image">
                 <img src="{{ pg.god.image_url }}" alt="{{ pg.god.name }}"
                      onerror="this.style.display='none'">
@@ -226,7 +226,7 @@
                 </div>
 
                 <!-- Equipment Slots -->
-                <div class="equip-slots">
+                <div class="equip-slots" onclick="event.stopPropagation();">
                     <div class="equip-slot {% if pg.weapon %}occupied{% endif %}"
                          onclick="openEquip({{ pg.id }}, 'weapon')" title="Arma">
                         {% if pg.weapon %}⚔️{% else %}⚔️{% endif %}
@@ -250,7 +250,7 @@
                     <div class="stat-bar"><span class="stat-label">HP</span><span class="stat-value" style="color: #51cf66;">{{ pg.total_hp }}</span></div>
                     <div class="stat-bar"><span class="stat-label">SPD</span><span class="stat-value" style="color: #ffd700;">{{ pg.total_speed }}</span></div>
                 </div>
-                <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;" onclick="event.stopPropagation();">
                     <form method="post" action="{% url 'gods:level_up' pg.id %}" style="display: flex; align-items: center; gap: 0.3rem;">
                         {% csrf_token %}
                         <span style="font-size: 0.75rem; color: #ffd700; line-height: 1;">Nv.</span>
@@ -368,6 +368,110 @@
         {% endfor %}
     </div>
 </div>
+
+<!-- Hero Detail Modal -->
+<div id="heroModal" class="equip-modal">
+    <div class="modal-content" style="max-width: 550px; padding: 0; overflow: hidden;">
+        <div id="heroModalBody" style="padding: 1.5rem;">
+            <div style="text-align: center;">
+                <div id="heroModalSpinner" style="padding: 2rem; color: #888;">Cargando...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hero-lore {
+    background: rgba(255,255,255,0.04);
+    border-left: 3px solid #a855f7;
+    padding: 0.75rem;
+    margin: 0.75rem 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.8rem;
+    color: #ccc;
+    line-height: 1.5;
+}
+.hero-stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+</style>
+
+<script>
+function openHeroModal(godId) {
+    const modal = document.getElementById('heroModal');
+    const body = document.getElementById('heroModalBody');
+    modal.classList.add('active');
+    body.innerHTML = '<div style="text-align: center; padding: 2rem; color: #888;">Cargando...</div>';
+
+    fetch('/gods/api/' + godId + '/')
+        .then(r => r.json())
+        .then(g => {
+            const rarityColors = { 'mythic': '#ff4444', 'legendary': '#ffd700', 'epic': '#a855f7', 'rare': '#4a9eff', 'common': '#888' };
+            const color = rarityColors[g.rarity_value] || '#888';
+            body.innerHTML = `
+                <div style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="width: 100px; height: 100px; border-radius: 8px; overflow: hidden; border: 2px solid ${color}; flex-shrink: 0; background: #1a1a3e;">
+                        <img src="${g.image_url}" alt="${g.name}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.style.display='none'">
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 1.3rem; font-weight: bold; color: #fff;">${g.name}</div>
+                        <div style="font-size: 0.8rem; color: ${color};">${g.rarity} · ${g.pantheon}</div>
+                        <div style="font-size: 0.8rem; color: #aaa;">${g.role} · Nv.${g.level} · ${g.quality_roman}</div>
+                        <div style="margin-top: 0.3rem; display: flex; gap: 0.3rem; flex-wrap: wrap;">
+                            ${g.synergy_tags.map(t => '<span style="font-size:0.65rem;background:rgba(168,85,247,0.15);color:#c084fc;padding:0.1rem 0.4rem;border-radius:4px;">🏷️ ' + t + '</span>').join('')}
+                        </div>
+                    </div>
+                    <button onclick="document.getElementById('heroModal').classList.remove('active')" style="background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;">&times;</button>
+                </div>
+
+                ${g.description ? '<div class="hero-lore">📜 ' + g.description + '</div>' : ''}
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem; margin: 0.75rem 0;">
+                    <div class="hero-stat-row"><span style="color:#aaa;">ATK</span><span style="color:#ff6b6b;font-weight:bold;">${g.total_attack}</span></div>
+                    <div class="hero-stat-row"><span style="color:#aaa;">DEF</span><span style="color:#4a9eff;font-weight:bold;">${g.total_defense}</span></div>
+                    <div class="hero-stat-row"><span style="color:#aaa;">HP</span><span style="color:#51cf66;font-weight:bold;">${g.total_hp}</span></div>
+                    <div class="hero-stat-row"><span style="color:#aaa;">SPD</span><span style="color:#ffd700;font-weight:bold;">${g.total_speed}</span></div>
+                </div>
+
+                ${g.equipment.length ? `
+                <div style="margin: 0.75rem 0;">
+                    <div style="font-size:0.8rem;color:#ddd;margin-bottom:0.3rem;">⚔️ Equipamiento:</div>
+                    ${g.equipment.map(eq => `
+                    <div style="background:rgba(255,255,255,0.04);padding:0.4rem;border-radius:6px;margin-bottom:0.3rem;border-left:3px solid ${eq.type === 'weapon' ? '#ff6b6b' : eq.type === 'armor' ? '#4a9eff' : '#ffd700'};">
+                        <div style="font-size:0.75rem;color:#fff;">${eq.name} +${eq.level}</div>
+                        <div style="font-size:0.7rem;color:#aaa;">ATK+${eq.atk} DEF+${eq.def} HP+${eq.hp} SPD+${eq.spd}</div>
+                        ${eq.has_passive && eq.passive_name ? '<div style="font-size:0.7rem;color:#ffd700;margin-top:0.2rem;">✨ ' + eq.passive_name + ': ' + eq.passive_desc + '</div>' : ''}
+                    </div>
+                    `).join('')}
+                </div>
+                ` : ''}
+
+                <div style="margin: 0.75rem 0;">
+                    <div style="font-size:0.8rem;color:#ddd;margin-bottom:0.3rem;">🔮 Habilidades:</div>
+                    ${g.skills.map(s => `
+                    <div style="background:rgba(255,255,255,0.04);padding:0.4rem;border-radius:6px;margin-bottom:0.3rem;border-left:3px solid ${s.type === 'ultimate' ? '#ffd700' : '#4a9eff'};">
+                        <div style="font-size:0.75rem;color:#fff;">${s.name} ${s.type === 'ultimate' ? '<span style="background:#ffd700;color:#000;padding:0 4px;border-radius:2px;font-size:0.6rem;">ULT</span>' : ''}</div>
+                        <div style="font-size:0.7rem;color:#aaa;">${s.desc.replace('{dmg}', s.multiplier)}</div>
+                    </div>
+                    `).join('')}
+                </div>
+
+                <div style="font-size:0.7rem;color:#a855f7;margin-top:0.5rem;">💠 Esencia: ${g.essence}</div>
+            `;
+        })
+        .catch(() => {
+            body.innerHTML = '<div style="text-align:center;padding:2rem;color:#ff6b6b;">Error al cargar información del héroe.</div>';
+        });
+}
+
+// Close modal on outside click
+document.getElementById('heroModal').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('active');
+});
+</script>
 
 <!-- Equipment Modal -->
 <div id="equipModal" class="equip-modal">

@@ -14,5 +14,10 @@ urlpatterns = [
     path("<int:god_id>/ascend/", views.ascend_god, name="ascend"),
     path("<int:god_id>/equip/<int:item_id>/", views.equip_item, name="equip_item"),
     path("unequip/<int:item_id>/", views.unequip_item, name="unequip_item"),
-    path("<int:god_id>/available-items/<str:item_type>/", views.available_items, name="available_items"),
+    path(
+        "<int:god_id>/available-items/<str:item_type>/",
+        views.available_items,
+        name="available_items",
+    ),
+    path("api/<int:pg_id>/", views.god_detail_json, name="detail_json"),
 ]
