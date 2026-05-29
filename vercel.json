@@ -1,5 +1,5 @@
 {
-  "buildCommand": "python manage.py collectstatic --noinput",
+  "buildCommand": "DATABASE_URL='' python manage.py collectstatic --noinput",
   "outputDirectory": "staticfiles",
   "devCommand": "python manage.py runserver",
   "framework": null,
