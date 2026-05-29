@@ -253,7 +253,7 @@
                 <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
                     <form method="post" action="{% url 'gods:level_up' pg.id %}" style="display: flex; align-items: center; gap: 0.3rem;">
                         {% csrf_token %}
-                        <span style="font-size: 0.75rem; color: #ffd700;">Nv.</span>
+                        <span style="font-size: 0.75rem; color: #ffd700; line-height: 1;">Nv.</span>
                         {% if user.is_superuser or profile.gold >= pg.gold_upgrade_cost %}
                         <button type="submit" class="btn btn-gold" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">+{{ pg.gold_upgrade_cost }}</button>
                         {% else %}
@@ -263,7 +263,7 @@
                     {% if pg.quality_tier < 5 %}
                     <form method="post" action="{% url 'gods:ascend' pg.id %}" style="display: flex; align-items: center; gap: 0.3rem;">
                         {% csrf_token %}
-                        <span style="font-size: 0.75rem; color: #a855f7;">⬆️{{ pg.ascension_cost }}</span>
+                        <span style="font-size: 0.75rem; color: #a855f7; line-height: 1;">⬆️{{ pg.ascension_cost }}</span>
                         {% if user.is_superuser or profile.gold >= 0 %}
                         <button type="submit" class="btn" style="font-size: 0.7rem; padding: 0.2rem 0.5rem; background: linear-gradient(135deg, #a855f7, #7c3aed);">Ascender</button>
                         {% else %}
