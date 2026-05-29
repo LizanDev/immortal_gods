@@ -26,4 +26,5 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(next_page="core:landing"), name="logout"),
     path("redeem/", views.redeem_referral, name="redeem_referral"),
     path("leaderboard/", views.leaderboard, name="leaderboard"),
+    path("notifications/mark-seen/", views.mark_gift_seen, name="mark_gift_seen"),
 ]

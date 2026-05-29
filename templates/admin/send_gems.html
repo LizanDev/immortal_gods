@@ -1,0 +1,43 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>🎁 Enviar regalo a jugadores seleccionados</h1>
+
+<form method="post">{% csrf_token %}
+  <div style="margin: 1rem 0;">
+    <p>Jugadores seleccionados:</p>
+    <ul>
+      {% for p in players %}
+      <li>{{ p.user.username }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <fieldset style="border: 1px solid #ccc; padding: 1rem; border-radius: 8px;">
+    <legend>Regalo</legend>
+    <div style="margin-bottom: 0.75rem;">
+      <label>Gemas 💎:</label>
+      <input type="number" name="gems" value="1000" min="0" style="width: 120px;">
+    </div>
+    <div style="margin-bottom: 0.75rem;">
+      <label>Oro 🥇:</label>
+      <input type="number" name="gold" value="0" min="0" style="width: 120px;">
+    </div>
+    <div style="margin-bottom: 0.75rem;">
+      <label>Mensaje:</label>
+      <textarea name="message" rows="2" style="width: 100%; max-width: 400px;">¡Has recibido un regalo del administrador!</textarea>
+    </div>
+  </fieldset>
+
+  <div style="margin-top: 1rem;">
+    {% for player in players %}
+    <input type="hidden" name="_selected_action" value="{{ player.pk }}">
+    {% endfor %}
+    <input type="hidden" name="action" value="send_gems">
+    <button type="submit" name="apply" value="yes" class="default" style="padding: 0.5rem 1.5rem; background: #417690; color: #fff; border: none; border-radius: 4px; cursor: pointer;">
+      ✅ Enviar
+    </button>
+    <a href="{% url 'admin:core_playerprofile_changelist' %}" style="margin-left: 1rem;">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

@@ -496,3 +496,15 @@ def sitemap(request):
     xml += "</urlset>"
 
     return HttpResponse(xml, content_type="application/xml")
+
+
+@require_POST
+def mark_gift_seen(request):
+    """Mark all unread gift notifications as seen for the current user."""
+    if request.user.is_authenticated:
+        from .models import GiftNotification
+
+        GiftNotification.objects.filter(
+            player=request.user.profile, seen=False
+        ).update(seen=True)
+    return HttpResponse("ok")

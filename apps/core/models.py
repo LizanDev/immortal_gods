@@ -233,6 +233,25 @@ class ReferralCode(models.Model):
         return self.used_by is not None
 
 
+class GiftNotification(models.Model):
+    """Admin-to-player gift notification shown as popup on login."""
+
+    player = models.ForeignKey(
+        "PlayerProfile", on_delete=models.CASCADE, related_name="gift_notifications"
+    )
+    message = models.CharField(max_length=255)
+    gems = models.PositiveIntegerField(default=0)
+    gold = models.PositiveIntegerField(default=0)
+    seen = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        return f"Gift for {self.player.user.username}: {self.gems}💎 {self.gold}🥇"
+
+
 def track_mission(player: "PlayerProfile", mission_type: str, amount: int = 1) -> None:
     """Track mission progress for a player. Called by other apps."""
     try:
