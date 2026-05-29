@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Resultado - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>⚔️ Resultado de la Batalla</h1>
+
+<div class="card" style="text-align: center; border-top: 3px solid {% if won %}#4ade80{% else %}#ff6b6b{% endif %};">
+    <div style="font-size: 4rem; margin-bottom: 0.5rem;">
+        {% if won %}🏆{% else %}💀{% endif %}
+    </div>
+    <h2 style="color: {% if won %}#4ade80{% else %}#ff6b6b{% endif %}; margin: 0;">
+        {% if won %}¡Victoria!{% else %}Derrota{% endif %}
+    </h2>
+    <p style="color: #aaa; margin: 0.5rem 0;">
+        vs <strong>{{ enemy_profile.user.username }}</strong>
+    </p>
+    {% if rating_change >= 0 %}
+    <div style="font-size: 1.5rem; color: #4ade80; margin: 0.5rem 0;">+{{ rating_change }} rating</div>
+    {% else %}
+    <div style="font-size: 1.5rem; color: #ff6b6b; margin: 0.5rem 0;">{{ rating_change }} rating</div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h3>Detalles de la batalla</h3>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 200px;">
+            <h4 style="color: {% if battle.winner == profile %}#4ade80{% endif %};">
+                Tu equipo ({{ battle.attacker_snapshot.power|default:"?" }})
+            </h4>
+            {% for god in battle.attacker_snapshot.gods %}
+            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <img src="{{ god.image_url }}" alt="{{ god.name }}" style="width: 30px; height: 30px; border-radius: 4px; object-fit: contain; background: #1a1a3e;" onerror="this.style.display='none'">
+                <div style="font-size: 0.85rem;">{{ god.name }}</div>
+                <div style="font-size: 0.7rem; color: #888; margin-left: auto;">⚔️{{ god.attack }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+            <h4 style="color: {% if battle.winner == enemy_profile %}#4ade80{% endif %};">
+                {{ enemy_profile.user.username }} ({{ battle.defender_snapshot.power|default:"?" }})
+            </h4>
+            {% for god in battle.defender_snapshot.gods %}
+            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <img src="{{ god.image_url }}" alt="{{ god.name }}" style="width: 30px; height: 30px; border-radius: 4px; object-fit: contain; background: #1a1a3e;" onerror="this.style.display='none'">
+                <div style="font-size: 0.85rem;">{{ god.name }}</div>
+                <div style="font-size: 0.7rem; color: #888; margin-left: auto;">⚔️{{ god.attack }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Registro de la batalla</h3>
+    <div style="max-height: 300px; overflow-y: auto;">
+        {% for entry in battle.battle_log %}
+        {% if entry.turn %}
+        <div style="padding: 0.3rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; color: #ccc;">
+            <strong>Turno {{ entry.turn }}</strong> —
+            Atacante: -{{ entry.attacker_damage }} HP ({{ entry.attacker_hp }} restante) —
+            Defensor: -{{ entry.defender_damage }} HP ({{ entry.defender_hp }} restante)
+        </div>
+        {% elif entry.result %}
+        <div style="padding: 0.5rem 0; font-size: 1rem; font-weight: bold; color: {% if entry.result == 'victory' %}#4ade80{% else %}#ff6b6b{% endif %};">
+            {% if entry.result == 'victory' %}Victoria{% else %}Derrota{% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<div style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap;">
+    <a href="{% url 'pvp:lobby' %}" class="btn">⚔️ Volver a la Arena</a>
+    <a href="{% url 'pvp:history' %}" class="btn btn-secondary">📜 Historial</a>
+</div>
+{% endblock %}

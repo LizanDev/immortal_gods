@@ -1,17 +1,21 @@
 """Core views."""
 
+import random
+
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from apps.campaign.models import FactionLadder, FactionProgress
 from apps.core.models import (
     DailyLoginStreak,
     DailyMission,
+    MissionResetLog,
     PlayerMission,
     PlayerProfile,
     ReferralCode,
@@ -206,6 +210,24 @@ def leaderboard(request):
 @login_required
 def missions(request):
     """Show daily missions and allow claiming rewards."""
+    from apps.core.management.commands.reset_missions import needs_reset
+
+    if needs_reset():
+        try:
+            pool = list(DailyMission.objects.filter(in_pool=True))
+            if len(pool) >= 5:
+                chosen = random.sample(pool, 5)
+                chosen_ids = [m.id for m in chosen]
+                DailyMission.objects.filter(in_pool=True).update(is_active=False)
+                DailyMission.objects.filter(id__in=chosen_ids).update(is_active=True)
+                PlayerMission.objects.all().delete()
+                log = MissionResetLog.objects.first()
+                if log:
+                    log.last_reset = timezone.now
+                    log.save(update_fields=["last_reset"])
+        except Exception:
+            pass
+
     profile = request.user.profile
 
     try:

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Historial PvP - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>📜 Historial de Batallas</h1>
+
+<div class="card" style="padding: 0;">
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="color: #888; font-size: 0.8rem; text-align: left; border-bottom: 2px solid rgba(255,255,255,0.1);">
+                <th style="padding: 0.75rem;">Rival</th>
+                <th style="padding: 0.75rem;">Resultado</th>
+                <th style="padding: 0.75rem;">Cambio</th>
+                <th style="padding: 0.75rem;">Fecha</th>
+                <th style="padding: 0.75rem;">Detalle</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for battle in battles %}
+            <tr style="border-top: 1px solid rgba(255,255,255,0.05);">
+                {% if battle.attacker == profile %}
+                <td style="padding: 0.75rem;">{{ battle.defender.user.username }}</td>
+                <td style="padding: 0.75rem;">
+                    {% if battle.winner == profile %}
+                    <span style="color: #4ade80;">Victoria</span>
+                    {% else %}
+                    <span style="color: #ff6b6b;">Derrota</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 0.75rem;">
+                    {% if battle.attacker_rating_change >= 0 %}
+                    <span style="color: #4ade80;">+{{ battle.attacker_rating_change }}</span>
+                    {% else %}
+                    <span style="color: #ff6b6b;">{{ battle.attacker_rating_change }}</span>
+                    {% endif %}
+                </td>
+                {% else %}
+                <td style="padding: 0.75rem;">{{ battle.attacker.user.username }}</td>
+                <td style="padding: 0.75rem;">
+                    {% if battle.winner == profile %}
+                    <span style="color: #4ade80;">Victoria</span>
+                    {% else %}
+                    <span style="color: #ff6b6b;">Derrota</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 0.75rem;">
+                    {% if battle.defender_rating_change >= 0 %}
+                    <span style="color: #4ade80;">+{{ battle.defender_rating_change }}</span>
+                    {% else %}
+                    <span style="color: #ff6b6b;">{{ battle.defender_rating_change }}</span>
+                    {% endif %}
+                </td>
+                {% endif %}
+                <td style="padding: 0.75rem; color: #888; font-size: 0.8rem;">{{ battle.created_at|date:"d/m/Y H:i" }}</td>
+                <td style="padding: 0.75rem;">
+                    <a href="{% url 'pvp:battle_result' battle.id %}" class="btn" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">Ver</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="padding: 2rem; text-align: center; color: #888;">Aún no has participado en batallas PvP.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if total_pages > 1 %}
+<div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem;">
+    {% if page > 1 %}
+    <a href="?page={{ page|add:-1 }}" class="btn btn-secondary">← Anterior</a>
+    {% endif %}
+    <span style="color: #888; padding: 0.5rem;">Página {{ page }} de {{ total_pages }}</span>
+    {% if page < total_pages %}
+    <a href="?page={{ page|add:1 }}" class="btn btn-secondary">Siguiente →</a>
+    {% endif %}
+</div>
+{% endif %}
+
+<a href="{% url 'pvp:lobby' %}" class="btn btn-secondary" style="margin-top: 1rem;">← Volver a la Arena</a>
+{% endblock %}

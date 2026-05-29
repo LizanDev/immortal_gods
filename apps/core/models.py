@@ -83,18 +83,32 @@ class DailyMission(models.Model):
         ("win_campaign", "Completar Campaña"),
     ]
 
-    mission_type = models.CharField(max_length=30, choices=MISSION_TYPES, unique=True)
+    mission_type = models.CharField(max_length=30, choices=MISSION_TYPES)
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=255)
     target = models.PositiveIntegerField(default=1)
     gem_reward = models.PositiveIntegerField(default=5)
     is_active = models.BooleanField(default=True)
+    in_pool = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["id"]
 
     def __str__(self) -> str:
         return f"{self.title} ({self.gem_reward} gemas)"
+
+
+class MissionResetLog(models.Model):
+    """Tracks when missions were last randomized globally."""
+
+    last_reset = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Registro de reinicio de misiones"
+        verbose_name_plural = "Registros de reinicio de misiones"
+
+    def __str__(self) -> str:
+        return f"Último reinicio: {self.last_reset}"
 
 
 class PlayerMission(models.Model):

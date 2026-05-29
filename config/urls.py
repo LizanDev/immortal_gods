@@ -12,4 +12,5 @@ urlpatterns = [
     path("teams/", include("apps.teams.urls")),
     path("gacha/", include("apps.gacha.urls")),
     path("campaign/", include("apps.campaign.urls")),
+    path("pvp/", include("apps.pvp.urls")),
 ]

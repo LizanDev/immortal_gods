@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Ranking PvP - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>🏅 Ranking PvP</h1>
+
+{% if current_rank %}
+<div class="card" style="border-color: #ffd700; background: rgba(255,215,0,0.05);">
+    <p style="margin: 0;">
+        Tu posición: <strong style="color: #ffd700; font-size: 1.2rem;">#{{ current_rank }}</strong>
+        — Rating: <strong>{{ profile.pvp.rating }}</strong>
+        — Rango: <strong>{{ profile.pvp.get_rank_display }}</strong>
+    </p>
+</div>
+{% endif %}
+
+<div class="card" style="padding: 0;">
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="color: #888; font-size: 0.8rem; text-align: left; border-bottom: 2px solid rgba(255,255,255,0.1);">
+                <th style="padding: 0.75rem;">#</th>
+                <th style="padding: 0.75rem;">Jugador</th>
+                <th style="padding: 0.75rem;">Rating</th>
+                <th style="padding: 0.75rem;">Rango</th>
+                <th style="padding: 0.75rem;">Victorias</th>
+                <th style="padding: 0.75rem;">Win Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pvp in top_players %}
+            <tr style="border-top: 1px solid rgba(255,255,255,0.05); {% if pvp.player == profile %}background: rgba(255,215,0,0.08);{% endif %}">
+                <td style="padding: 0.75rem; font-weight: bold;">
+                    {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% else %}{{ forloop.counter }}{% endif %}
+                </td>
+                <td style="padding: 0.75rem;">{{ pvp.player.user.username }}</td>
+                <td style="padding: 0.75rem; font-weight: bold; color: #ffd700;">{{ pvp.rating }}</td>
+                <td style="padding: 0.75rem;">{{ pvp.get_rank_display }}</td>
+                <td style="padding: 0.75rem;">{{ pvp.battles_won }}/{{ pvp.battles_played }}</td>
+                <td style="padding: 0.75rem;">{{ pvp.win_rate }}%</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="padding: 2rem; text-align: center; color: #888;">Aún no hay batallas PvP.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<a href="{% url 'pvp:lobby' %}" class="btn btn-secondary" style="margin-top: 1rem;">← Volver a la Arena</a>
+{% endblock %}

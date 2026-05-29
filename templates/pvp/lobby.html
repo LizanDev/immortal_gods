@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}PvP - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>⚔️ Arena PvP</h1>
+
+<div class="card" style="border-top: 3px solid #ff4444;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h2 style="margin: 0;">{{ pvp.get_rank_display }}</h2>
+            <div style="font-size: 2rem; font-weight: bold; color: #ffd700;">{{ pvp.rating }}</div>
+            <div style="font-size: 0.8rem; color: #aaa;">Puntuación</div>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-size: 1.5rem; font-weight: bold;">{{ pvp.battles_played }}</div>
+            <div style="font-size: 0.8rem; color: #aaa;">Batallas</div>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-size: 1.5rem; font-weight: bold; color: #4ade80;">{{ pvp.battles_won }}</div>
+            <div style="font-size: 0.8rem; color: #aaa;">Victorias</div>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-size: 1.5rem; font-weight: bold;">{{ pvp.win_rate }}%</div>
+            <div style="font-size: 0.8rem; color: #aaa;">Win Rate</div>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-size: 1rem; color: #888;">
+                Mejor: <span style="color: #ffd700;">{{ pvp.highest_rating }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if not teams %}
+<div class="card" style="border-color: #ff6b6b; background: rgba(255,68,68,0.05);">
+    <p style="color: #ff6b6b;">Necesitas al menos un equipo para entrar en la arena.</p>
+    <a href="{% url 'teams:create' %}" class="btn">Crear equipo</a>
+</div>
+{% else %}
+<div id="pvp-status">
+    {% if pvp.in_queue %}
+    <div class="card" style="border-color: #4a9eff; text-align: center; background: rgba(74,158,255,0.05);">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+        <h3 style="color: #4a9eff; margin: 0;">Buscando oponente...</h3>
+        <p style="color: #aaa; margin: 0.5rem 0;">Espera mientras encontramos un rival adecuado.</p>
+        <div id="queue-timer" style="font-size: 1.5rem; color: #fff; margin: 0.5rem 0;">0s</div>
+        <button id="cancelQueueBtn" class="btn btn-secondary" style="margin-top: 0.5rem;">Cancelar búsqueda</button>
+    </div>
+    {% else %}
+    <div class="card" style="text-align: center;">
+        <p style="color: #aaa; margin-bottom: 1rem;">
+            Enfréntate a otros jugadores. Gana puntos de rating y sube en el ranking.
+            <br>Se usará tu <strong>primer equipo</strong> para la batalla.
+        </p>
+        <button id="findMatchBtn" class="btn" style="font-size: 1.2rem; padding: 0.75rem 2rem;">
+            ⚔️ Buscar Batalla
+        </button>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<div style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap;">
+    <a href="{% url 'pvp:ranking' %}" class="btn btn-secondary">🏅 Ranking</a>
+    <a href="{% url 'pvp:history' %}" class="btn btn-secondary">📜 Historial</a>
+</div>
+
+{% if recent_battles %}
+<h2 style="margin-top: 2rem;">Últimas batallas</h2>
+<div class="card" style="padding: 0;">
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="color: #888; font-size: 0.8rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <th style="padding: 0.75rem;">Rival</th>
+                <th style="padding: 0.75rem;">Resultado</th>
+                <th style="padding: 0.75rem;">Cambio</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for battle in recent_battles %}
+            <tr style="border-top: 1px solid rgba(255,255,255,0.05);">
+                {% if battle.attacker == profile %}
+                <td style="padding: 0.75rem;">{{ battle.defender.user.username }}</td>
+                <td style="padding: 0.75rem;">
+                    {% if battle.winner == profile %}
+                    <span style="color: #4ade80;">Victoria</span>
+                    {% else %}
+                    <span style="color: #ff6b6b;">Derrota</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 0.75rem;">
+                    {% if battle.attacker_rating_change >= 0 %}
+                    <span style="color: #4ade80;">+{{ battle.attacker_rating_change }}</span>
+                    {% else %}
+                    <span style="color: #ff6b6b;">{{ battle.attacker_rating_change }}</span>
+                    {% endif %}
+                </td>
+                {% else %}
+                <td style="padding: 0.75rem;">{{ battle.attacker.user.username }}</td>
+                <td style="padding: 0.75rem;">
+                    {% if battle.winner == profile %}
+                    <span style="color: #4ade80;">Victoria</span>
+                    {% else %}
+                    <span style="color: #ff6b6b;">Derrota</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 0.75rem;">
+                    {% if battle.defender_rating_change >= 0 %}
+                    <span style="color: #4ade80;">+{{ battle.defender_rating_change }}</span>
+                    {% else %}
+                    <span style="color: #ff6b6b;">{{ battle.defender_rating_change }}</span>
+                    {% endif %}
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<script>
+(function() {
+    var findBtn = document.getElementById('findMatchBtn');
+    var cancelBtn = document.getElementById('cancelQueueBtn');
+    var timerEl = document.getElementById('queue-timer');
+    var pollId = null;
+    var secs = 0;
+
+    function updateTimer() {
+        secs++;
+        if (timerEl) timerEl.textContent = secs + 's';
+    }
+
+    function startPoll() {
+        secs = 0;
+        pollId = setInterval(function() {
+            updateTimer();
+            fetch('{% url "pvp:check_match" %}')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.status === 'match_found') {
+                        clearInterval(pollId);
+                        window.location.href = '{% url "pvp:battle_result" battle_id=0 %}'.replace('0', data.battle_id);
+                    } else if (data.status === 'timeout') {
+                        clearInterval(pollId);
+                        window.location.reload();
+                    }
+                });
+        }, 3000);
+    }
+
+    if (findBtn) {
+        findBtn.addEventListener('click', function() {
+            this.disabled = true;
+            this.textContent = 'Buscando...';
+            fetch('{% url "pvp:find_match" %}', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.status === 'match_found') {
+                    window.location.href = '{% url "pvp:battle_result" battle_id=0 %}'.replace('0', data.battle_id);
+                } else if (data.status === 'queued') {
+                    window.location.reload();
+                } else if (data.status === 'no_team') {
+                    alert('Crea un equipo primero.');
+                    findBtn.disabled = false;
+                    findBtn.textContent = '⚔️ Buscar Batalla';
+                }
+            });
+        });
+    }
+
+    if (cancelBtn && timerEl) {
+        startPoll();
+        cancelBtn.addEventListener('click', function() {
+            clearInterval(pollId);
+            fetch('{% url "pvp:cancel_queue" %}', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            }).then(function() { window.location.reload(); });
+        });
+    }
+})();
+</script>
+{% endblock %}
