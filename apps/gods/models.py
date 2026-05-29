@@ -1,7 +1,5 @@
 """Gods models."""
 
-import os
-from pathlib import Path
 from typing import Any
 
 from django.conf import settings
@@ -42,330 +40,1098 @@ CLASS_ADVANTAGE_BONUS = 0.15
 GOD_SKILLS: dict[str, dict[str, dict[str, Any]]] = {
     # Greek Gods
     "Zeus": {
-        "basic1": {"name": _("Thunderbolt"), "desc": _("Hurls lightning dealing {dmg} damage"), "multiplier": 0.9},
-        "basic2": {"name": _("Storm Call"), "desc": _("Summons storm dealing {dmg} AoE damage"), "multiplier": 0.7},
-        "ultimate": {"name": _("Wrath of Olympus"), "desc": _("Divine lightning storm dealing {dmg} damage to all enemies"), "multiplier": 3.5},
+        "basic1": {
+            "name": _("Thunderbolt"),
+            "desc": _("Hurls lightning dealing {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "basic2": {
+            "name": _("Storm Call"),
+            "desc": _("Summons storm dealing {dmg} AoE damage"),
+            "multiplier": 0.7,
+        },
+        "ultimate": {
+            "name": _("Wrath of Olympus"),
+            "desc": _("Divine lightning storm dealing {dmg} damage to all enemies"),
+            "multiplier": 3.5,
+        },
     },
     "Poseidon": {
-        "basic1": {"name": _("Tidal Wave"), "desc": _("Crashing wave dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Ocean's Grasp"), "desc": _("Water tentacles dealing {dmg} damage + slow"), "multiplier": 1.0},
-        "ultimate": {"name": _("Leviathan's Fury"), "desc": _("Summons sea monster dealing {dmg} damage to all"), "multiplier": 3.2},
+        "basic1": {
+            "name": _("Tidal Wave"),
+            "desc": _("Crashing wave dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Ocean's Grasp"),
+            "desc": _("Water tentacles dealing {dmg} damage + slow"),
+            "multiplier": 1.0,
+        },
+        "ultimate": {
+            "name": _("Leviathan's Fury"),
+            "desc": _("Summons sea monster dealing {dmg} damage to all"),
+            "multiplier": 3.2,
+        },
     },
     "Hades": {
-        "basic1": {"name": _("Soul Drain"), "desc": _("Steals life dealing {dmg} damage"), "multiplier": 0.8},
-        "basic2": {"name": _("Shadow Step"), "desc": _("Phase through shadows dealing {dmg} damage"), "multiplier": 1.1},
-        "ultimate": {"name": _("Gate of the Underworld"), "desc": _("Opens hell portal dealing {dmg} damage, ignores armor"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Soul Drain"),
+            "desc": _("Steals life dealing {dmg} damage"),
+            "multiplier": 0.8,
+        },
+        "basic2": {
+            "name": _("Shadow Step"),
+            "desc": _("Phase through shadows dealing {dmg} damage"),
+            "multiplier": 1.1,
+        },
+        "ultimate": {
+            "name": _("Gate of the Underworld"),
+            "desc": _("Opens hell portal dealing {dmg} damage, ignores armor"),
+            "multiplier": 3.0,
+        },
     },
     "Ares": {
-        "basic1": {"name": _("War Cry"), "desc": _("Battle shout dealing {dmg} damage + fear"), "multiplier": 0.85},
-        "basic2": {"name": _("Bloodlust Strike"), "desc": _("Frenzied attack dealing {dmg} damage"), "multiplier": 1.0},
-        "ultimate": {"name": _("God of War"), "desc": _("Enters battle frenzy dealing {dmg} damage to all enemies"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("War Cry"),
+            "desc": _("Battle shout dealing {dmg} damage + fear"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Bloodlust Strike"),
+            "desc": _("Frenzied attack dealing {dmg} damage"),
+            "multiplier": 1.0,
+        },
+        "ultimate": {
+            "name": _("God of War"),
+            "desc": _("Enters battle frenzy dealing {dmg} damage to all enemies"),
+            "multiplier": 2.8,
+        },
     },
     "Athena": {
-        "basic1": {"name": _("Wisdom's Shield"), "desc": _("Protective barrier absorbing {dmg} damage"), "multiplier": 0.5},
-        "basic2": {"name": _("Strategic Strike"), "desc": _("Calculated attack dealing {dmg} damage"), "multiplier": 0.9},
-        "ultimate": {"name": _("Aegis of Athena"), "desc": _("Invulnerable shield for team, reflects {dmg} damage"), "multiplier": 2.5},
+        "basic1": {
+            "name": _("Wisdom's Shield"),
+            "desc": _("Protective barrier absorbing {dmg} damage"),
+            "multiplier": 0.5,
+        },
+        "basic2": {
+            "name": _("Strategic Strike"),
+            "desc": _("Calculated attack dealing {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "ultimate": {
+            "name": _("Aegis of Athena"),
+            "desc": _("Invulnerable shield for team, reflects {dmg} damage"),
+            "multiplier": 2.5,
+        },
     },
     "Apollo": {
-        "basic1": {"name": _("Sun Arrow"), "desc": _("Solar projectile dealing {dmg} damage"), "multiplier": 0.9},
-        "basic2": {"name": _("Healing Light"), "desc": _("Restores {dmg} HP to ally"), "multiplier": 0.5},
-        "ultimate": {"name": _("Solar Flare"), "desc": _("Blinding sun burst dealing {dmg} damage to all"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Sun Arrow"),
+            "desc": _("Solar projectile dealing {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "basic2": {
+            "name": _("Healing Light"),
+            "desc": _("Restores {dmg} HP to ally"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Solar Flare"),
+            "desc": _("Blinding sun burst dealing {dmg} damage to all"),
+            "multiplier": 3.0,
+        },
     },
     "Artemis": {
-        "basic1": {"name": _("Moonshot"), "desc": _("Lunar arrow dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Beast Call"), "desc": _("Summons wolf dealing {dmg} damage"), "multiplier": 0.7},
-        "ultimate": {"name": _("Huntress's Mark"), "desc": _("Marks all enemies, arrows deal {dmg} damage each"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("Moonshot"),
+            "desc": _("Lunar arrow dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Beast Call"),
+            "desc": _("Summons wolf dealing {dmg} damage"),
+            "multiplier": 0.7,
+        },
+        "ultimate": {
+            "name": _("Huntress's Mark"),
+            "desc": _("Marks all enemies, arrows deal {dmg} damage each"),
+            "multiplier": 2.8,
+        },
     },
     "Hermes": {
-        "basic1": {"name": _("Swift Strike"), "desc": _("Lightning-fast attack dealing {dmg} damage"), "multiplier": 0.75},
-        "basic2": {"name": _("Trickster's Dash"), "desc": _("Dodges and strikes for {dmg} damage"), "multiplier": 0.9},
-        "ultimate": {"name": _("Messenger's Wrath"), "desc": _("Strikes all enemies in {dmg} speed burst"), "multiplier": 2.5},
+        "basic1": {
+            "name": _("Swift Strike"),
+            "desc": _("Lightning-fast attack dealing {dmg} damage"),
+            "multiplier": 0.75,
+        },
+        "basic2": {
+            "name": _("Trickster's Dash"),
+            "desc": _("Dodges and strikes for {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "ultimate": {
+            "name": _("Messenger's Wrath"),
+            "desc": _("Strikes all enemies in {dmg} speed burst"),
+            "multiplier": 2.5,
+        },
     },
     "Hephaestus": {
-        "basic1": {"name": _("Forge Hammer"), "desc": _("Molten strike dealing {dmg} damage + burn"), "multiplier": 0.8},
-        "basic2": {"name": _("Iron Wall"), "desc": _("Raises shield blocking {dmg} damage"), "multiplier": 0.6},
-        "ultimate": {"name": _("Volcanic Eruption"), "desc": _("Erupts ground dealing {dmg} damage to all enemies"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Forge Hammer"),
+            "desc": _("Molten strike dealing {dmg} damage + burn"),
+            "multiplier": 0.8,
+        },
+        "basic2": {
+            "name": _("Iron Wall"),
+            "desc": _("Raises shield blocking {dmg} damage"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("Volcanic Eruption"),
+            "desc": _("Erupts ground dealing {dmg} damage to all enemies"),
+            "multiplier": 3.0,
+        },
     },
     "Demeter": {
-        "basic1": {"name": _("Nature's Grasp"), "desc": _("Vines deal {dmg} damage + root"), "multiplier": 0.7},
-        "basic2": {"name": _("Harvest Blessing"), "desc": _("Heals ally for {dmg} HP"), "multiplier": 0.5},
-        "ultimate": {"name": _("Earth's Embrace"), "desc": _("Regenerates team, deals {dmg} damage to enemies"), "multiplier": 2.2},
+        "basic1": {
+            "name": _("Nature's Grasp"),
+            "desc": _("Vines deal {dmg} damage + root"),
+            "multiplier": 0.7,
+        },
+        "basic2": {
+            "name": _("Harvest Blessing"),
+            "desc": _("Heals ally for {dmg} HP"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Earth's Embrace"),
+            "desc": _("Regenerates team, deals {dmg} damage to enemies"),
+            "multiplier": 2.2,
+        },
     },
     # Aztec Gods
     "Huitzilopochtli": {
-        "basic1": {"name": _("Sun Spear"), "desc": _("Solar lance dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Hummingbird Strike"), "desc": _("Swift attack dealing {dmg} damage"), "multiplier": 1.0},
-        "ultimate": {"name": _("War of the Sun"), "desc": _("Summons solar fire dealing {dmg} damage to all"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Sun Spear"),
+            "desc": _("Solar lance dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Hummingbird Strike"),
+            "desc": _("Swift attack dealing {dmg} damage"),
+            "multiplier": 1.0,
+        },
+        "ultimate": {
+            "name": _("War of the Sun"),
+            "desc": _("Summons solar fire dealing {dmg} damage to all"),
+            "multiplier": 3.0,
+        },
     },
     "Quetzalcoatl": {
-        "basic1": {"name": _("Feather Wind"), "desc": _("Wind blade dealing {dmg} damage"), "multiplier": 0.7},
-        "basic2": {"name": _("Serpent Coil"), "desc": _("Heals ally for {dmg} HP"), "multiplier": 0.5},
-        "ultimate": {"name": _("Plumed Serpent"), "desc": _("Transforms into dragon, deals {dmg} damage to all"), "multiplier": 3.5},
+        "basic1": {
+            "name": _("Feather Wind"),
+            "desc": _("Wind blade dealing {dmg} damage"),
+            "multiplier": 0.7,
+        },
+        "basic2": {
+            "name": _("Serpent Coil"),
+            "desc": _("Heals ally for {dmg} HP"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Plumed Serpent"),
+            "desc": _("Transforms into dragon, deals {dmg} damage to all"),
+            "multiplier": 3.5,
+        },
     },
     "Tezcatlipoca": {
-        "basic1": {"name": _("Shadow Claw"), "desc": _("Dark strike dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Smoke Mirror"), "desc": _("Creates illusion, blocks {dmg} damage"), "multiplier": 0.6},
-        "ultimate": {"name": _("Night Jaguar"), "desc": _("Becomes invisible, deals {dmg} damage to all"), "multiplier": 3.2},
+        "basic1": {
+            "name": _("Shadow Claw"),
+            "desc": _("Dark strike dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Smoke Mirror"),
+            "desc": _("Creates illusion, blocks {dmg} damage"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("Night Jaguar"),
+            "desc": _("Becomes invisible, deals {dmg} damage to all"),
+            "multiplier": 3.2,
+        },
     },
     "Tlaloc": {
-        "basic1": {"name": _("Rain Drop"), "desc": _("Water bolt dealing {dmg} damage"), "multiplier": 0.75},
-        "basic2": {"name": _("Storm Cloud"), "desc": _("Heals team for {dmg} HP"), "multiplier": 0.5},
-        "ultimate": {"name": _("Great Flood"), "desc": _("Drowns battlefield dealing {dmg} damage to all"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("Rain Drop"),
+            "desc": _("Water bolt dealing {dmg} damage"),
+            "multiplier": 0.75,
+        },
+        "basic2": {
+            "name": _("Storm Cloud"),
+            "desc": _("Heals team for {dmg} HP"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Great Flood"),
+            "desc": _("Drowns battlefield dealing {dmg} damage to all"),
+            "multiplier": 2.8,
+        },
     },
     "Xipe Totec": {
-        "basic1": {"name": _("Flayed Strike"), "desc": _("Skinning blow dealing {dmg} damage"), "multiplier": 0.8},
-        "basic2": {"name": _("Rebirth Skin"), "desc": _("Sheds skin, heals {dmg} HP"), "multiplier": 0.6},
-        "ultimate": {"name": _("Lord of Flayed"), "desc": _("Wears enemy skin, deals {dmg} damage to all"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Flayed Strike"),
+            "desc": _("Skinning blow dealing {dmg} damage"),
+            "multiplier": 0.8,
+        },
+        "basic2": {
+            "name": _("Rebirth Skin"),
+            "desc": _("Sheds skin, heals {dmg} HP"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("Lord of Flayed"),
+            "desc": _("Wears enemy skin, deals {dmg} damage to all"),
+            "multiplier": 3.0,
+        },
     },
     "Coatlicue": {
-        "basic1": {"name": _("Serpent Skirt"), "desc": _("Snake bite dealing {dmg} damage"), "multiplier": 0.7},
-        "basic2": {"name": _("Earth Mother"), "desc": _("Raises defense, blocks {dmg} damage"), "multiplier": 0.5},
-        "ultimate": {"name": _("Mother of Gods"), "desc": _("Consumes all, deals {dmg} damage to enemies"), "multiplier": 2.5},
+        "basic1": {
+            "name": _("Serpent Skirt"),
+            "desc": _("Snake bite dealing {dmg} damage"),
+            "multiplier": 0.7,
+        },
+        "basic2": {
+            "name": _("Earth Mother"),
+            "desc": _("Raises defense, blocks {dmg} damage"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Mother of Gods"),
+            "desc": _("Consumes all, deals {dmg} damage to enemies"),
+            "multiplier": 2.5,
+        },
     },
     "Mictlantecuhtli": {
-        "basic1": {"name": _("Bone Spear"), "desc": _("Skeletal lance dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Death Gaze"), "desc": _("Terrifying stare dealing {dmg} damage"), "multiplier": 1.1},
-        "ultimate": {"name": _("Underworld Gate"), "desc": _("Opens portal to Mictlan, deals {dmg} damage to all"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Bone Spear"),
+            "desc": _("Skeletal lance dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Death Gaze"),
+            "desc": _("Terrifying stare dealing {dmg} damage"),
+            "multiplier": 1.1,
+        },
+        "ultimate": {
+            "name": _("Underworld Gate"),
+            "desc": _("Opens portal to Mictlan, deals {dmg} damage to all"),
+            "multiplier": 3.0,
+        },
     },
     "Xochiquetzal": {
-        "basic1": {"name": _("Flower Petal"), "desc": _("Petal storm dealing {dmg} damage"), "multiplier": 0.7},
-        "basic2": {"name": _("Beauty's Charm"), "desc": _("Charms enemy, heals {dmg} HP"), "multiplier": 0.5},
-        "ultimate": {"name": _("Garden of Eden"), "desc": _("Summons paradise garden, deals {dmg} damage to all"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("Flower Petal"),
+            "desc": _("Petal storm dealing {dmg} damage"),
+            "multiplier": 0.7,
+        },
+        "basic2": {
+            "name": _("Beauty's Charm"),
+            "desc": _("Charms enemy, heals {dmg} HP"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Garden of Eden"),
+            "desc": _("Summons paradise garden, deals {dmg} damage to all"),
+            "multiplier": 2.8,
+        },
     },
     "Xiuhtecuhtli": {
-        "basic1": {"name": _("Obsidian Blade"), "desc": _("Volcanic glass dealing {dmg} damage"), "multiplier": 0.9},
-        "basic2": {"name": _("Fire Walker"), "desc": _("Lava step dealing {dmg} damage"), "multiplier": 0.8},
-        "ultimate": {"name": _("Volcanic Eruption"), "desc": _("Destroys mountain dealing {dmg} damage to all"), "multiplier": 3.2},
+        "basic1": {
+            "name": _("Obsidian Blade"),
+            "desc": _("Volcanic glass dealing {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "basic2": {
+            "name": _("Fire Walker"),
+            "desc": _("Lava step dealing {dmg} damage"),
+            "multiplier": 0.8,
+        },
+        "ultimate": {
+            "name": _("Volcanic Eruption"),
+            "desc": _("Destroys mountain dealing {dmg} damage to all"),
+            "multiplier": 3.2,
+        },
     },
     "Coyolxauhqui": {
-        "basic1": {"name": _("Moon Disk"), "desc": _("Lunar throw dealing {dmg} damage"), "multiplier": 0.75},
-        "basic2": {"name": _("Silver Light"), "desc": _("Moonbeam healing {dmg} HP"), "multiplier": 0.5},
-        "ultimate": {"name": _("Dismembered Moon"), "desc": _("Shatters moon, deals {dmg} damage to all"), "multiplier": 2.5},
+        "basic1": {
+            "name": _("Moon Disk"),
+            "desc": _("Lunar throw dealing {dmg} damage"),
+            "multiplier": 0.75,
+        },
+        "basic2": {
+            "name": _("Silver Light"),
+            "desc": _("Moonbeam healing {dmg} HP"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Dismembered Moon"),
+            "desc": _("Shatters moon, deals {dmg} damage to all"),
+            "multiplier": 2.5,
+        },
     },
     "Ehecatl": {
-        "basic1": {"name": _("Wind Gust"), "desc": _("Hurricane blast dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Breath of Life"), "desc": _("Heals ally for {dmg} HP"), "multiplier": 0.5},
-        "ultimate": {"name": _("Great Hurricane"), "desc": _("Summons storm dealing {dmg} damage to all"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Wind Gust"),
+            "desc": _("Hurricane blast dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Breath of Life"),
+            "desc": _("Heals ally for {dmg} HP"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Great Hurricane"),
+            "desc": _("Summons storm dealing {dmg} damage to all"),
+            "multiplier": 3.0,
+        },
     },
     "Tonatiuh": {
-        "basic1": {"name": _("Sun Ray"), "desc": _("Solar beam dealing {dmg} damage"), "multiplier": 0.8},
-        "basic2": {"name": _("Fifth Sun"), "desc": _("Raises attack by {dmg}"), "multiplier": 0.6},
-        "ultimate": {"name": _("Solar Eclipse"), "desc": _("Darkens sun, deals {dmg} damage to all"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("Sun Ray"),
+            "desc": _("Solar beam dealing {dmg} damage"),
+            "multiplier": 0.8,
+        },
+        "basic2": {
+            "name": _("Fifth Sun"),
+            "desc": _("Raises attack by {dmg}"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("Solar Eclipse"),
+            "desc": _("Darkens sun, deals {dmg} damage to all"),
+            "multiplier": 2.8,
+        },
     },
     "Taurus": {
-        "basic1": {"name": _("Earth Stomp"), "desc": _("Ground shake dealing {dmg} damage"), "multiplier": 0.7},
-        "basic2": {"name": _("Bulwark"), "desc": _("Raises defense, blocks {dmg} damage"), "multiplier": 0.5},
-        "ultimate": {"name": _("Immovable Object"), "desc": _("Becomes unkillable for 2 turns, reflects {dmg} damage"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Earth Stomp"),
+            "desc": _("Ground shake dealing {dmg} damage"),
+            "multiplier": 0.7,
+        },
+        "basic2": {
+            "name": _("Bulwark"),
+            "desc": _("Raises defense, blocks {dmg} damage"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Immovable Object"),
+            "desc": _("Becomes unkillable for 2 turns, reflects {dmg} damage"),
+            "multiplier": 3.0,
+        },
     },
     "Gemini": {
-        "basic1": {"name": _("Twin Strike"), "desc": _("Dual attack dealing {dmg} damage"), "multiplier": 0.8},
-        "basic2": {"name": _("Mirror Image"), "desc": _("Creates clone dealing {dmg} damage"), "multiplier": 0.6},
-        "ultimate": {"name": _("Duality Cascade"), "desc": _("Infinite clones deal {dmg} damage to all"), "multiplier": 3.2},
+        "basic1": {
+            "name": _("Twin Strike"),
+            "desc": _("Dual attack dealing {dmg} damage"),
+            "multiplier": 0.8,
+        },
+        "basic2": {
+            "name": _("Mirror Image"),
+            "desc": _("Creates clone dealing {dmg} damage"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("Duality Cascade"),
+            "desc": _("Infinite clones deal {dmg} damage to all"),
+            "multiplier": 3.2,
+        },
     },
     "Cancer": {
-        "basic1": {"name": _("Shell Guard"), "desc": _("Hides in shell, blocks {dmg} damage"), "multiplier": 0.5},
-        "basic2": {"name": _("Tidal Claw"), "desc": _("Water-infused claw dealing {dmg} damage"), "multiplier": 0.9},
-        "ultimate": {"name": _("Ocean's Fortress"), "desc": _("Creates water fortress, heals team {dmg} HP"), "multiplier": 2.0},
+        "basic1": {
+            "name": _("Shell Guard"),
+            "desc": _("Hides in shell, blocks {dmg} damage"),
+            "multiplier": 0.5,
+        },
+        "basic2": {
+            "name": _("Tidal Claw"),
+            "desc": _("Water-infused claw dealing {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "ultimate": {
+            "name": _("Ocean's Fortress"),
+            "desc": _("Creates water fortress, heals team {dmg} HP"),
+            "multiplier": 2.0,
+        },
     },
     "Leo": {
-        "basic1": {"name": _("Lion's Roar"), "desc": _("Intimidating roar dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Royal Pounce"), "desc": _("Leaping strike dealing {dmg} damage"), "multiplier": 1.0},
-        "ultimate": {"name": _("King of Beasts"), "desc": _("Summons lion spirits dealing {dmg} damage to all"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Lion's Roar"),
+            "desc": _("Intimidating roar dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Royal Pounce"),
+            "desc": _("Leaping strike dealing {dmg} damage"),
+            "multiplier": 1.0,
+        },
+        "ultimate": {
+            "name": _("King of Beasts"),
+            "desc": _("Summons lion spirits dealing {dmg} damage to all"),
+            "multiplier": 3.0,
+        },
     },
     "Virgo": {
-        "basic1": {"name": _("Purifying Light"), "desc": _("Cleansing beam dealing {dmg} damage"), "multiplier": 0.75},
-        "basic2": {"name": _("Healing Touch"), "desc": _("Restores {dmg} HP to ally"), "multiplier": 0.5},
-        "ultimate": {"name": _("Virgin's Grace"), "desc": _("Full team heal + {dmg} damage to enemies"), "multiplier": 2.5},
+        "basic1": {
+            "name": _("Purifying Light"),
+            "desc": _("Cleansing beam dealing {dmg} damage"),
+            "multiplier": 0.75,
+        },
+        "basic2": {
+            "name": _("Healing Touch"),
+            "desc": _("Restores {dmg} HP to ally"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Virgin's Grace"),
+            "desc": _("Full team heal + {dmg} damage to enemies"),
+            "multiplier": 2.5,
+        },
     },
     "Libra": {
-        "basic1": {"name": _("Balance Strike"), "desc": _("Equalizing blow dealing {dmg} damage"), "multiplier": 0.8},
-        "basic2": {"name": _("Scales of Justice"), "desc": _("Redistributes damage, blocks {dmg}"), "multiplier": 0.6},
-        "ultimate": {"name": _("Cosmic Equilibrium"), "desc": _("Balances all HP, deals {dmg} to enemies"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("Balance Strike"),
+            "desc": _("Equalizing blow dealing {dmg} damage"),
+            "multiplier": 0.8,
+        },
+        "basic2": {
+            "name": _("Scales of Justice"),
+            "desc": _("Redistributes damage, blocks {dmg}"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("Cosmic Equilibrium"),
+            "desc": _("Balances all HP, deals {dmg} to enemies"),
+            "multiplier": 2.8,
+        },
     },
     "Scorpio": {
-        "basic1": {"name": _("Venom Sting"), "desc": _("Poisonous strike dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Shadow Ambush"), "desc": _("Stealth attack dealing {dmg} damage"), "multiplier": 1.1},
-        "ultimate": {"name": _("Death's Embrace"), "desc": _("Lethal poison dealing {dmg} damage over time"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Venom Sting"),
+            "desc": _("Poisonous strike dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Shadow Ambush"),
+            "desc": _("Stealth attack dealing {dmg} damage"),
+            "multiplier": 1.1,
+        },
+        "ultimate": {
+            "name": _("Death's Embrace"),
+            "desc": _("Lethal poison dealing {dmg} damage over time"),
+            "multiplier": 3.0,
+        },
     },
     "Sagittarius": {
-        "basic1": {"name": _("Star Arrow"), "desc": _("Cosmic arrow dealing {dmg} damage"), "multiplier": 0.9},
-        "basic2": {"name": _("Centaur Charge"), "desc": _("Galloping strike dealing {dmg} damage"), "multiplier": 0.8},
-        "ultimate": {"name": _("Meteor Shower"), "desc": _("Rains fire arrows dealing {dmg} damage to all"), "multiplier": 3.2},
+        "basic1": {
+            "name": _("Star Arrow"),
+            "desc": _("Cosmic arrow dealing {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "basic2": {
+            "name": _("Centaur Charge"),
+            "desc": _("Galloping strike dealing {dmg} damage"),
+            "multiplier": 0.8,
+        },
+        "ultimate": {
+            "name": _("Meteor Shower"),
+            "desc": _("Rains fire arrows dealing {dmg} damage to all"),
+            "multiplier": 3.2,
+        },
     },
     "Capricorn": {
-        "basic1": {"name": _("Mountain Strike"), "desc": _("Earth-shaking blow dealing {dmg} damage"), "multiplier": 0.75},
-        "basic2": {"name": _("Sea Goat's Wall"), "desc": _("Water-earth shield blocking {dmg} damage"), "multiplier": 0.6},
-        "ultimate": {"name": _("Peak of Ambition"), "desc": _("Ascends mountain, deals {dmg} damage to all"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("Mountain Strike"),
+            "desc": _("Earth-shaking blow dealing {dmg} damage"),
+            "multiplier": 0.75,
+        },
+        "basic2": {
+            "name": _("Sea Goat's Wall"),
+            "desc": _("Water-earth shield blocking {dmg} damage"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("Peak of Ambition"),
+            "desc": _("Ascends mountain, deals {dmg} damage to all"),
+            "multiplier": 2.8,
+        },
     },
     "Aquarius": {
-        "basic1": {"name": _("Water Bearer's Flow"), "desc": _("Cosmic water dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Starlight Rain"), "desc": _("Healing rain restoring {dmg} HP"), "multiplier": 0.5},
-        "ultimate": {"name": _("Cosmic Flood"), "desc": _("Drowns battlefield dealing {dmg} damage to all"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Water Bearer's Flow"),
+            "desc": _("Cosmic water dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Starlight Rain"),
+            "desc": _("Healing rain restoring {dmg} HP"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Cosmic Flood"),
+            "desc": _("Drowns battlefield dealing {dmg} damage to all"),
+            "multiplier": 3.0,
+        },
     },
     "Pisces": {
-        "basic1": {"name": _("Fish Companion"), "desc": _("Summons fish dealing {dmg} damage"), "multiplier": 0.7},
-        "basic2": {"name": _("Dream Wave"), "desc": _("Illusion wave dealing {dmg} damage + confuse"), "multiplier": 0.8},
-        "ultimate": {"name": _("Ocean's Dream"), "desc": _("Puts enemies to sleep, deals {dmg} damage"), "multiplier": 2.5},
+        "basic1": {
+            "name": _("Fish Companion"),
+            "desc": _("Summons fish dealing {dmg} damage"),
+            "multiplier": 0.7,
+        },
+        "basic2": {
+            "name": _("Dream Wave"),
+            "desc": _("Illusion wave dealing {dmg} damage + confuse"),
+            "multiplier": 0.8,
+        },
+        "ultimate": {
+            "name": _("Ocean's Dream"),
+            "desc": _("Puts enemies to sleep, deals {dmg} damage"),
+            "multiplier": 2.5,
+        },
     },
     # Chinese Gods
     "Jade Emperor": {
-        "basic1": {"name": _("Celestial Decree"), "desc": _("Divine order dealing {dmg} damage"), "multiplier": 0.7},
-        "basic2": {"name": _("Heaven's Blessing"), "desc": _("Grants shield absorbing {dmg} damage"), "multiplier": 0.5},
-        "ultimate": {"name": _("Mandate of Heaven"), "desc": _("Commands cosmos dealing {dmg} damage to all"), "multiplier": 3.5},
+        "basic1": {
+            "name": _("Celestial Decree"),
+            "desc": _("Divine order dealing {dmg} damage"),
+            "multiplier": 0.7,
+        },
+        "basic2": {
+            "name": _("Heaven's Blessing"),
+            "desc": _("Grants shield absorbing {dmg} damage"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Mandate of Heaven"),
+            "desc": _("Commands cosmos dealing {dmg} damage to all"),
+            "multiplier": 3.5,
+        },
     },
     "Sun Wukong": {
-        "basic1": {"name": _("Staff Strike"), "desc": _("Golden staff blow dealing {dmg} damage"), "multiplier": 0.9},
-        "basic2": {"name": _("Cloud Somersault"), "desc": _("Aerial strike dealing {dmg} damage"), "multiplier": 1.0},
-        "ultimate": {"name": _("72 Transformations"), "desc": _("Shape-shifts into army dealing {dmg} damage"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Staff Strike"),
+            "desc": _("Golden staff blow dealing {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "basic2": {
+            "name": _("Cloud Somersault"),
+            "desc": _("Aerial strike dealing {dmg} damage"),
+            "multiplier": 1.0,
+        },
+        "ultimate": {
+            "name": _("72 Transformations"),
+            "desc": _("Shape-shifts into army dealing {dmg} damage"),
+            "multiplier": 3.0,
+        },
     },
     "Nezha": {
-        "basic1": {"name": _("Fire Wheel Spin"), "desc": _("Flaming wheels dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Lotus Armor"), "desc": _("Blooms shield blocking {dmg} damage"), "multiplier": 0.6},
-        "ultimate": {"name": _("Three Heads Six Arms"), "desc": _("Unleashes full form dealing {dmg} damage"), "multiplier": 3.2},
+        "basic1": {
+            "name": _("Fire Wheel Spin"),
+            "desc": _("Flaming wheels dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Lotus Armor"),
+            "desc": _("Blooms shield blocking {dmg} damage"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("Three Heads Six Arms"),
+            "desc": _("Unleashes full form dealing {dmg} damage"),
+            "multiplier": 3.2,
+        },
     },
     "Erlang Shen": {
-        "basic1": {"name": _("Third Eye Beam"), "desc": _("Truth-seeing beam dealing {dmg} damage"), "multiplier": 0.9},
-        "basic2": {"name": _("Heavenly Spear"), "desc": _("Divine thrust dealing {dmg} damage"), "multiplier": 1.0},
-        "ultimate": {"name": _("Demon Queller"), "desc": _("Reveals all weaknesses, deals {dmg} damage"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("Third Eye Beam"),
+            "desc": _("Truth-seeing beam dealing {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "basic2": {
+            "name": _("Heavenly Spear"),
+            "desc": _("Divine thrust dealing {dmg} damage"),
+            "multiplier": 1.0,
+        },
+        "ultimate": {
+            "name": _("Demon Queller"),
+            "desc": _("Reveals all weaknesses, deals {dmg} damage"),
+            "multiplier": 2.8,
+        },
     },
     "Chang'e": {
-        "basic1": {"name": _("Moonlight Beam"), "desc": _("Lunar ray dealing {dmg} damage"), "multiplier": 0.75},
-        "basic2": {"name": _("Jade Rabbit's Grace"), "desc": _("Heals ally for {dmg} HP"), "multiplier": 0.5},
-        "ultimate": {"name": _("Eternal Moon Palace"), "desc": _("Freezes time, deals {dmg} damage to all"), "multiplier": 2.5},
+        "basic1": {
+            "name": _("Moonlight Beam"),
+            "desc": _("Lunar ray dealing {dmg} damage"),
+            "multiplier": 0.75,
+        },
+        "basic2": {
+            "name": _("Jade Rabbit's Grace"),
+            "desc": _("Heals ally for {dmg} HP"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Eternal Moon Palace"),
+            "desc": _("Freezes time, deals {dmg} damage to all"),
+            "multiplier": 2.5,
+        },
     },
     "Dragon King": {
-        "basic1": {"name": _("Dragon's Breath"), "desc": _("Water dragon breath dealing {dmg} damage"), "multiplier": 0.8},
-        "basic2": {"name": _("Tidal Shield"), "desc": _("Ocean barrier blocking {dmg} damage"), "multiplier": 0.6},
-        "ultimate": {"name": _("Leviathan Ascension"), "desc": _("Transforms into dragon dealing {dmg} damage"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Dragon's Breath"),
+            "desc": _("Water dragon breath dealing {dmg} damage"),
+            "multiplier": 0.8,
+        },
+        "basic2": {
+            "name": _("Tidal Shield"),
+            "desc": _("Ocean barrier blocking {dmg} damage"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("Leviathan Ascension"),
+            "desc": _("Transforms into dragon dealing {dmg} damage"),
+            "multiplier": 3.0,
+        },
     },
     "Guan Yu": {
-        "basic1": {"name": _("Green Dragon Blade"), "desc": _("Sweeping strike dealing {dmg} damage"), "multiplier": 0.9},
-        "basic2": {"name": _("Loyal Oath"), "desc": _("Protects ally, blocks {dmg} damage"), "multiplier": 0.5},
-        "ultimate": {"name": _("God of War's Fury"), "desc": _("Unleashes legendary might dealing {dmg} damage"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("Green Dragon Blade"),
+            "desc": _("Sweeping strike dealing {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "basic2": {
+            "name": _("Loyal Oath"),
+            "desc": _("Protects ally, blocks {dmg} damage"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("God of War's Fury"),
+            "desc": _("Unleashes legendary might dealing {dmg} damage"),
+            "multiplier": 2.8,
+        },
     },
     "Nuwa": {
-        "basic1": {"name": _("Five Colored Stone"), "desc": _("Elemental projectile dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Creation Mending"), "desc": _("Repairs ally for {dmg} HP"), "multiplier": 0.5},
-        "ultimate": {"name": _("World Forge"), "desc": _("Reshapes reality dealing {dmg} damage to all"), "multiplier": 3.5},
+        "basic1": {
+            "name": _("Five Colored Stone"),
+            "desc": _("Elemental projectile dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Creation Mending"),
+            "desc": _("Repairs ally for {dmg} HP"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("World Forge"),
+            "desc": _("Reshapes reality dealing {dmg} damage to all"),
+            "multiplier": 3.5,
+        },
     },
     "Zhong Kui": {
-        "basic1": {"name": _("Demon Hunter's Strike"), "desc": _("Purifying blow dealing {dmg} damage"), "multiplier": 0.8},
-        "basic2": {"name": _("Ghost Wall"), "desc": _("Spirit barrier blocking {dmg} damage"), "multiplier": 0.6},
-        "ultimate": {"name": _("King of Demons"), "desc": _("Commands ghost army dealing {dmg} damage"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("Demon Hunter's Strike"),
+            "desc": _("Purifying blow dealing {dmg} damage"),
+            "multiplier": 0.8,
+        },
+        "basic2": {
+            "name": _("Ghost Wall"),
+            "desc": _("Spirit barrier blocking {dmg} damage"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("King of Demons"),
+            "desc": _("Commands ghost army dealing {dmg} damage"),
+            "multiplier": 2.8,
+        },
     },
     "Caishen": {
-        "basic1": {"name": _("Golden Ingot Throw"), "desc": _("Wealth projectile dealing {dmg} damage"), "multiplier": 0.7},
-        "basic2": {"name": _("Prosperity Blessing"), "desc": _("Grants {dmg} gold shield to ally"), "multiplier": 0.5},
-        "ultimate": {"name": _("Treasure Flood"), "desc": _("Rains gold dealing {dmg} damage to all enemies"), "multiplier": 2.2},
+        "basic1": {
+            "name": _("Golden Ingot Throw"),
+            "desc": _("Wealth projectile dealing {dmg} damage"),
+            "multiplier": 0.7,
+        },
+        "basic2": {
+            "name": _("Prosperity Blessing"),
+            "desc": _("Grants {dmg} gold shield to ally"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Treasure Flood"),
+            "desc": _("Rains gold dealing {dmg} damage to all enemies"),
+            "multiplier": 2.2,
+        },
     },
     # Egyptian Gods
     "Ra": {
-        "basic1": {"name": _("Sun Disk"), "desc": _("Solar beam dealing {dmg} damage"), "multiplier": 0.9},
-        "basic2": {"name": _("Falcon's Gaze"), "desc": _("Burning stare dealing {dmg} damage"), "multiplier": 0.8},
-        "ultimate": {"name": _("Solar Eclipse"), "desc": _("Blots out sun dealing {dmg} damage to all"), "multiplier": 3.5},
+        "basic1": {
+            "name": _("Sun Disk"),
+            "desc": _("Solar beam dealing {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "basic2": {
+            "name": _("Falcon's Gaze"),
+            "desc": _("Burning stare dealing {dmg} damage"),
+            "multiplier": 0.8,
+        },
+        "ultimate": {
+            "name": _("Solar Eclipse"),
+            "desc": _("Blots out sun dealing {dmg} damage to all"),
+            "multiplier": 3.5,
+        },
     },
     "Osiris": {
-        "basic1": {"name": _("Afterlife Touch"), "desc": _("Soul drain dealing {dmg} damage"), "multiplier": 0.75},
-        "basic2": {"name": _("Resurrection Blessing"), "desc": _("Heals ally for {dmg} HP"), "multiplier": 0.5},
-        "ultimate": {"name": _("Lord of the Dead"), "desc": _("Raises undead army dealing {dmg} damage"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Afterlife Touch"),
+            "desc": _("Soul drain dealing {dmg} damage"),
+            "multiplier": 0.75,
+        },
+        "basic2": {
+            "name": _("Resurrection Blessing"),
+            "desc": _("Heals ally for {dmg} HP"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Lord of the Dead"),
+            "desc": _("Raises undead army dealing {dmg} damage"),
+            "multiplier": 3.0,
+        },
     },
     "Anubis": {
-        "basic1": {"name": _("Jackal's Bite"), "desc": _("Savage bite dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Soul Weigh"), "desc": _("Judges enemy dealing {dmg} damage"), "multiplier": 1.0},
-        "ultimate": {"name": _("Gate of Judgment"), "desc": _("Opens underworld dealing {dmg} damage to all"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("Jackal's Bite"),
+            "desc": _("Savage bite dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Soul Weigh"),
+            "desc": _("Judges enemy dealing {dmg} damage"),
+            "multiplier": 1.0,
+        },
+        "ultimate": {
+            "name": _("Gate of Judgment"),
+            "desc": _("Opens underworld dealing {dmg} damage to all"),
+            "multiplier": 2.8,
+        },
     },
     "Horus": {
-        "basic1": {"name": _("Falcon Strike"), "desc": _("Aerial dive dealing {dmg} damage"), "multiplier": 0.9},
-        "basic2": {"name": _("Sky Shield"), "desc": _("Wing barrier blocking {dmg} damage"), "multiplier": 0.6},
-        "ultimate": {"name": _("Eye of Horus"), "desc": _("All-seeing blast dealing {dmg} damage to all"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Falcon Strike"),
+            "desc": _("Aerial dive dealing {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "basic2": {
+            "name": _("Sky Shield"),
+            "desc": _("Wing barrier blocking {dmg} damage"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("Eye of Horus"),
+            "desc": _("All-seeing blast dealing {dmg} damage to all"),
+            "multiplier": 3.0,
+        },
     },
     "Isis": {
-        "basic1": {"name": _("Magic Wings"), "desc": _("Feather strike dealing {dmg} damage"), "multiplier": 0.75},
-        "basic2": {"name": _("Healing Spell"), "desc": _("Restores {dmg} HP to ally"), "multiplier": 0.5},
-        "ultimate": {"name": _("Throne of Magic"), "desc": _("Unleashes ancient magic dealing {dmg} damage"), "multiplier": 2.5},
+        "basic1": {
+            "name": _("Magic Wings"),
+            "desc": _("Feather strike dealing {dmg} damage"),
+            "multiplier": 0.75,
+        },
+        "basic2": {
+            "name": _("Healing Spell"),
+            "desc": _("Restores {dmg} HP to ally"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Throne of Magic"),
+            "desc": _("Unleashes ancient magic dealing {dmg} damage"),
+            "multiplier": 2.5,
+        },
     },
     "Set": {
-        "basic1": {"name": _("Sandstorm"), "desc": _("Desert wind dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Chaos Spear"), "desc": _("Unstable energy dealing {dmg} damage"), "multiplier": 1.0},
-        "ultimate": {"name": _("Desert of Destruction"), "desc": _("Consumes land dealing {dmg} damage to all"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("Sandstorm"),
+            "desc": _("Desert wind dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Chaos Spear"),
+            "desc": _("Unstable energy dealing {dmg} damage"),
+            "multiplier": 1.0,
+        },
+        "ultimate": {
+            "name": _("Desert of Destruction"),
+            "desc": _("Consumes land dealing {dmg} damage to all"),
+            "multiplier": 2.8,
+        },
     },
     "Thoth": {
-        "basic1": {"name": _("Hieroglyph Blast"), "desc": _("Ancient script dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Wisdom's Ward"), "desc": _("Knowledge shield blocking {dmg} damage"), "multiplier": 0.6},
-        "ultimate": {"name": _("Book of Thoth"), "desc": _("Rewrites reality dealing {dmg} damage to all"), "multiplier": 3.2},
+        "basic1": {
+            "name": _("Hieroglyph Blast"),
+            "desc": _("Ancient script dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Wisdom's Ward"),
+            "desc": _("Knowledge shield blocking {dmg} damage"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("Book of Thoth"),
+            "desc": _("Rewrites reality dealing {dmg} damage to all"),
+            "multiplier": 3.2,
+        },
     },
     "Sekhmet": {
-        "basic1": {"name": _("Lioness Claw"), "desc": _("Fierce swipe dealing {dmg} damage"), "multiplier": 0.9},
-        "basic2": {"name": _("Blood Frenzy"), "desc": _("Berserker strike dealing {dmg} damage"), "multiplier": 1.1},
-        "ultimate": {"name": _("Goddess of Slaughter"), "desc": _("Unleashes war fury dealing {dmg} damage"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Lioness Claw"),
+            "desc": _("Fierce swipe dealing {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "basic2": {
+            "name": _("Blood Frenzy"),
+            "desc": _("Berserker strike dealing {dmg} damage"),
+            "multiplier": 1.1,
+        },
+        "ultimate": {
+            "name": _("Goddess of Slaughter"),
+            "desc": _("Unleashes war fury dealing {dmg} damage"),
+            "multiplier": 3.0,
+        },
     },
     "Bastet": {
-        "basic1": {"name": _("Cat's Grace"), "desc": _("Swift strike dealing {dmg} damage"), "multiplier": 0.75},
-        "basic2": {"name": _("Protective Purr"), "desc": _("Heals ally for {dmg} HP"), "multiplier": 0.5},
-        "ultimate": {"name": _("Nine Lives"), "desc": _("Revives fallen ally, deals {dmg} damage"), "multiplier": 2.2},
+        "basic1": {
+            "name": _("Cat's Grace"),
+            "desc": _("Swift strike dealing {dmg} damage"),
+            "multiplier": 0.75,
+        },
+        "basic2": {
+            "name": _("Protective Purr"),
+            "desc": _("Heals ally for {dmg} HP"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Nine Lives"),
+            "desc": _("Revives fallen ally, deals {dmg} damage"),
+            "multiplier": 2.2,
+        },
     },
     "Ptah": {
-        "basic1": {"name": _("Creation Strike"), "desc": _("Forged blow dealing {dmg} damage"), "multiplier": 0.7},
-        "basic2": {"name": _("Divine Craft"), "desc": _("Builds shield blocking {dmg} damage"), "multiplier": 0.6},
-        "ultimate": {"name": _("World Shaper"), "desc": _("Reshapes battlefield dealing {dmg} damage"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("Creation Strike"),
+            "desc": _("Forged blow dealing {dmg} damage"),
+            "multiplier": 0.7,
+        },
+        "basic2": {
+            "name": _("Divine Craft"),
+            "desc": _("Builds shield blocking {dmg} damage"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("World Shaper"),
+            "desc": _("Reshapes battlefield dealing {dmg} damage"),
+            "multiplier": 2.8,
+        },
     },
     # Nordic Gods
     "Odin": {
-        "basic1": {"name": _("Gungnir's Throw"), "desc": _("Spear of destiny dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Raven's Sight"), "desc": _("All-seeing strike dealing {dmg} damage"), "multiplier": 0.9},
-        "ultimate": {"name": _("Allfather's Wrath"), "desc": _("Commands Valhalla dealing {dmg} damage to all"), "multiplier": 3.5},
+        "basic1": {
+            "name": _("Gungnir's Throw"),
+            "desc": _("Spear of destiny dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Raven's Sight"),
+            "desc": _("All-seeing strike dealing {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "ultimate": {
+            "name": _("Allfather's Wrath"),
+            "desc": _("Commands Valhalla dealing {dmg} damage to all"),
+            "multiplier": 3.5,
+        },
     },
     "Thor": {
-        "basic1": {"name": _("Mjolnir Strike"), "desc": _("Hammer blow dealing {dmg} damage"), "multiplier": 0.8},
-        "basic2": {"name": _("Thunder Block"), "desc": _("Lightning shield blocking {dmg} damage"), "multiplier": 0.6},
-        "ultimate": {"name": _("Ragnarok's Thunder"), "desc": _("World-shaking storm dealing {dmg} damage"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Mjolnir Strike"),
+            "desc": _("Hammer blow dealing {dmg} damage"),
+            "multiplier": 0.8,
+        },
+        "basic2": {
+            "name": _("Thunder Block"),
+            "desc": _("Lightning shield blocking {dmg} damage"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("Ragnarok's Thunder"),
+            "desc": _("World-shaking storm dealing {dmg} damage"),
+            "multiplier": 3.0,
+        },
     },
     "Loki": {
-        "basic1": {"name": _("Trickster's Blade"), "desc": _("Deceptive strike dealing {dmg} damage"), "multiplier": 0.9},
-        "basic2": {"name": _("Shape Shift"), "desc": _("Transforms and strikes for {dmg} damage"), "multiplier": 1.0},
-        "ultimate": {"name": _("Chaos Incarnate"), "desc": _("Unleashes pure chaos dealing {dmg} damage"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("Trickster's Blade"),
+            "desc": _("Deceptive strike dealing {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "basic2": {
+            "name": _("Shape Shift"),
+            "desc": _("Transforms and strikes for {dmg} damage"),
+            "multiplier": 1.0,
+        },
+        "ultimate": {
+            "name": _("Chaos Incarnate"),
+            "desc": _("Unleashes pure chaos dealing {dmg} damage"),
+            "multiplier": 2.8,
+        },
     },
     "Freya": {
-        "basic1": {"name": _("Falcon Dive"), "desc": _("Aerial strike dealing {dmg} damage"), "multiplier": 0.8},
-        "basic2": {"name": _("Love's Embrace"), "desc": _("Heals ally for {dmg} HP"), "multiplier": 0.5},
-        "ultimate": {"name": _("Valkyrie's Call"), "desc": _("Summons warriors dealing {dmg} damage"), "multiplier": 2.5},
+        "basic1": {
+            "name": _("Falcon Dive"),
+            "desc": _("Aerial strike dealing {dmg} damage"),
+            "multiplier": 0.8,
+        },
+        "basic2": {
+            "name": _("Love's Embrace"),
+            "desc": _("Heals ally for {dmg} HP"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Valkyrie's Call"),
+            "desc": _("Summons warriors dealing {dmg} damage"),
+            "multiplier": 2.5,
+        },
     },
     "Tyr": {
-        "basic1": {"name": _("Justice Strike"), "desc": _("Righteous blow dealing {dmg} damage"), "multiplier": 0.8},
-        "basic2": {"name": _("Honor's Shield"), "desc": _("Defends ally blocking {dmg} damage"), "multiplier": 0.6},
-        "ultimate": {"name": _("God of Justice"), "desc": _("Judges all enemies dealing {dmg} damage"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("Justice Strike"),
+            "desc": _("Righteous blow dealing {dmg} damage"),
+            "multiplier": 0.8,
+        },
+        "basic2": {
+            "name": _("Honor's Shield"),
+            "desc": _("Defends ally blocking {dmg} damage"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("God of Justice"),
+            "desc": _("Judges all enemies dealing {dmg} damage"),
+            "multiplier": 2.8,
+        },
     },
     "Heimdall": {
-        "basic1": {"name": _("Bifrost Beam"), "desc": _("Rainbow energy dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Watchman's Ward"), "desc": _("Vigilant shield blocking {dmg} damage"), "multiplier": 0.6},
-        "ultimate": {"name": _("Gjallarhorn's Call"), "desc": _("Awakens gods dealing {dmg} damage to all"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Bifrost Beam"),
+            "desc": _("Rainbow energy dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Watchman's Ward"),
+            "desc": _("Vigilant shield blocking {dmg} damage"),
+            "multiplier": 0.6,
+        },
+        "ultimate": {
+            "name": _("Gjallarhorn's Call"),
+            "desc": _("Awakens gods dealing {dmg} damage to all"),
+            "multiplier": 3.0,
+        },
     },
     "Frigg": {
-        "basic1": {"name": _("Fate's Thread"), "desc": _("Destiny weave dealing {dmg} damage"), "multiplier": 0.7},
-        "basic2": {"name": _("Mother's Blessing"), "desc": _("Heals ally for {dmg} HP"), "multiplier": 0.5},
-        "ultimate": {"name": _("Weaver of Fate"), "desc": _("Rewrites destiny dealing {dmg} damage"), "multiplier": 2.2},
+        "basic1": {
+            "name": _("Fate's Thread"),
+            "desc": _("Destiny weave dealing {dmg} damage"),
+            "multiplier": 0.7,
+        },
+        "basic2": {
+            "name": _("Mother's Blessing"),
+            "desc": _("Heals ally for {dmg} HP"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("Weaver of Fate"),
+            "desc": _("Rewrites destiny dealing {dmg} damage"),
+            "multiplier": 2.2,
+        },
     },
     "Baldr": {
-        "basic1": {"name": _("Light's Touch"), "desc": _("Radiant beam dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Pure Heart"), "desc": _("Heals self for {dmg} HP"), "multiplier": 0.5},
-        "ultimate": {"name": _("God of Light"), "desc": _("Blinding radiance dealing {dmg} damage to all"), "multiplier": 2.8},
+        "basic1": {
+            "name": _("Light's Touch"),
+            "desc": _("Radiant beam dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Pure Heart"),
+            "desc": _("Heals self for {dmg} HP"),
+            "multiplier": 0.5,
+        },
+        "ultimate": {
+            "name": _("God of Light"),
+            "desc": _("Blinding radiance dealing {dmg} damage to all"),
+            "multiplier": 2.8,
+        },
     },
     "Skadi": {
-        "basic1": {"name": _("Winter's Arrow"), "desc": _("Frozen projectile dealing {dmg} damage"), "multiplier": 0.85},
-        "basic2": {"name": _("Snow Hunt"), "desc": _("Tracking strike dealing {dmg} damage"), "multiplier": 0.9},
-        "ultimate": {"name": _("Eternal Winter"), "desc": _("Freezes battlefield dealing {dmg} damage"), "multiplier": 3.0},
+        "basic1": {
+            "name": _("Winter's Arrow"),
+            "desc": _("Frozen projectile dealing {dmg} damage"),
+            "multiplier": 0.85,
+        },
+        "basic2": {
+            "name": _("Snow Hunt"),
+            "desc": _("Tracking strike dealing {dmg} damage"),
+            "multiplier": 0.9,
+        },
+        "ultimate": {
+            "name": _("Eternal Winter"),
+            "desc": _("Freezes battlefield dealing {dmg} damage"),
+            "multiplier": 3.0,
+        },
     },
     "Vidar": {
-        "basic1": {"name": _("Silent Strike"), "desc": _("Quiet blow dealing {dmg} damage"), "multiplier": 0.8},
-        "basic2": {"name": _("Vengeance Step"), "desc": _("Counter-attack dealing {dmg} damage"), "multiplier": 1.0},
-        "ultimate": {"name": _("Avenger's Fury"), "desc": _("Silent vengeance dealing {dmg} damage to all"), "multiplier": 2.5},
+        "basic1": {
+            "name": _("Silent Strike"),
+            "desc": _("Quiet blow dealing {dmg} damage"),
+            "multiplier": 0.8,
+        },
+        "basic2": {
+            "name": _("Vengeance Step"),
+            "desc": _("Counter-attack dealing {dmg} damage"),
+            "multiplier": 1.0,
+        },
+        "ultimate": {
+            "name": _("Avenger's Fury"),
+            "desc": _("Silent vengeance dealing {dmg} damage to all"),
+            "multiplier": 2.5,
+        },
     },
 }
 
 DEFAULT_SKILLS: dict[str, dict[str, Any]] = {
-    "basic1": {"name": _("Basic Attack"), "desc": _("Standard strike dealing {dmg} damage"), "multiplier": 0.8},
-    "basic2": {"name": _("Power Strike"), "desc": _("Strong attack dealing {dmg} damage"), "multiplier": 1.0},
-    "ultimate": {"name": _("Divine Power"), "desc": _("Ultimate ability dealing {dmg} damage"), "multiplier": 2.5},
+    "basic1": {
+        "name": _("Basic Attack"),
+        "desc": _("Standard strike dealing {dmg} damage"),
+        "multiplier": 0.8,
+    },
+    "basic2": {
+        "name": _("Power Strike"),
+        "desc": _("Strong attack dealing {dmg} damage"),
+        "multiplier": 1.0,
+    },
+    "ultimate": {
+        "name": _("Divine Power"),
+        "desc": _("Ultimate ability dealing {dmg} damage"),
+        "multiplier": 2.5,
+    },
 }
 
 
@@ -569,8 +1335,13 @@ class God(models.Model):
         return f"{base}, {suffix}, detailed character portrait, 4k"
 
     @property
+    _image_url_cache: str | None = None
+
     def image_url(self) -> str:
         """Get image URL for this god (static if available, AI fallback)."""
+        if self._image_url_cache is not None:
+            return self._image_url_cache
+
         import urllib.parse
 
         filename_base = self.name.lower().replace(" ", "_")
@@ -579,14 +1350,16 @@ class God(models.Model):
         for ext in [".png", ".webp", ".jpg", ".jpeg"]:
             path = static_dir / f"{filename_base}{ext}"
             if path.exists():
-                return f"{settings.STATIC_URL}images/gods/{filename_base}{ext}"
+                self._image_url_cache = f"{settings.STATIC_URL}images/gods/{filename_base}{ext}"
+                return self._image_url_cache
 
         prompt = self.GOD_PROMPTS.get(self.name, "epic fantasy god portrait")
         encoded = urllib.parse.quote(prompt)
         seed = abs(hash(self.name)) % 10000
         base = "https://image.pollinations.ai/prompt"
         params = f"width=400&height=300&nologo=true&seed={seed}&model=flux"
-        return f"{base}/{encoded}?{params}"
+        self._image_url_cache = f"{base}/{encoded}?{params}"
+        return self._image_url_cache
 
     @property
     def visual_class(self) -> str:
@@ -699,16 +1472,21 @@ class PlayerGod(models.Model):
         """Get stat multiplier based on quality tier."""
         return 1.0 + (self.quality_tier - 1) * 0.15
 
+    def _equipment_list(self) -> list:
+        """Get cached list of equipped items to avoid repeated DB queries."""
+        if not hasattr(self, "_cached_equipment"):
+            self._cached_equipment = list(self.equipped_items.select_related("item").all())
+        return self._cached_equipment
+
     @property
     def total_attack(self) -> int:
         """Calculate total attack including equipment bonuses and quality."""
         base = (self.god.base_attack + (self.level * 10)) * self.quality_multiplier
-        equipment_bonus = sum(
-            eq.item.attack_bonus * eq.level for eq in self.equipped_items.all()
-        )
+        eqs = self._equipment_list()
+        equipment_bonus = sum(eq.item.attack_bonus * eq.level for eq in eqs)
         passive_bonus = sum(
             eq.item.passive_atk * eq.level
-            for eq in self.equipped_items.all()
+            for eq in eqs
             if eq.item.has_passive_for(self.god.name)
         )
         return int(base) + equipment_bonus + passive_bonus
@@ -717,12 +1495,11 @@ class PlayerGod(models.Model):
     def total_defense(self) -> int:
         """Calculate total defense including equipment bonuses and quality."""
         base = (self.god.base_defense + (self.level * 5)) * self.quality_multiplier
-        equipment_bonus = sum(
-            eq.item.defense_bonus * eq.level for eq in self.equipped_items.all()
-        )
+        eqs = self._equipment_list()
+        equipment_bonus = sum(eq.item.defense_bonus * eq.level for eq in eqs)
         passive_bonus = sum(
             eq.item.passive_def * eq.level
-            for eq in self.equipped_items.all()
+            for eq in eqs
             if eq.item.has_passive_for(self.god.name)
         )
         return int(base) + equipment_bonus + passive_bonus
@@ -731,12 +1508,11 @@ class PlayerGod(models.Model):
     def total_hp(self) -> int:
         """Calculate total HP including equipment bonuses and quality."""
         base = (self.god.base_hp + (self.level * 50)) * self.quality_multiplier
-        equipment_bonus = sum(
-            eq.item.hp_bonus * eq.level for eq in self.equipped_items.all()
-        )
+        eqs = self._equipment_list()
+        equipment_bonus = sum(eq.item.hp_bonus * eq.level for eq in eqs)
         passive_bonus = sum(
             eq.item.passive_hp * eq.level
-            for eq in self.equipped_items.all()
+            for eq in eqs
             if eq.item.has_passive_for(self.god.name)
         )
         return int(base) + equipment_bonus + passive_bonus
@@ -745,12 +1521,11 @@ class PlayerGod(models.Model):
     def total_speed(self) -> int:
         """Calculate total speed including equipment bonuses and quality."""
         base = (self.god.base_speed + (self.level * 2)) * self.quality_multiplier
-        equipment_bonus = sum(
-            eq.item.speed_bonus * eq.level for eq in self.equipped_items.all()
-        )
+        eqs = self._equipment_list()
+        equipment_bonus = sum(eq.item.speed_bonus * eq.level for eq in eqs)
         passive_bonus = sum(
             eq.item.passive_spd * eq.level
-            for eq in self.equipped_items.all()
+            for eq in eqs
             if eq.item.has_passive_for(self.god.name)
         )
         return int(base) + equipment_bonus + passive_bonus
@@ -782,9 +1557,7 @@ class PlayerGod(models.Model):
         ]:
             multiplier = float(skill["multiplier"])
             desc = str(skill["desc"])
-            dmg = int(
-                self.god.base_attack * multiplier * (1 + self.level * 0.15)
-            )
+            dmg = int(self.god.base_attack * multiplier * (1 + self.level * 0.15))
             skills.append(
                 {
                     "name": skill["name"],
@@ -813,33 +1586,44 @@ class PlayerGod(models.Model):
     @property
     def weapon(self):
         """Get equipped weapon."""
-        return self.equipped_items.filter(item__item_type="weapon").first()
+        for eq in self._equipment_list():
+            if eq.item.item_type == "weapon":
+                return eq
+        return None
 
     @property
     def armor(self):
         """Get equipped armor."""
-        return self.equipped_items.filter(item__item_type="armor").first()
+        for eq in self._equipment_list():
+            if eq.item.item_type == "armor":
+                return eq
+        return None
 
     @property
     def amulet(self):
         """Get equipped amulet."""
-        return self.equipped_items.filter(item__item_type="amulet").first()
+        for eq in self._equipment_list():
+            if eq.item.item_type == "amulet":
+                return eq
+        return None
 
     @property
     def active_passives(self) -> list[dict]:
         """Get list of active item passives for this god."""
         passives = []
-        for eq in self.equipped_items.all():
+        for eq in self._equipment_list():
             if eq.item.has_passive_for(self.god.name):
-                passives.append({
-                    "name": eq.item.passive_name,
-                    "desc": eq.item.passive_desc,
-                    "item_name": eq.item.name,
-                    "bonuses": {
-                        "atk": eq.item.passive_atk * eq.level,
-                        "def": eq.item.passive_def * eq.level,
-                        "hp": eq.item.passive_hp * eq.level,
-                        "spd": eq.item.passive_spd * eq.level,
+                passives.append(
+                    {
+                        "name": eq.item.passive_name,
+                        "desc": eq.item.passive_desc,
+                        "item_name": eq.item.name,
+                        "bonuses": {
+                            "atk": eq.item.passive_atk * eq.level,
+                            "def": eq.item.passive_def * eq.level,
+                            "hp": eq.item.passive_hp * eq.level,
+                            "spd": eq.item.passive_spd * eq.level,
+                        },
                     }
-                })
+                )
         return passives

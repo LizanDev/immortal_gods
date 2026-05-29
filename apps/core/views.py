@@ -76,7 +76,7 @@ def home(request):
 def inventory(request):
     """Show player's inventory of gods and items."""
     profile = request.user.profile
-    gods = profile.gods.select_related("god").all()
+    gods = profile.gods.select_related("god").prefetch_related("equipped_items__item").all()
     items = profile.items.select_related("item").all()
     return render(
         request,
