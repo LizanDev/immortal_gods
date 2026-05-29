@@ -94,6 +94,18 @@ class PvPProfile(models.Model):
         )
 
 
+BOT_NAMES = [
+    "Ares",
+    "Loki",
+    "Set",
+    "Susanoo",
+    "Kukulkan",
+    "Morrigan",
+    "Hela",
+    "Typhon",
+]
+
+
 class PvPBattle(models.Model):
     """Record of a PvP battle between two players."""
 
@@ -104,9 +116,14 @@ class PvPBattle(models.Model):
     )
     defender = models.ForeignKey(
         "core.PlayerProfile",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="pvp_defenses",
     )
+    is_bot = models.BooleanField(default=False)
+    bot_name = models.CharField(max_length=50, blank=True, default="")
+    bot_rating = models.IntegerField(default=1000)
     attacker_team = models.ForeignKey(
         "teams.Team", null=True, on_delete=models.SET_NULL, related_name="+"
     )
@@ -132,7 +149,23 @@ class PvPBattle(models.Model):
         verbose_name_plural = "Batallas PvP"
 
     def __str__(self) -> str:
-        return (
-            f"{self.attacker.user.username} vs {self.defender.user.username}"
-            f" ({self.created_at.strftime('%Y-%m-%d')})"
-        )
+        if self.is_bot:
+            return (
+                f"{self.attacker.user.username} vs {self.bot_name} (Bot)"
+                f" ({self.created_at.strftime('%Y-%m-%d')})"
+            )
+        if self.defender:
+            return (
+                f"{self.attacker.user.username} vs {self.defender.user.username}"
+                f" ({self.created_at.strftime('%Y-%m-%d')})"
+            )
+        return f"Battle #{self.pk}"
+
+    @property
+    def defender_display(self) -> str:
+        """Return display name for the defender (human or bot)."""
+        if self.is_bot:
+            return f"🤖 {self.bot_name}"
+        if self.defender:
+            return self.defender.user.username
+        return "Desconocido"

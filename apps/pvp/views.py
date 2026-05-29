@@ -17,7 +17,7 @@ from apps.battle.utils import (
 )
 from apps.core.models import track_mission
 
-from .models import PvPBattle, PvPProfile
+from .models import BOT_NAMES, PvPBattle, PvPProfile
 
 
 @login_required
@@ -27,7 +27,7 @@ def lobby(request):
     pvp, _ = PvPProfile.objects.get_or_create(player=profile)
     recent_battles = PvPBattle.objects.filter(
         Q(attacker=profile) | Q(defender=profile)
-    )[:5]
+    ).select_related("attacker__user", "winner__user")[:5]
     teams = profile.teams.all()
 
     return render(
@@ -118,12 +118,74 @@ def find_match(request):
             }
         )
 
-    # No opponent — enter queue
-    pvp.in_queue = True
-    pvp.queued_at = timezone.now()
-    pvp.save(update_fields=["in_queue", "queued_at"])
+    # No human opponent — create bot battle immediately
+    import random
 
-    return JsonResponse({"status": "queued"})
+    bot_name = random.choice(BOT_NAMES)
+    bot_rating = max(800, pvp.rating + random.randint(-100, 100))
+
+    # Generate a bot snapshot with scaled power
+    player_power = calculate_team_power(team)
+    bot_power = max(50, int(player_power * random.uniform(0.7, 1.3)))
+
+    bot_god_names = ["Soldado", "Arquero", "Mago", "Guerrero", "Cuervo"]
+    bot_gods = []
+    for i, gname in enumerate(bot_god_names):
+        bot_gods.append(
+            {
+                "id": -(i + 1),
+                "name": gname,
+                "rarity": "common",
+                "role": "warrior",
+                "level": max(1, pvp.battles_played // 5 + 1),
+                "quality_tier": 1,
+                "attack": bot_power // (len(bot_god_names) * 2),
+                "defense": bot_power // (len(bot_god_names) * 2),
+                "hp": bot_power // len(bot_god_names),
+                "speed": 50,
+                "image_url": "",
+                "tags": [],
+            }
+        )
+
+    defender_snapshot = {
+        "gods": bot_gods,
+        "power": bot_power,
+        "synergy_mult": 1.0,
+    }
+
+    won, battle_log = resolve_battle(player_power, bot_power)
+    attacker_delta, defender_delta = calculate_elo_change(
+        pvp.rating, bot_rating, won_by_a=won
+    )
+
+    battle = PvPBattle.objects.create(
+        attacker=profile,
+        defender=None,
+        is_bot=True,
+        bot_name=f"🤖 {bot_name}",
+        bot_rating=bot_rating,
+        attacker_team=team,
+        defender_team=None,
+        attacker_snapshot=make_snapshot(team),
+        defender_snapshot=defender_snapshot,
+        winner=profile if won else None,
+        attacker_rating_change=attacker_delta,
+        defender_rating_change=defender_delta,
+        battle_log=battle_log,
+    )
+
+    pvp.record_battle(won=won, rating_change=attacker_delta)
+
+    if won:
+        track_mission(profile, "win_battles")
+
+    return JsonResponse(
+        {
+            "status": "match_found",
+            "battle_id": battle.id,
+        }
+    )
 
 
 @login_required
@@ -184,19 +246,24 @@ def battle_result(request, battle_id: int):
     profile = request.user.profile
     battle = get_object_or_404(
         PvPBattle.objects.select_related(
-            "attacker__user", "defender__user", "winner__user"
+            "attacker__user", "winner__user"
         ),
         pk=battle_id,
     )
 
-    if profile not in (battle.attacker, battle.defender):
+    if battle.defender and profile not in (battle.attacker, battle.defender):
+        messages.error(request, "No tienes permiso para ver esta batalla.")
+        return redirect("pvp:lobby")
+    if not battle.defender and not battle.is_bot and profile != battle.attacker:
         messages.error(request, "No tienes permiso para ver esta batalla.")
         return redirect("pvp:lobby")
 
     is_attacker = profile == battle.attacker
     won = battle.winner == profile
 
-    enemy = battle.defender if is_attacker else battle.attacker
+    enemy_name = battle.defender_display if battle.is_bot else (
+        battle.defender.user.username if battle.defender else "Desconocido"
+    )
     rating_change = (
         battle.attacker_rating_change if is_attacker else battle.defender_rating_change
     )
@@ -208,7 +275,7 @@ def battle_result(request, battle_id: int):
             "battle": battle,
             "won": won,
             "is_attacker": is_attacker,
-            "enemy_profile": enemy,
+            "enemy_name": enemy_name,
             "rating_change": rating_change,
             "profile": profile,
         },
@@ -260,7 +327,7 @@ def history(request):
 
     battles = PvPBattle.objects.filter(
         Q(attacker=profile) | Q(defender=profile)
-    ).select_related("attacker__user", "defender__user", "winner__user")[
+    ).select_related("attacker__user", "winner__user")[
         offset : offset + per_page
     ]
 
