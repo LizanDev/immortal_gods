@@ -48,7 +48,10 @@ def equip_item(request, item_id):
         success = player_item.equip(player_god)
 
         if success:
-    return redirect(request.META.get("HTTP_REFERER", "core:inventory") + f"#item-{item_id}")
+            return redirect(
+                request.META.get("HTTP_REFERER", "core:inventory")
+                + f"#item-{item_id}"
+            )
 
     gods = PlayerGod.objects.filter(player=request.user.profile)
     return render(
@@ -76,4 +79,6 @@ def upgrade_item(request, item_id):
     if cost > 0 and (request.user.is_superuser or request.user.profile.gold >= cost):
         player_item.upgrade(cost)
 
-    return redirect(request.META.get("HTTP_REFERER", "core:inventory"))
+    return redirect(
+        request.META.get("HTTP_REFERER", "core:inventory") + f"#item-{item_id}"
+    )
