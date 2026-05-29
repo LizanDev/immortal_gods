@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block title %}{{ team.name }} - Immortal Gods{% endblock %}
 
@@ -6,8 +7,28 @@
 <h1>{{ team.name }}</h1>
 
 {% if not team.is_full %}
-<a href="{% url 'teams:add_member' team.id %}" class="btn">Add Member</a>
+<a href="{% url 'teams:add_member' team.id %}" class="btn">Añadir miembro</a>
 {% endif %}
+
+{% with synergies=team.get_synergy_details %}
+{% if synergies %}
+<div class="card" style="background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(74,158,255,0.05)); border-color: #a855f7;">
+    <h3 style="color: #a855f7; margin-bottom: 0.75rem;">✨ Sinergias activas</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+        {% for s in synergies %}
+        <div style="background: rgba(168,85,247,0.15); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(168,85,247,0.3);">
+            <div style="font-weight: bold; color: #fff; font-size: 0.85rem;">🏷️ {{ s.tag|title }}</div>
+            <div style="font-size: 0.75rem; color: #ccc;">{{ s.count }} dioses — umbral {{ s.threshold }}</div>
+            <div style="font-size: 0.8rem; color: #a855f7;">+{{ s.bonus_pct|floatformat:0 }}% ATK/DEF/HP/SPD</div>
+        </div>
+        {% endfor %}
+    </div>
+    <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #aaa;">
+        Multiplicador total: <strong style="color: #a855f7;">×{{ team.get_synergy_multiplier|floatformat:2 }}</strong>
+    </div>
+</div>
+{% endif %}
+{% endwith %}
 
 <div class="card">
     {% for member in team.members.all %}
@@ -19,10 +40,19 @@
             </div>
         </div>
         <div style="flex: 1;">
-            <p style="font-weight: bold;">Position {{ member.position }}: {{ member.god.god.name }} (Lv.{{ member.god.level }})</p>
+            <p style="font-weight: bold;">Posición {{ member.position }}: {{ member.god.god.name }} (Lv.{{ member.god.level }}) <span style="color: {% if member.god.god.rarity == 'mythic' %}#ff4444{% elif member.god.god.rarity == 'legendary' %}#ffd700{% elif member.god.god.rarity == 'epic' %}#a855f7{% else %}#aaa{% endif %}; font-size: 0.75rem;">{{ member.god.god.get_rarity_display }}</span></p>
             <p style="font-size: 0.8rem;">
                 ATK: {{ member.god.total_attack }} | DEF: {{ member.god.total_defense }} | HP: {{ member.god.total_hp }} | SPD: {{ member.god.total_speed }}
             </p>
+            {% with member.god.god.synergy_tags.all as tags %}
+            {% if tags %}
+            <div style="margin-top: 0.3rem; display: flex; gap: 0.3rem; flex-wrap: wrap;">
+                {% for t in tags %}
+                <span style="font-size: 0.65rem; background: rgba(168,85,247,0.15); color: #c084fc; padding: 0.1rem 0.4rem; border-radius: 4px;">🏷️ {{ t.tag }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
             <div style="margin-top: 0.5rem;">
                 {% for skill in member.god.skills %}
                 <span style="display: inline-block; background: rgba(255,255,255,0.05); padding: 0.2rem 0.5rem; margin: 0.1rem; border-radius: 4px; font-size: 0.7rem; border-left: 2px solid {% if skill.type == 'ultimate' %}#ffd700{% else %}#4a9eff{% endif %};">
@@ -30,13 +60,13 @@
                 </span>
                 {% endfor %}
             </div>
-            <a href="{% url 'teams:remove_member' team.id member.id %}" class="btn btn-secondary" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">Remove</a>
+            <a href="{% url 'teams:remove_member' team.id member.id %}" class="btn btn-secondary" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">Eliminar</a>
         </div>
     </div>
     {% empty %}
-    <p>No gods assigned to this team.</p>
+    <p>No hay dioses asignados a este equipo.</p>
     {% endfor %}
 </div>
 
-<a href="{% url 'teams:list' %}" class="btn btn-secondary" style="margin-top: 1rem;">Back to list</a>
+<a href="{% url 'teams:list' %}" class="btn btn-secondary" style="margin-top: 1rem;">Volver a equipos</a>
 {% endblock %}

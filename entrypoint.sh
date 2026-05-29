@@ -15,6 +15,9 @@ uv run python manage.py seed_data
 echo "Seeding daily missions..."
 uv run python manage.py seed_missions
 
+echo "Seeding synergy tags & rebalancing rarities..."
+uv run python manage.py seed_synergies
+
 echo "Creating superuser..."
 uv run python manage.py create_superuser
 

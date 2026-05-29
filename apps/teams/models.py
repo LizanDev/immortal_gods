@@ -1,8 +1,15 @@
 """Teams models."""
 
+from collections import defaultdict
+
 from django.db import models
 
-from apps.gods.models import CLASS_ADVANTAGE_BONUS, CLASS_ADVANTAGES
+from apps.gods.models import (
+    CLASS_ADVANTAGE_BONUS,
+    CLASS_ADVANTAGES,
+    SYNERGY_BONUSES,
+    GodSynergyTag,
+)
 
 MAX_TEAM_SIZE = 5
 
@@ -49,6 +56,66 @@ class Team(models.Model):
                 bonus += count * CLASS_ADVANTAGE_BONUS
 
         return 1.0 + min(bonus, 0.5)
+
+    def get_synergy_tags_active(self) -> dict[str, int]:
+        """Count how many gods share each synergy tag."""
+        if self.god_count() == 0:
+            return {}
+
+        god_ids = [
+            m.god.god_id
+            for m in self.members.select_related("god").all()
+            if m.god
+        ]
+        tag_counts: dict[str, int] = defaultdict(int)
+        for tag in GodSynergyTag.objects.filter(
+            god_id__in=god_ids
+        ).values_list("tag", flat=True):
+            tag_counts[tag] += 1
+        return {tag: count for tag, count in tag_counts.items() if count >= 2}
+
+    def get_synergy_bonus_pct(self) -> float:
+        """Calculate total stat bonus from active synergies."""
+        tag_counts = self.get_synergy_tags_active()
+        if not tag_counts:
+            return 0.0
+
+        max_bonus = 0.0
+        thresholds = sorted(SYNERGY_BONUSES.keys(), reverse=True)
+        for count in tag_counts.values():
+            for threshold in thresholds:
+                if count >= threshold:
+                    max_bonus = max(
+                        max_bonus, SYNERGY_BONUSES[threshold]["stat_bonus_pct"]
+                    )
+                    break
+        return max_bonus
+
+    def get_synergy_multiplier(self) -> float:
+        """Get combined multiplier from synergy bonuses."""
+        return 1.0 + self.get_synergy_bonus_pct()
+
+    def get_synergy_details(self) -> list[dict]:
+        """Return list of active synergies with details."""
+        tag_counts = self.get_synergy_tags_active()
+        if not tag_counts:
+            return []
+
+        details = []
+        for tag, count in sorted(tag_counts.items()):
+            thresholds = sorted(SYNERGY_BONUSES.keys(), reverse=True)
+            for threshold in thresholds:
+                if count >= threshold:
+                    bonus = SYNERGY_BONUSES[threshold]["stat_bonus_pct"]
+                    detail = {
+                        "tag": tag,
+                        "count": count,
+                        "threshold": threshold,
+                        "bonus_pct": bonus,
+                    }
+                    details.append(detail)
+                    break
+        return details
 
 
 class TeamMember(models.Model):

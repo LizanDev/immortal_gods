@@ -19,13 +19,18 @@
 </div>
 {% endif %}
 
-<div class="team-power-banner">
-    <div class="power-label">Poder de tu equipo</div>
-    <div class="power-value">{{ team_power }}</div>
-    {% if selected_team %}
-    <div class="power-team-name">{{ selected_team.name }}</div>
-    {% endif %}
-</div>
+    <div class="team-power-banner">
+        <div class="power-label">Poder de tu equipo</div>
+        <div class="power-value">{{ team_power }}</div>
+        {% if selected_team %}
+        <div class="power-details">
+            {% if selected_team.synergy_mult and selected_team.synergy_mult > 1.0 %}
+            <div class="power-bonus synergy-bonus">✨ ×{{ selected_team.synergy_mult|floatformat:2 }}</div>
+            {% endif %}
+        </div>
+        <div class="power-team-name">{{ selected_team.name }}</div>
+        {% endif %}
+    </div>
 
 <div class="campaign-grid">
     {% for level in levels %}

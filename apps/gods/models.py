@@ -1154,6 +1154,35 @@ RARITY_PULL_WEIGHTS = {
 }
 
 
+class GodSynergyTag(models.Model):
+    """Mythology-based synergy tag assigned to a God."""
+
+    god = models.ForeignKey(
+        "God", on_delete=models.CASCADE, related_name="synergy_tags"
+    )
+    tag = models.CharField(max_length=50, db_index=True)
+
+    class Meta:
+        unique_together = ["god", "tag"]
+
+    def __str__(self) -> str:
+        return f"{self.god.name}: {self.tag}"
+
+
+SYNERGY_BONUSES: dict[int, dict[str, float]] = {
+    2: {"stat_bonus_pct": 0.05},
+    3: {"stat_bonus_pct": 0.10},
+    4: {"stat_bonus_pct": 0.15},
+    5: {"stat_bonus_pct": 0.25},
+}
+
+SYNERGY_SPECIAL_EFFECTS: dict[int, str] = {
+    3: "heal_5pct",
+    4: "armor_pen_10pct",
+    5: "ultra_buff",
+}
+
+
 class God(models.Model):
     """Represents a god character in the game."""
 

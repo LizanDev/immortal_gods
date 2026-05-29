@@ -40,10 +40,13 @@ def campaign_list(request):
             member.god.total_attack + member.god.total_defense
             for member in team.members.all()
         )
-        team.power = power
+        synergy_mult = team.get_synergy_multiplier()
+        class_mult = team.get_class_advantage_multiplier()
+        team.power = int(power * class_mult * synergy_mult)
+        team.synergy_mult = synergy_mult
         if str(team.id) == str(selected_team_id):
             selected_team = team
-            team_power = power
+            team_power = team.power
 
     if not selected_team and teams:
         selected_team = teams[0]
@@ -95,7 +98,8 @@ def campaign_battle(request, level_id):
         )
 
         class_multiplier = team.get_class_advantage_multiplier()
-        team_power = int(team_power * class_multiplier)
+        synergy_multiplier = team.get_synergy_multiplier()
+        team_power = int(team_power * class_multiplier * synergy_multiplier)
 
         power_ratio = (
             team_power / level.required_power if level.required_power > 0 else 1
@@ -267,6 +271,8 @@ def faction_battle(request, stage_id):
             return redirect("campaign:faction_ladder_detail", ladder_id=ladder.id)
 
         team_power = sum(god.total_attack + god.total_defense for god in faction_gods)
+        synergy_multiplier = team.get_synergy_multiplier()
+        team_power = int(team_power * synergy_multiplier)
 
         power_ratio = (
             team_power / stage.required_power if stage.required_power > 0 else 1
