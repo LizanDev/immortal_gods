@@ -223,8 +223,10 @@ def missions(request):
                 PlayerMission.objects.all().delete()
                 log = MissionResetLog.objects.first()
                 if log:
-                    log.last_reset = timezone.now
+                    log.last_reset = timezone.now()
                     log.save(update_fields=["last_reset"])
+                else:
+                    MissionResetLog.objects.create(last_reset=timezone.now())
         except Exception:
             pass
 

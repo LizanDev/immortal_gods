@@ -275,9 +275,10 @@ class GiftNotification(models.Model):
 
 def track_mission(player: "PlayerProfile", mission_type: str, amount: int = 1) -> None:
     """Track mission progress for a player. Called by other apps."""
-    try:
-        mission = DailyMission.objects.get(mission_type=mission_type, is_active=True)
-        pm, _ = PlayerMission.objects.get_or_create(player=player, mission=mission)
-        pm.add_progress(amount)
-    except DailyMission.DoesNotExist:
-        pass
+    mission = DailyMission.objects.filter(
+        mission_type=mission_type, is_active=True
+    ).first()
+    if mission is None:
+        return
+    pm, _ = PlayerMission.objects.get_or_create(player=player, mission=mission)
+    pm.add_progress(amount)
