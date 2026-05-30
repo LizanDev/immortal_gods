@@ -62,6 +62,12 @@ def find_match(request):
     if not pvp.defense_team:
         return JsonResponse({"status": "no_defense"}, status=400)
 
+    if pvp.attacks_remaining <= 0:
+        return JsonResponse({"status": "no_attacks"}, status=400)
+
+    if not pvp.use_attack():
+        return JsonResponse({"status": "no_attacks"}, status=400)
+
     # Find a random opponent with a defense team within rating range
     rating_min = max(0, pvp.rating - 200)
     rating_max = pvp.rating + 200

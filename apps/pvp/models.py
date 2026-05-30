@@ -1,5 +1,7 @@
 """PvP models."""
 
+from datetime import date
+
 from django.db import models
 
 PVP_RANKS = [
@@ -53,6 +55,10 @@ class PvPProfile(models.Model):
         blank=True,
         related_name="+",
     )
+    BASE_ATTACKS = 5
+    MAX_ATTACKS = 10
+    daily_attacks_used = models.PositiveIntegerField(default=0)
+    daily_attacks_date = models.DateField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Perfil PvP"
@@ -70,6 +76,45 @@ class PvPProfile(models.Model):
         if self.battles_played == 0:
             return 0.0
         return round(self.battles_won / self.battles_played * 100, 1)
+
+    def _reset_daily_if_needed(self) -> None:
+        """Reset daily counter if it's a new day."""
+        today = date.today()
+        if self.daily_attacks_date != today:
+            self.daily_attacks_used = 0
+            self.daily_attacks_date = today
+
+    def _completed_missions_today(self) -> int:
+        """Count missions completed in the current daily cycle."""
+        return self.player.missions.filter(completed=True).count()
+
+    @property
+    def attacks_remaining(self) -> int:
+        """Calculate remaining daily attacks (base + 1/complete mission, max 10)."""
+        self._reset_daily_if_needed()
+        max_bonus = self.MAX_ATTACKS - self.BASE_ATTACKS
+        bonus = min(self._completed_missions_today(), max_bonus)
+        total = min(self.BASE_ATTACKS + bonus, self.MAX_ATTACKS)
+        return max(0, total - self.daily_attacks_used)
+
+    @property
+    def attacks_max(self) -> int:
+        """Calculate max daily attacks for display."""
+        self._reset_daily_if_needed()
+        max_bonus = self.MAX_ATTACKS - self.BASE_ATTACKS
+        bonus = min(self._completed_missions_today(), max_bonus)
+        return min(self.BASE_ATTACKS + bonus, self.MAX_ATTACKS)
+
+    def use_attack(self) -> bool:
+        """Use one attack attempt. Returns False if none remaining."""
+        self._reset_daily_if_needed()
+        self.refresh_from_db(fields=["daily_attacks_used", "daily_attacks_date"])
+        self._reset_daily_if_needed()
+        if self.daily_attacks_used >= self.attacks_max:
+            return False
+        self.daily_attacks_used += 1
+        self.save(update_fields=["daily_attacks_used", "daily_attacks_date"])
+        return True
 
     def update_rank(self) -> None:
         """Re-calculate rank label from current rating."""
