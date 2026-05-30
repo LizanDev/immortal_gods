@@ -17,11 +17,12 @@
             <div class="god-card-info">
                 {{ god.get_pantheon_display }} | {{ god.get_role_display }} | {{ god.get_rarity_display }}
             </div>
-            <div style="margin-top: 0.5rem; font-size: 0.75rem;">
-                <div class="stat-bar"><span class="stat-label">ATK</span><span class="stat-value" style="color: #ff6b6b;">{{ god.base_attack }}</span></div>
-                <div class="stat-bar"><span class="stat-label">DEF</span><span class="stat-value" style="color: #4a9eff;">{{ god.base_defense }}</span></div>
-                <div class="stat-bar"><span class="stat-label">HP</span><span class="stat-value" style="color: #51cf66;">{{ god.base_hp }}</span></div>
-                <div class="stat-bar"><span class="stat-label">SPD</span><span class="stat-value" style="color: #ffd700;">{{ god.base_speed }}</span></div>
+            <div style="margin-top: 0.75rem; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.08);">
+                <div style="font-size: 0.65rem; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem;">Stats máximos (Lv.100 · V)</div>
+                <div class="stat-bar"><span class="stat-label">ATK</span><span class="stat-value" style="color: #ff6b6b;">{{ god.max_attack|default:god.base_attack }}</span></div>
+                <div class="stat-bar"><span class="stat-label">DEF</span><span class="stat-value" style="color: #4a9eff;">{{ god.max_defense|default:god.base_defense }}</span></div>
+                <div class="stat-bar"><span class="stat-label">HP</span><span class="stat-value" style="color: #51cf66;">{{ god.max_hp|default:god.base_hp }}</span></div>
+                <div class="stat-bar"><span class="stat-label">SPD</span><span class="stat-value" style="color: #ffd700;">{{ god.max_speed|default:god.base_speed }}</span></div>
             </div>
         </div>
     </div>

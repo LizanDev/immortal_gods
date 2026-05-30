@@ -15,6 +15,17 @@ from .models import God, PlayerGod
 def god_list(request):
     """List all available gods."""
     gods = God.objects.all()
+
+    MAX_LEVEL = 100
+    MAX_QUALITY = 5
+    Q_MULT = 1.0 + (MAX_QUALITY - 1) * 0.15
+
+    for g in gods:
+        g.max_attack = int((g.base_attack + MAX_LEVEL * 10) * Q_MULT)
+        g.max_defense = int((g.base_defense + MAX_LEVEL * 5) * Q_MULT)
+        g.max_hp = int((g.base_hp + MAX_LEVEL * 50) * Q_MULT)
+        g.max_speed = int((g.base_speed + MAX_LEVEL * 2) * Q_MULT)
+
     return render(request, "gods/list.html", {"gods": gods})
 
 
