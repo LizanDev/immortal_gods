@@ -106,24 +106,24 @@ def memory_game(request):
         )
 
     try:
-        all_gods = list(God.objects.order_by("?")[:MEMORY_PAIR_COUNT])
+        picked_gods = list(God.objects.order_by("?")[:MEMORY_PAIR_COUNT])
     except DatabaseError:
-        all_gods = []
+        picked_gods = []
+
     gods_data = []
-    for god in all_gods:
-        gods_data.append(
-            {
-                "id": god.id,
-                "name": god.name,
-                "image_url": god.image_url,
-            }
-        )
+    for god in picked_gods:
+        card = {"id": god.id, "name": god.name, "image_url": god.image_url}
+        gods_data.append(card)
+        gods_data.append(card.copy())
+
+    random.shuffle(gods_data)
 
     return render(
         request,
         "minigames/memory.html",
         {
             "gods": gods_data,
+            "total_pairs": MEMORY_PAIR_COUNT,
             "session": today_session,
             "finished": bool(today_session and today_session.completed),
         },

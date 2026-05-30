@@ -22,7 +22,7 @@
     {% else %}
     <div style="font-size: 3rem;">🎮</div>
     <h2 style="color: #4a9eff;">Juego nuevo</h2>
-    <p style="color: #aaa;">Encuentra las 8 parejas de dioses. ¡Suerte!</p>
+    <p style="color: #aaa;">Encuentra las {{ total_pairs }} parejas de dioses. ¡Suerte!</p>
     {% endif %}
 </div>
 {% else %}
@@ -31,7 +31,7 @@
         Movimientos: <span id="movesDisplay" style="font-weight: bold; color: #fff;">0</span>
     </div>
     <div style="color: #aaa;">
-        Parejas: <span id="pairsDisplay" style="font-weight: bold; color: #fff;">0/{{ gods|length }}</span>
+        Parejas: <span id="pairsDisplay" style="font-weight: bold; color: #fff;">0/{{ total_pairs }}</span>
     </div>
     <button id="resetBtn" class="btn btn-secondary" style="font-size: 0.85rem;">🔄 Reiniciar</button>
 </div>
@@ -66,7 +66,7 @@
     var matchedPairs = 0;
     var moves = 0;
     var isProcessing = false;
-    var totalPairs = {{ gods|length }};
+    var totalPairs = {{ total_pairs }};
     var cardOrder = [];
 
     function shuffleArray(arr) {
