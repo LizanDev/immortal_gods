@@ -26,6 +26,20 @@
 {% endif %}
 {% endwith %}
 
+{% if team.has_ultra_buff %}
+<div class="card" style="border-color: #ff4444; background: linear-gradient(135deg, rgba(255,68,68,0.15), rgba(168,85,247,0.1));">
+    <h3 style="color: #ff4444;">🔥 ULTRA BUFF ACTIVO</h3>
+    <p style="font-size: 0.85rem; color: #ddd;">
+        ¡5+ dioses comparten un tag de sinergia!
+    </p>
+    <ul style="font-size: 0.8rem; color: #ccc; margin: 0.5rem 0;">
+        <li><strong style="color: #ff6b6b;">Power Surge</strong> — +10% stat bonus adicional (sobre el +25% base)</li>
+        <li><strong style="color: #ff6b6b;">First Strike</strong> — +30% de daño en el primer ataque</li>
+        <li><strong style="color: #ff6b6b;">Colossus</strong> — +0.15 al power ratio en batalla</li>
+    </ul>
+</div>
+{% endif %}
+
 <div class="card">
     <div style="display: flex; flex-direction: column; gap: 0.75rem;">
         {% for slot in slots %}

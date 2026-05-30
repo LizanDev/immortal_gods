@@ -92,7 +92,10 @@ def find_match(request):
     attacker_power = calculate_team_power(attacker_team)
     defender_power = calculate_team_power(defender_team) if defender_team else 0
 
-    won, battle_log = resolve_battle(attacker_power, defender_power)
+    won, battle_log = resolve_battle(
+        attacker_power, defender_power,
+        has_ultra_buff=attacker_team.has_ultra_buff(),
+    )
     attacker_delta, defender_delta = calculate_elo_change(
         pvp.rating, opponent.rating, won_by_a=won
     )

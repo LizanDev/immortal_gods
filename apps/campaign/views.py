@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
+from apps.battle.utils import calculate_team_power, resolve_battle
 from apps.campaign.models import (
     CampaignBattle,
     CampaignLevel,
@@ -128,26 +129,13 @@ def campaign_battle(request, level_id):
         if not team or team.god_count() == 0:
             return redirect("teams:list")
 
-        team_power = sum(
-            member.god.total_attack + member.god.total_defense
-            for member in team.members.select_related("god").all()
-            if member.god
+        team_power = calculate_team_power(team)
+        enemy_power = level.required_power if level.required_power > 0 else 1
+        won, battle_log = resolve_battle(
+            team_power=team_power,
+            enemy_power=enemy_power,
+            has_ultra_buff=team.has_ultra_buff(),
         )
-
-        class_multiplier = team.get_class_advantage_multiplier()
-        synergy_multiplier = team.get_synergy_multiplier()
-        team_power = int(team_power * class_multiplier * synergy_multiplier)
-
-        power_ratio = (
-            team_power / level.required_power if level.required_power > 0 else 1
-        )
-
-        if power_ratio >= 1.0:
-            won = True
-        elif power_ratio >= 0.7:
-            won = random.random() < (power_ratio - 0.5)
-        else:
-            won = False
 
         gold_var = random.randint(0, int(level.gold_reward * 0.2))
         gems_var = random.randint(0, max(1, int(level.gems_reward * 0.3)))
@@ -175,14 +163,16 @@ def campaign_battle(request, level_id):
                     PlayerItem.objects.create(player=profile, item=item)
                     dropped_item = item
 
+        actual_turns = len([e for e in battle_log if "turn" in e])
         battle = CampaignBattle.objects.create(
             player=profile,
             level=level,
             team=team,
             won=won,
-            turns=random.randint(1, 10),
+            turns=actual_turns,
             gold_earned=gold_earned if won else 0,
             gems_earned=gems_earned if won else 0,
+            log_json=battle_log,
         )
 
         next_level = None

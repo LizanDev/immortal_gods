@@ -1182,6 +1182,10 @@ SYNERGY_SPECIAL_EFFECTS: dict[int, str] = {
     5: "ultra_buff",
 }
 
+ULTRA_BUFF_POWER_SURGE = 0.10
+ULTRA_BUFF_FIRST_STRIKE = 0.30
+ULTRA_BUFF_COLOSSUS = 0.15
+
 
 class God(models.Model):
     """Represents a god character in the game."""

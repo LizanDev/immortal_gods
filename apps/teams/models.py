@@ -8,6 +8,7 @@ from apps.gods.models import (
     CLASS_ADVANTAGE_BONUS,
     CLASS_ADVANTAGES,
     SYNERGY_BONUSES,
+    ULTRA_BUFF_POWER_SURGE,
     GodSynergyTag,
 )
 
@@ -74,6 +75,11 @@ class Team(models.Model):
             tag_counts[tag] += 1
         return {tag: count for tag, count in tag_counts.items() if count >= 2}
 
+    def has_ultra_buff(self) -> bool:
+        """Check if any synergy tag has 5+ gods (ultra_buff active)."""
+        tag_counts = self.get_synergy_tags_active()
+        return any(c >= 5 for c in tag_counts.values())
+
     def get_synergy_bonus_pct(self) -> float:
         """Calculate total stat bonus from active synergies."""
         tag_counts = self.get_synergy_tags_active()
@@ -92,8 +98,11 @@ class Team(models.Model):
         return max_bonus
 
     def get_synergy_multiplier(self) -> float:
-        """Get combined multiplier from synergy bonuses."""
-        return 1.0 + self.get_synergy_bonus_pct()
+        """Get combined multiplier from synergy bonuses (includes Power Surge)."""
+        bonus = self.get_synergy_bonus_pct()
+        if self.has_ultra_buff():
+            bonus += ULTRA_BUFF_POWER_SURGE
+        return 1.0 + bonus
 
     def get_synergy_details(self) -> list[dict]:
         """Return list of active synergies with details."""

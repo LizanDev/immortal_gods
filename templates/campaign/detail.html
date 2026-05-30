@@ -58,6 +58,14 @@
             {% else %}
             <p style="color: #888; font-size: 0.85rem;">Selecciona un equipo en la campaña.</p>
             {% endif %}
+            {% if team and team.has_ultra_buff %}
+            <div style="margin-top: 0.75rem; padding: 0.5rem; background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,0,0.1)); border: 1px solid #ffd700; border-radius: 8px; text-align: center;">
+                <span style="color: #ffd700; font-weight: bold; font-size: 0.8rem;">⚡ ULTRA BUFF ACTIVO</span>
+                <div style="color: #aaa; font-size: 0.7rem; margin-top: 0.25rem;">
+                    Power Surge +10% · First Strike +30% · Colossus +0.15
+                </div>
+            </div>
+            {% endif %}
         </div>
 
         <!-- Enemy Team -->
@@ -102,6 +110,21 @@
             {% endif %}
         </div>
         <div style="font-size: 0.8rem; color: #888; margin-top: 0.25rem;">Turnos: {{ latest_battle.turns }}</div>
+        {% if latest_battle.log_json %}
+        <details style="margin-top: 0.5rem; font-size: 0.7rem; font-family: monospace;">
+            <summary style="cursor: pointer; color: #666;">Ver registro</summary>
+            <div style="margin-top: 0.35rem; display: flex; flex-direction: column; gap: 0.2rem;">
+                {% for entry in latest_battle.log_json %}
+                    {% if entry.turn %}
+                    <div style="padding: 0.2rem 0.4rem; background: rgba(255,255,255,0.03); border-radius: 3px; border-left: 2px solid {% if entry.first_strike %}#ff6b6b{% else %}#4a9eff{% endif %};">
+                        T{{ entry.turn }}: ATK {{ entry.attacker_damage }} vs DEF {{ entry.defender_damage }}
+                        {% if entry.first_strike %}<span style="color: #ff6b6b;">FS!</span>{% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </details>
+        {% endif %}
     </div>
     {% endif %}
 

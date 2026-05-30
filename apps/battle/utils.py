@@ -3,6 +3,7 @@
 import random
 from collections.abc import Sequence
 
+from apps.gods.models import ULTRA_BUFF_COLOSSUS, ULTRA_BUFF_FIRST_STRIKE
 from apps.teams.models import Team, TeamMember
 
 
@@ -10,10 +11,11 @@ def resolve_battle(
     team_power: int,
     enemy_power: int,
     turns: int = 1,
+    has_ultra_buff: bool = False,
 ) -> tuple[bool, list[dict]]:
     """Resolve a battle between two teams and return (won, battle_log).
 
-    battle_log contains step-by-step entries for replay.
+    If has_ultra_buff is True, the attacker deals bonus first-strike damage.
     """
     log: list[dict] = []
     attacker_hp = team_power
@@ -21,6 +23,8 @@ def resolve_battle(
     turn_number = 0
 
     ratio = team_power / enemy_power if enemy_power > 0 else 1
+    if has_ultra_buff:
+        ratio += ULTRA_BUFF_COLOSSUS
 
     if ratio >= 1.0:
         won = True
@@ -29,9 +33,14 @@ def resolve_battle(
     else:
         won = False
 
+    first_strike = has_ultra_buff
     while attacker_hp > 0 and defender_hp > 0 and turn_number < 20:
         turn_number += 1
-        atk_dmg = max(1, int(team_power * random.uniform(0.8, 1.2)))
+        dmg_mult = 1.0
+        if first_strike:
+            dmg_mult += ULTRA_BUFF_FIRST_STRIKE
+            first_strike = False
+        atk_dmg = max(1, int(team_power * random.uniform(0.8, 1.2) * dmg_mult))
         def_dmg = max(1, int(enemy_power * random.uniform(0.8, 1.2)))
 
         if won:
@@ -46,6 +55,7 @@ def resolve_battle(
                 "defender_hp": max(0, defender_hp),
                 "attacker_damage": atk_dmg,
                 "defender_damage": def_dmg,
+                "first_strike": dmg_mult > 1.0,
             }
         )
 

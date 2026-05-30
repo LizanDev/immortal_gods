@@ -56,6 +56,7 @@ class CampaignBattle(models.Model):
     gold_earned = models.PositiveIntegerField(default=0)
     gems_earned = models.PositiveIntegerField(default=0)
     exp_earned = models.PositiveIntegerField(default=0)
+    log_json = models.JSONField(default=list, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
