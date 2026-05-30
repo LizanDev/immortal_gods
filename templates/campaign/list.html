@@ -51,6 +51,15 @@
                         <span style="color: #ffd700;">⚔️</span> {{ level.required_power }}
                     </span>
                 </div>
+                {% if level.enemy_team_data %}
+                <div class="enemy-preview" style="display: flex; flex-wrap: wrap; gap: 4px 8px; margin-top: 6px;">
+                    {% for enemy in level.enemy_team_data|slice:":5" %}
+                    <span style="font-size: 0.7rem; color: #ff6b6b; background: rgba(255,107,107,0.1); padding: 1px 6px; border-radius: 3px;">
+                        👹 {{ enemy.name }} <span style="color: #ff8;">{{ enemy.attack|add:enemy.defense }}</span>
+                    </span>
+                    {% endfor %}
+                </div>
+                {% endif %}
             </div>
             <div class="level-rewards">
                 <span class="reward-item">&#9734; {{ level.gold_reward }} oro</span>
