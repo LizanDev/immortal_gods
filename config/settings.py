@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     "apps.gacha",
     "apps.campaign",
     "apps.pvp",
+    "apps.minigames",
 ]
 
 MIDDLEWARE = [

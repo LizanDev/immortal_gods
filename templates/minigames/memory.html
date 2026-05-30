@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Memoria de Dioses - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>🧠 Memoria de Dioses</h1>
+
+{% if finished %}
+<div class="card" style="text-align: center; border-top: 3px solid {% if session.reward_claimed %}#4a9eff{% else %}#4ade80{% endif %};">
+    {% if session.completed %}
+    <div style="font-size: 3rem;">🏆</div>
+    <h2 style="color: #4ade80;">¡Completado!</h2>
+    <p style="color: #aaa;">Lo resolviste en <strong>{{ session.moves }}</strong> movimientos.</p>
+    <p style="color: #ffd700; font-size: 1.2rem;">Recompensa: {{ session.reward_gems }} 💎</p>
+    {% if not session.reward_claimed %}
+    <button id="claimBtn" class="btn" style="font-size: 1.1rem;">Reclamar {{ session.reward_gems }} 💎</button>
+    <div id="claimMsg" style="color: #4ade80; margin-top: 0.5rem; display: none;"></div>
+    {% else %}
+    <p style="color: #888;">Recompensa ya reclamada. Vuelve mañana para un nuevo juego.</p>
+    {% endif %}
+    {% else %}
+    <div style="font-size: 3rem;">🎮</div>
+    <h2 style="color: #4a9eff;">Juego nuevo</h2>
+    <p style="color: #aaa;">Encuentra las 8 parejas de dioses. ¡Suerte!</p>
+    {% endif %}
+</div>
+{% else %}
+<div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+    <div style="color: #aaa;">
+        Movimientos: <span id="movesDisplay" style="font-weight: bold; color: #fff;">0</span>
+    </div>
+    <div style="color: #aaa;">
+        Parejas: <span id="pairsDisplay" style="font-weight: bold; color: #fff;">0/{{ gods|length }}</span>
+    </div>
+    <button id="resetBtn" class="btn btn-secondary" style="font-size: 0.85rem;">🔄 Reiniciar</button>
+</div>
+
+<div id="memoryBoard" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; max-width: 600px; margin: 0 auto;">
+    {% for god in gods %}
+    <div class="memory-card" data-id="{{ god.id }}" data-index="{{ forloop.counter0 }}"
+         style="aspect-ratio: 1; border-radius: 8px; cursor: pointer; perspective: 800px;"
+         onclick="flipCard(this)">
+        <div class="memory-card-inner" style="position: relative; width: 100%; height: 100%; transition: transform 0.4s; transform-style: preserve-3d;">
+            <div class="memory-card-front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: linear-gradient(135deg, #2a1a5e, #1a1a3e); border: 2px solid rgba(255,255,255,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                ❓
+            </div>
+            <div class="memory-card-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; transform: rotateY(180deg); background: #1a1a3e; border: 2px solid #4a9eff; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0.25rem;">
+                <img src="{{ god.image_url }}" alt="{{ god.name }}" style="width: 60%; height: 60%; object-fit: contain; border-radius: 4px; background: rgba(0,0,0,0.3);" onerror="this.style.display='none'">
+                <div style="font-size: 0.7rem; color: #fff; margin-top: 0.25rem; text-align: center;">{{ god.name }}</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<script>
+(function() {
+    {% if not finished %}
+    var cards = document.querySelectorAll('.memory-card');
+    var movesDisplay = document.getElementById('movesDisplay');
+    var pairsDisplay = document.getElementById('pairsDisplay');
+    var resetBtn = document.getElementById('resetBtn');
+    var flippedCards = [];
+    var matchedPairs = 0;
+    var moves = 0;
+    var isProcessing = false;
+    var totalPairs = {{ gods|length }};
+    var cardOrder = [];
+
+    function shuffleArray(arr) {
+        for (var i = arr.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var tmp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = tmp;
+        }
+        return arr;
+    }
+
+    function initBoard() {
+        cardOrder = [];
+        for (var i = 0; i < cards.length; i++) {
+            cardOrder.push(i);
+        }
+        shuffleArray(cardOrder);
+        var board = document.getElementById('memoryBoard');
+        var container = board.parentNode;
+        var newBoard = document.createElement('div');
+        newBoard.id = 'memoryBoard';
+        newBoard.style.cssText = board.style.cssText;
+        for (var j = 0; j < cardOrder.length; j++) {
+            newBoard.appendChild(cards[cardOrder[j]].cloneNode(true));
+        }
+        container.replaceChild(newBoard, board);
+
+        // Re-bind click events
+        newBoard.querySelectorAll('.memory-card').forEach(function(c) {
+            c.addEventListener('click', function() { flipCard(this); });
+        });
+        cards = newBoard.querySelectorAll('.memory-card');
+        flippedCards = [];
+        matchedPairs = 0;
+        moves = 0;
+        isProcessing = false;
+        updateDisplay();
+    }
+
+    function updateDisplay() {
+        movesDisplay.textContent = moves;
+        pairsDisplay.textContent = matchedPairs + '/' + totalPairs;
+    }
+
+    window.flipCard = function(el) {
+        if (isProcessing) return;
+        if (el.classList.contains('matched')) return;
+        var inner = el.querySelector('.memory-card-inner');
+        if (inner.style.transform === 'rotateY(180deg)') return; // already flipped
+
+        if (flippedCards.length >= 2) return;
+
+        inner.style.transform = 'rotateY(180deg)';
+        flippedCards.push(el);
+        el.classList.add('flipped');
+
+        if (flippedCards.length === 2) {
+            moves++;
+            updateDisplay();
+            isProcessing = true;
+            var card1 = flippedCards[0];
+            var card2 = flippedCards[1];
+
+            if (card1.dataset.id === card2.dataset.id && card1 !== card2) {
+                // Match!
+                setTimeout(function() {
+                    card1.classList.add('matched');
+                    card2.classList.add('matched');
+                    flippedCards = [];
+                    matchedPairs++;
+                    updateDisplay();
+                    isProcessing = false;
+
+                    if (matchedPairs === totalPairs) {
+                        saveGame();
+                    }
+                }, 400);
+            } else {
+                // No match
+                setTimeout(function() {
+                    card1.querySelector('.memory-card-inner').style.transform = 'rotateY(0deg)';
+                    card2.querySelector('.memory-card-inner').style.transform = 'rotateY(0deg)';
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    flippedCards = [];
+                    isProcessing = false;
+                }, 900);
+            }
+        }
+    };
+
+    function saveGame() {
+        fetch('{% url "minigames:memory_save" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ moves: moves })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.status === 'ok') {
+                window.location.reload();
+            }
+        });
+    }
+
+    if (resetBtn) {
+        resetBtn.addEventListener('click', initBoard);
+    }
+
+    initBoard();
+    {% endif %}
+
+    var claimBtn = document.getElementById('claimBtn');
+    if (claimBtn) {
+        claimBtn.addEventListener('click', function() {
+            var msg = document.getElementById('claimMsg');
+            fetch('{% url "minigames:memory_claim" %}', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.status === 'ok') {
+                    msg.style.display = 'block';
+                    msg.textContent = '¡Reclamaste ' + data.gems + ' 💎!';
+                    claimBtn.disabled = true;
+                    claimBtn.textContent = 'Reclamado ✓';
+                } else {
+                    msg.style.display = 'block';
+                    msg.textContent = 'Ya reclamaste la recompensa.';
+                    claimBtn.disabled = true;
+                }
+            });
+        });
+    }
+})();
+</script>
+
+<div style="margin-top: 1rem;">
+    <a href="{% url 'minigames:index' %}" class="btn btn-secondary">← Volver a Minijuegos</a>
+</div>
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Rueda de la Fortuna - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>🎡 Rueda de la Fortuna</h1>
+
+<div class="card" style="text-align: center;">
+    {% if today_spin %}
+    <div style="font-size: 3rem;">{% if today_spin.reward_type == "nothing" %}🍀{% else %}🎉{% endif %}</div>
+    <h2>Giro de hoy</h2>
+    {% if today_spin.reward_type == "nothing" %}
+    <p style="color: #888;">¡Suerte! No ganaste nada hoy. Vuelve mañana.</p>
+    {% else %}
+    <p style="color: #aaa;">Ganaste:</p>
+    <div style="font-size: 2rem; font-weight: bold; color: #ffd700;">
+        +{{ today_spin.reward_amount }}
+        {% if today_spin.reward_type == "gems" %}💎{% else %}🪙{% endif %}
+    </div>
+    {% endif %}
+    {% else %}
+    <div id="wheelContainer" style="position: relative; width: 280px; height: 280px; margin: 1rem auto;">
+        <canvas id="wheelCanvas" width="280" height="280" style="border-radius: 50%; box-shadow: 0 0 20px rgba(255,215,0,0.3);"></canvas>
+        <div style="position: absolute; top: 50%; right: -10px; transform: translateY(-50%); font-size: 2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">▶</div>
+    </div>
+    <button id="spinBtn" class="btn" style="font-size: 1.2rem; padding: 0.75rem 2rem;">🎡 Girar</button>
+    <div id="spinResult" style="margin-top: 1rem; display: none;"></div>
+    {% endif %}
+</div>
+
+<script>
+(function() {
+    var segments = {{ segments|safe }};
+    var numSegments = segments.length;
+    var canvas = document.getElementById('wheelCanvas');
+    var ctx = canvas ? canvas.getContext('2d') : null;
+    var currentAngle = 0;
+    var isSpinning = false;
+    var spinBtn = document.getElementById('spinBtn');
+
+    var colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff'];
+
+    function drawWheel(angle) {
+        if (!ctx) return;
+        var cx = 140, cy = 140, r = 130;
+        ctx.clearRect(0, 0, 280, 280);
+        var arc = (2 * Math.PI) / numSegments;
+
+        for (var i = 0; i < numSegments; i++) {
+            var startAngle = angle + i * arc;
+            var endAngle = startAngle + arc;
+
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, r, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = colors[i % colors.length];
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(startAngle + arc / 2);
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText(segments[i].label, r - 10, 4);
+            ctx.restore();
+        }
+
+        // Center circle
+        ctx.beginPath();
+        ctx.arc(cx, cy, 20, 0, 2 * Math.PI);
+        ctx.fillStyle = '#1a1a3e';
+        ctx.fill();
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    }
+
+    function getRewardIndex(angle) {
+        var arc = (2 * Math.PI) / numSegments;
+        // Normalize angle to 0-2PI
+        var norm = angle % (2 * Math.PI);
+        if (norm < 0) norm += 2 * Math.PI;
+        // The pointer is at the right (0 radians), so find which segment it points to
+        var idx = Math.floor(norm / arc);
+        // The pointer is at the beginning of the segment, so we need to invert for visual
+        return (numSegments - 1 - idx) % numSegments;
+    }
+
+    if (canvas) drawWheel(currentAngle);
+
+    if (spinBtn) {
+        spinBtn.addEventListener('click', function() {
+            if (isSpinning) return;
+            isSpinning = true;
+            spinBtn.disabled = true;
+            spinBtn.textContent = 'Girando...';
+
+            var resultEl = document.getElementById('spinResult');
+            resultEl.style.display = 'none';
+
+            var spins = 5 + Math.random() * 5;
+            var targetAngle = currentAngle + spins * 2 * Math.PI + (Math.random() * 2 * Math.PI);
+            var startAngle = currentAngle;
+            var duration = 4000;
+            var startTime = performance.now();
+
+            function animate(time) {
+                var elapsed = time - startTime;
+                var progress = Math.min(elapsed / duration, 1);
+                // Ease out cubic
+                var eased = 1 - Math.pow(1 - progress, 3);
+                var angle = startAngle + (targetAngle - startAngle) * eased;
+                drawWheel(angle);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    currentAngle = targetAngle;
+                    // Send spin to server
+                    fetch('{% url "minigames:wheel_spin" %}', {
+                        method: 'POST',
+                        headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                    })
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        if (data.status === 'ok') {
+                            // Highlight the winning segment
+                            resultEl.style.display = 'block';
+                            if (data.reward_type === 'nothing') {
+                                resultEl.innerHTML = '<div style="font-size: 2rem;">🍀</div><p style="color: #888;">¡Suerte! No ganaste nada.</p>';
+                            } else {
+                                resultEl.innerHTML = '<div style="font-size: 2rem;">🎉</div><p style="color: #aaa;">¡Ganaste!</p><div style="font-size: 2rem; font-weight: bold; color: #ffd700;">+' + data.reward_amount + ' ' + (data.reward_type === 'gems' ? '💎' : '🪙') + '</div>';
+                            }
+                            spinBtn.textContent = 'Reclamado ✓';
+                        } else {
+                            resultEl.style.display = 'block';
+                            resultEl.textContent = 'Ya giraste hoy.';
+                            spinBtn.textContent = 'Ya girado';
+                        }
+                    })
+                    .catch(function() {
+                        resultEl.style.display = 'block';
+                        resultEl.textContent = 'Error al girar.';
+                        spinBtn.disabled = false;
+                        spinBtn.textContent = '🎡 Girar';
+                        isSpinning = false;
+                    });
+                }
+            }
+            requestAnimationFrame(animate);
+        });
+    }
+})();
+</script>
+
+<div style="margin-top: 1rem;">
+    <a href="{% url 'minigames:index' %}" class="btn btn-secondary">← Volver a Minijuegos</a>
+</div>
+{% endblock %}
