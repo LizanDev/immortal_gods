@@ -35,34 +35,36 @@
 <div class="campaign-grid">
     {% for level in levels %}
     {% if level.order <= max_visible %}
-    <a href="{% url 'campaign:battle' level.id %}" class="level-card rank-{{ level.get_difficulty_display }} {% if level.is_boss_level %}is-boss{% endif %}">
-        <div class="level-order">{{ level.order }}</div>
-        <div class="level-info">
-            <div class="level-name-row">
-                <span class="level-name">{{ level.name }}</span>
-                {% if level.is_boss_level %}
-                <span class="boss-icon">👹</span>
-                {% endif %}
+    <div class="level-card rank-{{ level.get_difficulty_display }} {% if level.is_boss_level %}is-boss{% endif %}">
+        <a href="{% url 'campaign:detail' level.id %}" style="display: flex; align-items: center; gap: 1rem; flex: 1; text-decoration: none; color: inherit;">
+            <div class="level-order">{{ level.order }}</div>
+            <div class="level-info">
+                <div class="level-name-row">
+                    <span class="level-name">{{ level.name }}</span>
+                    {% if level.is_boss_level %}
+                    <span class="boss-icon">👹</span>
+                    {% endif %}
+                </div>
+                <div class="level-meta">
+                    <span class="difficulty-tag">{{ level.get_difficulty_display }}</span>
+                    <span class="level-power">
+                        <span style="color: #ffd700;">⚔️</span> {{ level.required_power }}
+                    </span>
+                </div>
             </div>
-            <div class="level-meta">
-                <span class="difficulty-tag">{{ level.get_difficulty_display }}</span>
-                <span class="level-power">
-                    <span style="color: #ffd700;">⚔️</span> {{ level.required_power }}
-                </span>
+            <div class="level-rewards">
+                <span class="reward-item">&#9734; {{ level.gold_reward }} oro</span>
+                <span class="reward-item">&#9830; {{ level.gems_reward }} 💎</span>
             </div>
-        </div>
-        <div class="level-rewards">
-            <span class="reward-item">&#9734; {{ level.gold_reward }} oro</span>
-            <span class="reward-item">&#9830; {{ level.gems_reward }} 💎</span>
-        </div>
+        </a>
         <div class="level-action">
             {% if level.order <= profile.campaign_progress %}
-            <span class="btn battle-btn">Batallar</span>
+            <a href="{% url 'campaign:battle' level.id %}" class="btn battle-btn">Batallar</a>
             {% else %}
-            <span class="btn battle-btn btn-gold">Desbloquear</span>
+            <span class="btn battle-btn btn-gold">Bloqueado</span>
             {% endif %}
         </div>
-    </a>
+    </div>
     {% endif %}
     {% empty %}
     <p>No hay niveles de campaña disponibles.</p>

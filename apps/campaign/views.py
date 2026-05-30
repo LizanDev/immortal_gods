@@ -68,6 +68,43 @@ def campaign_list(request):
 
 
 @login_required
+def campaign_detail(request, level_id):
+    """Show campaign level detail with teams, rewards, and battle history."""
+    profile = request.user.profile
+    level = get_object_or_404(CampaignLevel, pk=level_id)
+
+    if level.order > profile.campaign_progress and not request.user.is_superuser:
+        return render(
+            request,
+            "campaign/locked.html",
+            {"level": level, "profile": profile},
+        )
+
+    team_id = request.session.get("campaign_team_id")
+    team = profile.teams.filter(id=team_id).first()
+    if not team:
+        team = profile.teams.first()
+
+    latest_battle = CampaignBattle.objects.filter(
+        player=profile, level=level
+    ).first()
+
+    next_level = CampaignLevel.objects.filter(order=level.order + 1).first()
+
+    return render(
+        request,
+        "campaign/detail.html",
+        {
+            "level": level,
+            "profile": profile,
+            "team": team,
+            "latest_battle": latest_battle,
+            "next_level": next_level,
+        },
+    )
+
+
+@login_required
 def campaign_battle(request, level_id):
     """Execute a battle for a campaign level."""
     try:

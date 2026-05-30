@@ -9,13 +9,13 @@
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
 
     <a href="{% url 'minigames:memory' %}" style="text-decoration: none;">
-        <div class="card" style="border-top: 3px solid #4a9eff; cursor: pointer; transition: transform 0.2s; text-align: center;"
-             onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-            <div style="font-size: 3rem; margin: 0.5rem 0;">🧠</div>
-            <h3 style="margin: 0.5rem 0; color: #4a9eff;">Memoria de Dioses</h3>
-            <p style="color: #aaa; font-size: 0.9rem;">
-                Encuentra las parejas de dioses en el menor número de movimientos.
-            </p>
+<div class="card" style="border-top: 3px solid #4a9eff; cursor: pointer; transition: transform 0.2s; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: space-between;"
+     onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+    <div style="font-size: 3rem; margin: 0.5rem 0;">🧠</div>
+    <h3 style="margin: 0.5rem 0; color: #4a9eff;">Memoria de Dioses</h3>
+    <p style="color: #aaa; font-size: 0.9rem; flex: 1;">
+        Encuentra las parejas de dioses en el menor número de movimientos.
+    </p>
             {% if today_memory and today_memory.completed %}
             <div style="color: #4ade80; font-size: 0.85rem;">
                 ✓ Completado — {{ today_memory.moves }} movimientos
@@ -34,13 +34,13 @@
     </a>
 
     <a href="{% url 'minigames:wheel' %}" style="text-decoration: none;">
-        <div class="card" style="border-top: 3px solid #ffd700; cursor: pointer; transition: transform 0.2s; text-align: center;"
-             onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-            <div style="font-size: 3rem; margin: 0.5rem 0;">🎡</div>
-            <h3 style="margin: 0.5rem 0; color: #ffd700;">Rueda de la Fortuna</h3>
-            <p style="color: #aaa; font-size: 0.9rem;">
-                Gira la rueda una vez al día y gana premios.
-            </p>
+<div class="card" style="border-top: 3px solid #ffd700; cursor: pointer; transition: transform 0.2s; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: space-between;"
+     onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+    <div style="font-size: 3rem; margin: 0.5rem 0;">🎡</div>
+    <h3 style="margin: 0.5rem 0; color: #ffd700;">Rueda de la Fortuna</h3>
+    <p style="color: #aaa; font-size: 0.9rem; flex: 1;">
+        Gira la rueda una vez al día y gana premios.
+    </p>
             {% if today_wheel %}
             <div style="color: #888; font-size: 0.85rem;">
                 {% if today_wheel.reward_type == "nothing" %}

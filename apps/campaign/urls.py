@@ -8,6 +8,7 @@ app_name = "campaign"
 
 urlpatterns = [
     path("", views.campaign_list, name="list"),
+    path("<int:level_id>/", views.campaign_detail, name="detail"),
     path("<int:level_id>/battle/", views.campaign_battle, name="battle"),
     path("select-team/<int:team_id>/", views.select_team, name="select_team"),
     path("factions/", views.faction_ladders, name="faction_ladders"),

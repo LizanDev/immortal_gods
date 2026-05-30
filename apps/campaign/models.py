@@ -24,6 +24,11 @@ class CampaignLevel(models.Model):
     exp_reward = models.PositiveIntegerField(default=50)
     required_power = models.PositiveIntegerField(default=500)
     is_boss_level = models.BooleanField(default=False)
+    enemy_team_data = models.JSONField(
+        default=list,
+        blank=True,
+        help_text="List of enemy god configurations for this level",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
