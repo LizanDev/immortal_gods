@@ -45,6 +45,17 @@ LEVEL_SCALING = {
 QUALITY_MULT = {"easy": 1.00, "normal": 1.15, "hard": 1.30, "hell": 1.45}
 
 
+QUALITY_ROMAN = {"easy": "I", "normal": "II", "hard": "III", "hell": "IV"}
+
+ROLE_EMOJI = {
+    "Tank": "🛡️",
+    "Archer": "🏹",
+    "Mage": "🔮",
+    "Assassin": "🗡️",
+    "Support": "✨",
+}
+
+
 def build_enemy_team(level: CampaignLevel) -> list[dict]:
     """Build enemy team data for a campaign level."""
     diff = level.difficulty
@@ -54,8 +65,9 @@ def build_enemy_team(level: CampaignLevel) -> list[dict]:
     diff_pct = config["diff_pct"]
 
     pool = BOSS_POOL if level.is_boss_level else ENEMY_POOL
-    enemy_level = level.order * 2
-    level_mult = 1.0 + (enemy_level * 0.1)
+    display_level = level.order * 2
+    level_mult = 1.0 + (display_level * 0.1)
+    quality_roman = QUALITY_ROMAN[diff]
 
     enemies = []
     for i in range(num_enemies):
@@ -73,6 +85,8 @@ def build_enemy_team(level: CampaignLevel) -> list[dict]:
             "defense": def_,
             "hp": hp,
             "speed": speed,
+            "level": display_level,
+            "quality_roman": quality_roman,
         })
 
     return enemies
