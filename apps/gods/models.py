@@ -1514,7 +1514,7 @@ class PlayerGod(models.Model):
     @property
     def total_attack(self) -> int:
         """Calculate total attack including equipment bonuses and quality."""
-        base = (self.god.base_attack + (self.level * 10)) * self.quality_multiplier
+        base = self.god.base_attack * self.quality_multiplier * (1 + self.level * 0.1)
         eqs = self._equipment_list()
         equipment_bonus = sum(eq.item.attack_bonus * eq.level for eq in eqs)
         passive_bonus = sum(
@@ -1527,7 +1527,7 @@ class PlayerGod(models.Model):
     @property
     def total_defense(self) -> int:
         """Calculate total defense including equipment bonuses and quality."""
-        base = (self.god.base_defense + (self.level * 5)) * self.quality_multiplier
+        base = self.god.base_defense * self.quality_multiplier * (1 + self.level * 0.1)
         eqs = self._equipment_list()
         equipment_bonus = sum(eq.item.defense_bonus * eq.level for eq in eqs)
         passive_bonus = sum(
@@ -1540,7 +1540,7 @@ class PlayerGod(models.Model):
     @property
     def total_hp(self) -> int:
         """Calculate total HP including equipment bonuses and quality."""
-        base = (self.god.base_hp + (self.level * 50)) * self.quality_multiplier
+        base = self.god.base_hp * self.quality_multiplier * (1 + self.level * 0.1)
         eqs = self._equipment_list()
         equipment_bonus = sum(eq.item.hp_bonus * eq.level for eq in eqs)
         passive_bonus = sum(
@@ -1553,7 +1553,7 @@ class PlayerGod(models.Model):
     @property
     def total_speed(self) -> int:
         """Calculate total speed including equipment bonuses and quality."""
-        base = (self.god.base_speed + (self.level * 2)) * self.quality_multiplier
+        base = self.god.base_speed * self.quality_multiplier * (1 + self.level * 0.02)
         eqs = self._equipment_list()
         equipment_bonus = sum(eq.item.speed_bonus * eq.level for eq in eqs)
         passive_bonus = sum(

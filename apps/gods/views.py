@@ -21,10 +21,10 @@ def god_list(request):
     Q_MULT = 1.0 + (MAX_QUALITY - 1) * 0.15
 
     for g in gods:
-        g.max_attack = int((g.base_attack + MAX_LEVEL * 10) * Q_MULT)
-        g.max_defense = int((g.base_defense + MAX_LEVEL * 5) * Q_MULT)
-        g.max_hp = int((g.base_hp + MAX_LEVEL * 50) * Q_MULT)
-        g.max_speed = int((g.base_speed + MAX_LEVEL * 2) * Q_MULT)
+        g.max_attack = int(g.base_attack * Q_MULT * (1 + MAX_LEVEL * 0.1))
+        g.max_defense = int(g.base_defense * Q_MULT * (1 + MAX_LEVEL * 0.1))
+        g.max_hp = int(g.base_hp * Q_MULT * (1 + MAX_LEVEL * 0.1))
+        g.max_speed = int(g.base_speed * Q_MULT * (1 + MAX_LEVEL * 0.02))
 
     return render(request, "gods/list.html", {"gods": gods})
 
