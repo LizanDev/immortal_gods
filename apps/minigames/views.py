@@ -16,9 +16,12 @@ from .models import DailyWheelSpin, MemoryGameSession
 
 MEMORY_PAIR_COUNT = 8
 
+UNAVAILABLE = {"status": "error", "message": "Database unavailable"}
+
 
 class WheelSegment(TypedDict):
     """Single wheel segment definition."""
+
     label: str
     type: str
     amount: int
@@ -60,9 +63,7 @@ def index(request):
             player=profile, spun_date=timezone.now().date()
         ).first()
         best_score = (
-            MemoryGameSession.objects.filter(
-                player=profile, completed=True
-            )
+            MemoryGameSession.objects.filter(player=profile, completed=True)
             .order_by("moves")
             .first()
         )
@@ -90,9 +91,12 @@ def memory_game(request):
     """Memory of Gods game page."""
     profile = request.user.profile
 
-    today_session = MemoryGameSession.objects.filter(
-        player=profile, played_date=timezone.now().date()
-    ).first()
+    try:
+        today_session = MemoryGameSession.objects.filter(
+            player=profile, played_date=timezone.now().date()
+        ).first()
+    except DatabaseError:
+        today_session = None
 
     if today_session and today_session.reward_claimed:
         return render(
@@ -101,8 +105,10 @@ def memory_game(request):
             {"session": today_session, "finished": True, "gods": []},
         )
 
-    # Pick random gods for the game
-    all_gods = list(God.objects.order_by("?")[:MEMORY_PAIR_COUNT])
+    try:
+        all_gods = list(God.objects.order_by("?")[:MEMORY_PAIR_COUNT])
+    except DatabaseError:
+        all_gods = []
     gods_data = []
     for god in all_gods:
         gods_data.append(
@@ -132,9 +138,13 @@ def memory_save(request):
 
     profile = request.user.profile
 
-    existing = MemoryGameSession.objects.filter(
-        player=profile, played_date=timezone.now().date(), completed=True
-    ).first()
+    try:
+        existing = MemoryGameSession.objects.filter(
+            player=profile, played_date=timezone.now().date(), completed=True
+        ).first()
+    except DatabaseError:
+        return JsonResponse(UNAVAILABLE, status=503)
+
     if existing:
         return JsonResponse({"status": "already_completed"})
 
@@ -147,11 +157,18 @@ def memory_save(request):
     if moves < 8:
         return JsonResponse({"status": "error", "message": "Invalid moves"}, status=400)
 
-    session, _ = MemoryGameSession.objects.get_or_create(
-        player=profile,
-        played_date=timezone.now().date(),
-        defaults={"pairs_total": MEMORY_PAIR_COUNT, "moves": moves, "completed": True},
-    )
+    try:
+        session, _ = MemoryGameSession.objects.get_or_create(
+            player=profile,
+            played_date=timezone.now().date(),
+            defaults={
+                "pairs_total": MEMORY_PAIR_COUNT,
+                "moves": moves,
+                "completed": True,
+            },
+        )
+    except DatabaseError:
+        return JsonResponse(UNAVAILABLE, status=503)
 
     if not session.completed:
         session.moves = moves
@@ -175,9 +192,12 @@ def memory_claim(request):
 
     profile = request.user.profile
 
-    session = MemoryGameSession.objects.filter(
-        player=profile, played_date=timezone.now().date(), completed=True
-    ).first()
+    try:
+        session = MemoryGameSession.objects.filter(
+            player=profile, played_date=timezone.now().date(), completed=True
+        ).first()
+    except DatabaseError:
+        return JsonResponse(UNAVAILABLE, status=503)
 
     if not session:
         return JsonResponse({"status": "no_session"}, status=404)
@@ -193,14 +213,19 @@ def memory_claim(request):
 def wheel_of_fortune(request):
     """Wheel of Fortune page."""
     profile = request.user.profile
-    today_spin = DailyWheelSpin.objects.filter(
-        player=profile, spun_date=timezone.now().date()
-    ).first()
+    try:
+        today_spin = DailyWheelSpin.objects.filter(
+            player=profile, spun_date=timezone.now().date()
+        ).first()
+    except DatabaseError:
+        today_spin = None
 
-    segments_json = json.dumps([
-        {"label": s["label"], "type": s["type"], "amount": s["amount"]}
-        for s in WHEEL_SEGMENTS
-    ])
+    segments_json = json.dumps(
+        [
+            {"label": s["label"], "type": s["type"], "amount": s["amount"]}
+            for s in WHEEL_SEGMENTS
+        ]
+    )
 
     return render(
         request,
@@ -222,25 +247,35 @@ def wheel_spin(request):
 
     profile = request.user.profile
 
-    existing = DailyWheelSpin.objects.filter(
-        player=profile, spun_date=timezone.now().date()
-    ).first()
+    try:
+        existing = DailyWheelSpin.objects.filter(
+            player=profile, spun_date=timezone.now().date()
+        ).first()
+    except DatabaseError:
+        return JsonResponse(UNAVAILABLE, status=503)
+
     if existing:
         return JsonResponse({"status": "already_spun"})
 
     reward = _pick_wheel_reward()
 
-    spin = DailyWheelSpin.objects.create(
-        player=profile,
-        reward_type=reward["type"],
-        reward_amount=reward["amount"],
-        spun_date=timezone.now().date(),
-    )
+    try:
+        spin = DailyWheelSpin.objects.create(
+            player=profile,
+            reward_type=reward["type"],
+            reward_amount=reward["amount"],
+            spun_date=timezone.now().date(),
+        )
+    except DatabaseError:
+        return JsonResponse(UNAVAILABLE, status=503)
 
-    if reward["type"] == "gems":
-        profile.add_gems(reward["amount"])
-    elif reward["type"] == "gold":
-        profile.add_gold(reward["amount"])
+    try:
+        if reward["type"] == "gems":
+            profile.add_gems(reward["amount"])
+        elif reward["type"] == "gold":
+            profile.add_gold(reward["amount"])
+    except DatabaseError:
+        pass
 
     segments_json = [
         {"label": s["label"], "type": s["type"], "amount": s["amount"]}
