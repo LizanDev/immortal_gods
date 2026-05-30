@@ -5,6 +5,7 @@ import random
 from typing import TypedDict
 
 from django.contrib.auth.decorators import login_required
+from django.db import DatabaseError
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
@@ -51,23 +52,24 @@ def index(request):
     """Hub page for all minigames."""
     profile = request.user.profile
 
-    # Check if memory reward available today
-    today_memory = MemoryGameSession.objects.filter(
-        player=profile, played_date=timezone.now().date(), completed=True
-    ).first()
-
-    # Check if wheel available today
-    today_wheel = DailyWheelSpin.objects.filter(
-        player=profile, spun_date=timezone.now().date()
-    ).first()
-
-    best_score = (
-        MemoryGameSession.objects.filter(
-            player=profile, completed=True
+    try:
+        today_memory = MemoryGameSession.objects.filter(
+            player=profile, played_date=timezone.now().date(), completed=True
+        ).first()
+        today_wheel = DailyWheelSpin.objects.filter(
+            player=profile, spun_date=timezone.now().date()
+        ).first()
+        best_score = (
+            MemoryGameSession.objects.filter(
+                player=profile, completed=True
+            )
+            .order_by("moves")
+            .first()
         )
-        .order_by("moves")
-        .first()
-    )
+    except DatabaseError:
+        today_memory = None
+        today_wheel = None
+        best_score = None
 
     return render(
         request,
@@ -195,6 +197,11 @@ def wheel_of_fortune(request):
         player=profile, spun_date=timezone.now().date()
     ).first()
 
+    segments_json = json.dumps([
+        {"label": s["label"], "type": s["type"], "amount": s["amount"]}
+        for s in WHEEL_SEGMENTS
+    ])
+
     return render(
         request,
         "minigames/wheel.html",
@@ -202,7 +209,7 @@ def wheel_of_fortune(request):
             "profile": profile,
             "today_spin": today_spin,
             "can_spin": not today_spin,
-            "segments": WHEEL_SEGMENTS,
+            "segments": segments_json,
         },
     )
 
