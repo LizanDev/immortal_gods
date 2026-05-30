@@ -15,9 +15,9 @@ class PvPProfileAdmin(admin.ModelAdmin):
         "rank",
         "battles_played",
         "battles_won",
-        "in_queue",
+        "defense_team",
     ]
-    list_filter = ["rank", "in_queue"]
+    list_filter = ["rank"]
     search_fields = ["player__user__username"]
     readonly_fields = ["highest_rating", "battles_played", "battles_won"]
 

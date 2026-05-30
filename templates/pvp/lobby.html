@@ -39,26 +39,33 @@
     <a href="{% url 'teams:create' %}" class="btn">Crear equipo</a>
 </div>
 {% else %}
-<div id="pvp-status">
-    {% if pvp.in_queue %}
-    <div class="card" style="border-color: #4a9eff; text-align: center; background: rgba(74,158,255,0.05);">
-        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
-        <h3 style="color: #4a9eff; margin: 0;">Buscando oponente...</h3>
-        <p style="color: #aaa; margin: 0.5rem 0;">Espera mientras encontramos un rival adecuado.</p>
-        <div id="queue-timer" style="font-size: 1.5rem; color: #fff; margin: 0.5rem 0;">0s</div>
-        <button id="cancelQueueBtn" class="btn btn-secondary" style="margin-top: 0.5rem;">Cancelar búsqueda</button>
-    </div>
-    {% else %}
-    <div class="card" style="text-align: center;">
-        <p style="color: #aaa; margin-bottom: 1rem;">
-            Enfréntate a otros jugadores. Gana puntos de rating y sube en el ranking.
-            <br>Se usará tu <strong>primer equipo</strong> para la batalla.
-        </p>
-        <button id="findMatchBtn" class="btn" style="font-size: 1.2rem; padding: 0.75rem 2rem;">
-            ⚔️ Buscar Batalla
-        </button>
-    </div>
-    {% endif %}
+<div class="card" style="border-color: #4a9eff; background: rgba(74,158,255,0.05);">
+    <h3 style="margin-top: 0;">🛡️ Equipo de defensa</h3>
+    <p style="color: #aaa; margin: 0.5rem 0;">
+        Este equipo defenderá tu honor cuando otros jugadores te ataquen.
+    </p>
+    <form id="defenseForm" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+        <select name="defense_team" style="flex: 1; min-width: 200px; padding: 0.5rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: #1a1a3e; color: #fff;">
+            <option value="">Selecciona un equipo</option>
+            {% for team in teams %}
+            <option value="{{ team.id }}" {% if pvp.defense_team_id == team.id %}selected{% endif %}>
+                {{ team.name }} ({{ team.god_count }} dioses)
+            </option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-secondary">Guardar defensa</button>
+    </form>
+</div>
+
+<div class="card" style="text-align: center;">
+    <p style="color: #aaa; margin-bottom: 1rem;">
+        Ataca a otros jugadores y gana puntos de rating.
+        <br>Te enfrentarás al <strong>equipo de defensa</strong> de un rival al azar.
+    </p>
+    <button id="findMatchBtn" class="btn" style="font-size: 1.2rem; padding: 0.75rem 2rem;">
+        ⚔️ Atacar
+    </button>
+    <div id="attackStatus" style="margin-top: 0.5rem; color: #aaa; display: none;"></div>
 </div>
 {% endif %}
 
@@ -74,6 +81,7 @@
         <thead>
             <tr style="color: #888; font-size: 0.8rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1);">
                 <th style="padding: 0.75rem;">Rival</th>
+                <th style="padding: 0.75rem;">Rol</th>
                 <th style="padding: 0.75rem;">Resultado</th>
                 <th style="padding: 0.75rem;">Cambio</th>
             </tr>
@@ -83,6 +91,7 @@
             <tr style="border-top: 1px solid rgba(255,255,255,0.05);">
                 {% if battle.attacker == profile %}
                 <td style="padding: 0.75rem;">{{ battle.defender_display }}</td>
+                <td style="padding: 0.75rem; color: #ff6b6b;">Atacaste</td>
                 <td style="padding: 0.75rem;">
                     {% if battle.winner == profile %}
                     <span style="color: #4ade80;">Victoria</span>
@@ -99,6 +108,7 @@
                 </td>
                 {% else %}
                 <td style="padding: 0.75rem;">{{ battle.attacker.user.username }}</td>
+                <td style="padding: 0.75rem; color: #4a9eff;">Te atacó</td>
                 <td style="padding: 0.75rem;">
                     {% if battle.winner == profile %}
                     <span style="color: #4ade80;">Victoria</span>
@@ -124,65 +134,75 @@
 <script>
 (function() {
     var findBtn = document.getElementById('findMatchBtn');
-    var cancelBtn = document.getElementById('cancelQueueBtn');
-    var timerEl = document.getElementById('queue-timer');
-    var pollId = null;
-    var secs = 0;
-
-    function updateTimer() {
-        secs++;
-        if (timerEl) timerEl.textContent = secs + 's';
-    }
-
-    function startPoll() {
-        secs = 0;
-        pollId = setInterval(function() {
-            updateTimer();
-            fetch('{% url "pvp:check_match" %}')
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    if (data.status === 'match_found') {
-                        clearInterval(pollId);
-                        window.location.href = '{% url "pvp:battle_result" battle_id=0 %}'.replace('0', data.battle_id);
-                    } else if (data.status === 'timeout') {
-                        clearInterval(pollId);
-                        window.location.reload();
-                    }
-                });
-        }, 3000);
-    }
+    var statusEl = document.getElementById('attackStatus');
 
     if (findBtn) {
         findBtn.addEventListener('click', function() {
             this.disabled = true;
-            this.textContent = 'Buscando...';
+            this.textContent = 'Atacando...';
+            if (statusEl) {
+                statusEl.style.display = 'block';
+                statusEl.textContent = 'Buscando rival...';
+            }
             fetch('{% url "pvp:find_match" %}', {
                 method: 'POST',
-                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'team_id={{ pvp.defense_team_id|default:"" }}'
             })
             .then(function(r) { return r.json(); })
             .then(function(data) {
                 if (data.status === 'match_found') {
                     window.location.href = '{% url "pvp:battle_result" battle_id=0 %}'.replace('0', data.battle_id);
-                } else if (data.status === 'queued') {
-                    window.location.reload();
                 } else if (data.status === 'no_team') {
-                    alert('Crea un equipo primero.');
+                    alert('Selecciona un equipo para atacar.');
                     findBtn.disabled = false;
-                    findBtn.textContent = '⚔️ Buscar Batalla';
+                    findBtn.textContent = '⚔️ Atacar';
+                    if (statusEl) statusEl.style.display = 'none';
+                } else if (data.status === 'no_defense') {
+                    alert('Configura un equipo de defensa primero.');
+                    findBtn.disabled = false;
+                    findBtn.textContent = '⚔️ Atacar';
+                    if (statusEl) statusEl.style.display = 'none';
+                } else if (data.status === 'no_opponents') {
+                    alert('No hay oponentes disponibles en tu rango ahora. Intenta más tarde.');
+                    findBtn.disabled = false;
+                    findBtn.textContent = '⚔️ Atacar';
+                    if (statusEl) statusEl.style.display = 'none';
                 }
+            })
+            .catch(function() {
+                alert('Error al buscar oponente.');
+                findBtn.disabled = false;
+                findBtn.textContent = '⚔️ Atacar';
+                if (statusEl) statusEl.style.display = 'none';
             });
         });
     }
 
-    if (cancelBtn && timerEl) {
-        startPoll();
-        cancelBtn.addEventListener('click', function() {
-            clearInterval(pollId);
-            fetch('{% url "pvp:cancel_queue" %}', {
+    var defenseForm = document.getElementById('defenseForm');
+    if (defenseForm) {
+        defenseForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var teamSelect = this.querySelector('select[name="defense_team"]');
+            fetch('{% url "pvp:set_defense" %}', {
                 method: 'POST',
-                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
-            }).then(function() { window.location.reload(); });
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'team_id=' + teamSelect.value
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.status === 'ok') {
+                    alert('Equipo de defensa actualizado.');
+                } else {
+                    alert('Error al guardar la defensa.');
+                }
+            });
         });
     }
 })();

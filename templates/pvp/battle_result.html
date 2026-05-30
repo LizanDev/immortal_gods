@@ -15,6 +15,7 @@
     </h2>
     <p style="color: #aaa; margin: 0.5rem 0;">
         vs <strong>{{ enemy_name }}</strong>
+        {% if not is_attacker %}<span style="color: #888;"> (te atacó)</span>{% endif %}
     </p>
     {% if rating_change >= 0 %}
     <div style="font-size: 1.5rem; color: #4ade80; margin: 0.5rem 0;">+{{ rating_change }} rating</div>
@@ -27,8 +28,9 @@
     <h3>Detalles de la batalla</h3>
     <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
         <div style="flex: 1; min-width: 200px;">
-            <h4 style="color: {% if battle.winner == profile %}#4ade80{% endif %};">
-                Tu equipo ({{ battle.attacker_snapshot.power|default:"?" }})
+            <h4 style="color: {% if is_attacker and won or not is_attacker and not won %}#4ade80{% endif %};">
+                {% if is_attacker %}Tu equipo{% else %}Atacante{% endif %}
+                ({{ battle.attacker_snapshot.power|default:"?" }})
             </h4>
             {% for god in battle.attacker_snapshot.gods %}
             <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
@@ -39,8 +41,9 @@
             {% endfor %}
         </div>
         <div style="flex: 1; min-width: 200px;">
-            <h4 style="color: {% if not won %}#4ade80{% endif %};">
-                {{ enemy_name }} ({{ battle.defender_snapshot.power|default:"?" }})
+            <h4 style="color: {% if not is_attacker and won or is_attacker and not won %}#4ade80{% endif %};">
+                {% if is_attacker %}{{ enemy_name }}{% else %}Tu equipo (defensa){% endif %}
+                ({{ battle.defender_snapshot.power|default:"?" }})
             </h4>
             {% for god in battle.defender_snapshot.gods %}
             <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
