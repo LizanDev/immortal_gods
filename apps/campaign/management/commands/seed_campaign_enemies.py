@@ -5,42 +5,44 @@ from django.core.management.base import BaseCommand
 from apps.campaign.models import CampaignLevel
 
 ENEMY_POOL = [
-    {"name": "Soldado Esqueleto", "role": "Tank", "base_atk": 40, "base_def": 60},
-    {"name": "Arquero Fantasma", "role": "Archer", "base_atk": 55, "base_def": 35},
-    {"name": "Mago Oscuro", "role": "Mage", "base_atk": 60, "base_def": 30},
-    {"name": "Lobo de Sombra", "role": "Assassin", "base_atk": 65, "base_def": 25},
-    {"name": "Gólem de Piedra", "role": "Tank", "base_atk": 35, "base_def": 75},
-    {"name": "Harpía", "role": "Archer", "base_atk": 50, "base_def": 30},
-    {"name": "Quimera", "role": "Mage", "base_atk": 55, "base_def": 40},
-    {"name": "Minotauro", "role": "Tank", "base_atk": 50, "base_def": 65},
-    {"name": "Súcubo", "role": "Assassin", "base_atk": 60, "base_def": 30},
-    {"name": "Centauro", "role": "Archer", "base_atk": 55, "base_def": 40},
-    {"name": "Gorgona", "role": "Support", "base_atk": 40, "base_def": 50},
-    {"name": "Hidra", "role": "Mage", "base_atk": 65, "base_def": 45},
-    {"name": "Cerbero", "role": "Tank", "base_atk": 55, "base_def": 70},
-    {"name": "Pegaso Oscuro", "role": "Support", "base_atk": 45, "base_def": 45},
-    {"name": "Dragón Menor", "role": "Mage", "base_atk": 70, "base_def": 40},
-    {"name": "Titán", "role": "Tank", "base_atk": 60, "base_def": 80},
+    {"name": "Soldado Esqueleto", "role": "Tank", "base_atk": 95, "base_def": 145},
+    {"name": "Arquero Fantasma", "role": "Archer", "base_atk": 130, "base_def": 85},
+    {"name": "Mago Oscuro", "role": "Mage", "base_atk": 145, "base_def": 75},
+    {"name": "Lobo de Sombra", "role": "Assassin", "base_atk": 155, "base_def": 65},
+    {"name": "Gólem de Piedra", "role": "Tank", "base_atk": 85, "base_def": 170},
+    {"name": "Harpía", "role": "Archer", "base_atk": 120, "base_def": 80},
+    {"name": "Quimera", "role": "Mage", "base_atk": 140, "base_def": 95},
+    {"name": "Minotauro", "role": "Tank", "base_atk": 110, "base_def": 155},
+    {"name": "Súcubo", "role": "Assassin", "base_atk": 145, "base_def": 80},
+    {"name": "Centauro", "role": "Archer", "base_atk": 135, "base_def": 95},
+    {"name": "Gorgona", "role": "Support", "base_atk": 95, "base_def": 120},
+    {"name": "Hidra", "role": "Mage", "base_atk": 155, "base_def": 105},
+    {"name": "Cerbero", "role": "Tank", "base_atk": 120, "base_def": 165},
+    {"name": "Pegaso Oscuro", "role": "Support", "base_atk": 105, "base_def": 110},
+    {"name": "Dragón Menor", "role": "Mage", "base_atk": 165, "base_def": 100},
+    {"name": "Titán", "role": "Tank", "base_atk": 130, "base_def": 185},
 ]
 
 BOSS_POOL = [
-    {"name": "Rey Momia", "role": "Tank", "base_atk": 70, "base_def": 90},
-    {"name": "Sacerdote de Seth", "role": "Mage", "base_atk": 85, "base_def": 55},
-    {"name": "Hefesto Enfurecido", "role": "Tank", "base_atk": 75, "base_def": 95},
-    {"name": "Hades Renacido", "role": "Assassin", "base_atk": 90, "base_def": 60},
-    {"name": "Thor de las Tormentas", "role": "Tank", "base_atk": 80, "base_def": 85},
-    {"name": "Emperador de Jade", "role": "Mage", "base_atk": 95, "base_def": 65},
-    {"name": "Dragón Celestial", "role": "Mage", "base_atk": 100, "base_def": 70},
-    {"name": "Eclipse Viviente", "role": "Assassin", "base_atk": 105, "base_def": 75},
-    {"name": "Vacío Absoluto", "role": "Mage", "base_atk": 120, "base_def": 80},
+    {"name": "Rey Momia", "role": "Tank", "base_atk": 160, "base_def": 220},
+    {"name": "Sacerdote de Seth", "role": "Mage", "base_atk": 200, "base_def": 130},
+    {"name": "Hefesto Enfurecido", "role": "Tank", "base_atk": 170, "base_def": 240},
+    {"name": "Hades Renacido", "role": "Assassin", "base_atk": 210, "base_def": 140},
+    {"name": "Thor de las Tormentas", "role": "Tank", "base_atk": 180, "base_def": 210},
+    {"name": "Emperador de Jade", "role": "Mage", "base_atk": 230, "base_def": 150},
+    {"name": "Dragón Celestial", "role": "Mage", "base_atk": 240, "base_def": 160},
+    {"name": "Eclipse Viviente", "role": "Assassin", "base_atk": 260, "base_def": 170},
+    {"name": "Vacío Absoluto", "role": "Mage", "base_atk": 280, "base_def": 190},
 ]
 
 LEVEL_SCALING = {
-    "easy": {"num_enemies": 3, "scaling": 0.04, "hp_mult": 10},
-    "normal": {"num_enemies": 3, "scaling": 0.07, "hp_mult": 12},
-    "hard": {"num_enemies": 4, "scaling": 0.10, "hp_mult": 14},
-    "hell": {"num_enemies": 4, "scaling": 0.14, "hp_mult": 16},
+    "easy": {"num_enemies": 3, "hp_mult": 10, "diff_pct": 0.70},
+    "normal": {"num_enemies": 3, "hp_mult": 14, "diff_pct": 0.85},
+    "hard": {"num_enemies": 4, "hp_mult": 18, "diff_pct": 1.00},
+    "hell": {"num_enemies": 4, "hp_mult": 22, "diff_pct": 1.20},
 }
+
+QUALITY_MULT = {"easy": 1.00, "normal": 1.15, "hard": 1.30, "hell": 1.45}
 
 
 def build_enemy_team(level: CampaignLevel) -> list[dict]:
@@ -48,21 +50,21 @@ def build_enemy_team(level: CampaignLevel) -> list[dict]:
     diff = level.difficulty
     config = LEVEL_SCALING.get(diff, LEVEL_SCALING["easy"])
     num_enemies = 5 if level.is_boss_level else config["num_enemies"]
-    scaling = config["scaling"]
+    quality = QUALITY_MULT.get(diff, 1.0)
+    diff_pct = config["diff_pct"]
 
     pool = BOSS_POOL if level.is_boss_level else ENEMY_POOL
-    base_power = level.required_power // num_enemies
-    level_mult = 1.0 + (level.order * scaling)
+    enemy_level = level.order * 2
+    level_mult = 1.0 + (enemy_level * 0.1)
 
     enemies = []
     for i in range(num_enemies):
         template = pool[i % len(pool)]
-        atk = int((template["base_atk"] + base_power * 0.3) * level_mult)
-        def_ = int((template["base_def"] + base_power * 0.2) * level_mult)
-        base_hp = template.get("base_hp", 200)
-        hp = int((base_hp + base_power) * config["hp_mult"] * level_mult)
-        speed_mult = 1.0 + (level.order * 0.02)
-        speed = int((60 + (i * 5)) * speed_mult)
+        atk = int(template["base_atk"] * quality * level_mult * diff_pct)
+        def_ = int(template["base_def"] * quality * level_mult * diff_pct)
+        base_hp = (template["base_atk"] + template["base_def"]) * 2
+        hp = int(base_hp * quality * level_mult * diff_pct * config["hp_mult"] // 10)
+        speed = int((60 + (i * 5)) * (1 + level.order * 0.03))
 
         enemies.append({
             "name": template["name"],
