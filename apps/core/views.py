@@ -502,11 +502,6 @@ def sitemap(request):
             "changefreq": "weekly",
         },
         {
-            "loc": request.build_absolute_uri(reverse("items:list")),
-            "priority": "0.7",
-            "changefreq": "weekly",
-        },
-        {
             "loc": request.build_absolute_uri(reverse("campaign:list")),
             "priority": "0.7",
             "changefreq": "weekly",

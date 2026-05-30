@@ -6,8 +6,8 @@ from django.core.management.base import BaseCommand
 
 from apps.core.models import PlayerProfile
 from apps.gods.models import (
-    CLASS_ADVANTAGES,
     CLASS_ADVANTAGE_BONUS,
+    CLASS_ADVANTAGES,
     SYNERGY_BONUSES,
     ULTRA_BUFF_POWER_SURGE,
     God,
