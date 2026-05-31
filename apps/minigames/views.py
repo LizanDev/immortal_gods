@@ -235,6 +235,7 @@ def wheel_of_fortune(request):
             "today_spin": today_spin,
             "can_spin": not today_spin,
             "segments": segments_json,
+            "segments_parsed": WHEEL_SEGMENTS,
         },
     )
 
