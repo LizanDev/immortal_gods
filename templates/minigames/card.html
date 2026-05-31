@@ -261,12 +261,7 @@
                 setVal('.cv-right', cell.values.right);
                 setVal('.cv-bottom', cell.values.bottom);
                 setVal('.cv-left', cell.values.left);
-                var iconEl = content.querySelector('.cv-icon');
-                if (!cell.image_url) {
-                    iconEl.textContent = cell.owner === 'player' ? '🛡️' : '👹';
-                } else {
-                    iconEl.textContent = cell.owner === 'player' ? '⭐' : '💀';
-                }
+                content.querySelector('.cv-icon').textContent = '';
             });
         });
     }
