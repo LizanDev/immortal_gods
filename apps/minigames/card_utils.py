@@ -1,94 +1,62 @@
-"""Shared card game utilities — percentile-based stat ranking."""
+"""Shared card game utilities — rarity-based value generation."""
 
-from django.db.models import Max, Min, QuerySet
+import random
 
-from apps.gods.models import God
-
-
-def _percentile_value(raw: int, stat_min: int, stat_max: int) -> int:
-    """Map a raw stat to 1-9 based on its percentile position."""
-    if stat_max == stat_min:
-        return 5
-    return max(1, min(9, 1 + round((raw - stat_min) / (stat_max - stat_min) * 8)))
-
-
-def _get_stat_ranges(queryset: QuerySet | None = None) -> dict:
-    """Compute min/max for each base stat across the given queryset (default: all Gods)."""
-    if queryset is None:
-        queryset = God.objects.all()
-    stats = queryset.aggregate(
-        atk_min=Min("base_attack"),
-        atk_max=Max("base_attack"),
-        def_min=Min("base_defense"),
-        def_max=Max("base_defense"),
-        spd_min=Min("base_speed"),
-        spd_max=Max("base_speed"),
-        hp_min=Min("base_hp"),
-        hp_max=Max("base_hp"),
-    )
-    return stats
-
+RARITY_SUMS = {
+    "common": 18,
+    "rare": 22,
+    "epic": 26,
+    "legendary": 30,
+    "mythic": 34,
+}
 
 DIRECTIONS = ("top", "right", "bottom", "left")
 
 
-def _apply_bonus(val: int, bonuses: dict | None, direction: str) -> int:
+def _generate_rarity_values(total_sum: int) -> list[int]:
+    """Generate 4 random values (1-9) summing to total_sum."""
+    for _ in range(200):
+        cuts = sorted(random.sample(range(1, total_sum), 3))
+        values = [
+            cuts[0],
+            cuts[1] - cuts[0],
+            cuts[2] - cuts[1],
+            total_sum - cuts[2],
+        ]
+        if all(1 <= v <= 9 for v in values):
+            random.shuffle(values)
+            return values
+    base = total_sum // 4
+    rem = total_sum % 4
+    values = [base, base, base, base]
+    for i in range(rem):
+        values[i] += 1
+    random.shuffle(values)
+    return values
+
+
+def _apply_bonus(val: int, bonuses: dict[str, int] | None, direction: str) -> int:
     """Add bonus points to a card value, capped at 10."""
     if not bonuses:
         return val
     return min(10, val + bonuses.get(direction, 0))
 
 
-def compute_card_values(
-    base_attack: int,
-    base_defense: int,
-    base_speed: int,
-    base_hp: int,
-    ranges: dict | None = None,
-    bonuses: dict | None = None,
-    queryset: QuerySet | None = None,
-) -> dict:
-    """Compute top/right/bottom/left card values using percentile ranking + bonus."""
-    if ranges is None:
-        ranges = _get_stat_ranges(queryset)
-    return {
-        "top": _apply_bonus(
-            _percentile_value(base_attack, ranges["atk_min"], ranges["atk_max"]),
-            bonuses,
-            "top",
-        ),
-        "right": _apply_bonus(
-            _percentile_value(base_defense, ranges["def_min"], ranges["def_max"]),
-            bonuses,
-            "right",
-        ),
-        "bottom": _apply_bonus(
-            _percentile_value(base_speed, ranges["spd_min"], ranges["spd_max"]),
-            bonuses,
-            "bottom",
-        ),
-        "left": _apply_bonus(
-            _percentile_value(base_hp, ranges["hp_min"], ranges["hp_max"]),
-            bonuses,
-            "left",
-        ),
-    }
+def rarity_card_values(rarity: str, bonuses: dict | None = None) -> dict:
+    """Generate top/right/bottom/left card values based on rarity + bonuses."""
+    total = RARITY_SUMS.get(rarity, 18)
+    pool = _generate_rarity_values(total)
+    values = {}
+    for i, d in enumerate(DIRECTIONS):
+        v = _apply_bonus(pool[i], bonuses, d)
+        values[d] = v
+    return values
 
 
-def god_to_card(
-    god, ranges: dict | None = None, queryset: QuerySet | None = None
-) -> dict:
-    """Convert a God to a card dict using percentile ranking."""
-    if ranges is None:
-        ranges = _get_stat_ranges(queryset)
+def god_to_card(god, bonuses: dict | None = None) -> dict:
+    """Convert a God to a card dict using rarity-based values."""
     return {
         "name": god.name,
         "image_url": god.image_url,
-        "values": compute_card_values(
-            god.base_attack,
-            god.base_defense,
-            god.base_speed,
-            god.base_hp,
-            ranges,
-        ),
+        "values": rarity_card_values(god.rarity, bonuses),
     }

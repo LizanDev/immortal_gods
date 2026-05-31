@@ -12,7 +12,7 @@ from django.utils import timezone
 
 from apps.gods.models import God
 
-from .card_utils import _get_stat_ranges, compute_card_values, god_to_card
+from .card_utils import god_to_card, rarity_card_values
 from .models import CardGameSession, DailyWheelSpin, MemoryGameSession
 
 MEMORY_PAIR_COUNT = 8
@@ -304,18 +304,14 @@ CARD_HAND_SIZE = 6
 GRID_SIZE = 3
 
 
-def _god_to_card(pg, ranges: dict, bonuses: dict | None = None) -> dict:
-    """Convert a PlayerGod to a card dict using percentile ranking + bonuses."""
-    card = god_to_card(pg.god, ranges)
-    if bonuses:
-        for d in ("top", "right", "bottom", "left"):
-            card["values"][d] = min(10, card["values"][d] + bonuses.get(d, 0))
-    return card
+def _god_to_card(pg) -> dict:
+    """Convert a PlayerGod to a card dict using rarity-based values + bonuses."""
+    return god_to_card(pg.god, pg.card_bonus)
 
 
-def _god_to_ai_card(god: God, ranges: dict) -> dict:
-    """Convert a God to a card dict using percentile ranking."""
-    return god_to_card(god, ranges)
+def _god_to_ai_card(god: God) -> dict:
+    """Convert a God to a card dict using rarity-based values."""
+    return god_to_card(god)
 
 
 def _make_empty_board() -> list:
@@ -411,18 +407,12 @@ def card_game(request):
             },
         )
 
-    owned_god_ids = profile.gods.filter(god__isnull=False).values_list(
-        "god_id", flat=True
-    )
-    player_god_qs = God.objects.filter(id__in=list(owned_god_ids))
-    player_ranges = _get_stat_ranges(player_god_qs)
-    player_hand = [_god_to_card(pg, player_ranges, pg.card_bonus) for pg in picked]
+    player_hand = [_god_to_card(pg) for pg in picked]
 
     all_gods = list(God.objects.all())
     random.shuffle(all_gods)
     ai_gods = all_gods[:CARD_HAND_SIZE]
-    ai_ranges = _get_stat_ranges(God.objects.filter(id__in=[g.id for g in ai_gods]))
-    ai_hand = [_god_to_ai_card(g, ai_ranges) for g in ai_gods]
+    ai_hand = [_god_to_ai_card(g) for g in ai_gods]
 
     try:
         session = CardGameSession.objects.create(
@@ -697,25 +687,12 @@ def card_deck(request):
     owned_gods = list(profile.gods.select_related("god").order_by("-level"))
     deck_ids = list(profile.card_deck)
 
-    owned_god_ids = profile.gods.filter(god__isnull=False).values_list(
-        "god_id", flat=True
-    )
-    player_god_qs = God.objects.filter(id__in=list(owned_god_ids))
-    player_ranges = _get_stat_ranges(player_god_qs)
-
     gods_with_values = []
     for pg in owned_gods:
         gods_with_values.append(
             {
                 "pg": pg,
-                "card_values": compute_card_values(
-                    pg.god.base_attack,
-                    pg.god.base_defense,
-                    pg.god.base_speed,
-                    pg.god.base_hp,
-                    player_ranges,
-                    pg.card_bonus,
-                ),
+                "card_values": rarity_card_values(pg.god.rarity, pg.card_bonus),
             }
         )
 
@@ -767,19 +744,7 @@ def card_allocate_bonus(request):
     pg.card_bonus = bonus
     pg.save(update_fields=["card_bonus"])
 
-    owned_god_ids = profile.gods.filter(god__isnull=False).values_list(
-        "god_id", flat=True
-    )
-    player_god_qs = God.objects.filter(id__in=list(owned_god_ids))
-    ranges = _get_stat_ranges(player_god_qs)
-    new_value = compute_card_values(
-        pg.god.base_attack,
-        pg.god.base_defense,
-        pg.god.base_speed,
-        pg.god.base_hp,
-        ranges,
-        bonus,
-    )[direction]
+    new_value = rarity_card_values(pg.god.rarity, bonus)[direction]
 
     return JsonResponse(
         {

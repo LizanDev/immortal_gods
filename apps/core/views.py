@@ -21,9 +21,8 @@ from apps.core.models import (
     ReferralCode,
     track_mission,
 )
-from apps.gods.models import God
 from apps.items.models import Item, ItemType, PlayerItem
-from apps.minigames.card_utils import _get_stat_ranges, compute_card_values
+from apps.minigames.card_utils import rarity_card_values
 
 
 @login_required
@@ -78,18 +77,11 @@ def home(request):
     )
 
 
-def _god_to_card_data(pg, ranges):
+def _god_to_card_data(pg):
     return {
         "name": pg.god.name,
         "image_url": pg.god.image_url,
-        "values": compute_card_values(
-            pg.god.base_attack,
-            pg.god.base_defense,
-            pg.god.base_speed,
-            pg.god.base_hp,
-            ranges,
-            pg.card_bonus,
-        ),
+        "values": rarity_card_values(pg.god.rarity, pg.card_bonus),
     }
 
 
@@ -103,10 +95,7 @@ def inventory(request):
         .all()
     )
     items = profile.items.select_related("item").all()
-    owned_ids = profile.gods.filter(god__isnull=False).values_list("god_id", flat=True)
-    player_qs = God.objects.filter(id__in=list(owned_ids))
-    ranges = _get_stat_ranges(player_qs)
-    cards = [_god_to_card_data(pg, ranges) for pg in gods]
+    cards = [_god_to_card_data(pg) for pg in gods]
     return render(
         request,
         "core/inventory.html",
