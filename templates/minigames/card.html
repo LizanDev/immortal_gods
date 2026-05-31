@@ -77,7 +77,6 @@
                 <div style="position: absolute; right: 2px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ card.values.right }}</div>
                 <div style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ card.values.bottom }}</div>
                 <div style="position: absolute; left: 2px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ card.values.left }}</div>
-                <div style="position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); font-size: 0.5rem; white-space: nowrap; color: #fff; text-shadow: 0 0 4px rgba(0,0,0,0.8); z-index: 2;">{{ card.name }}</div>
             </div>
             {% endfor %}
         </div>
@@ -262,8 +261,6 @@
                 setVal('.cv-right', cell.values.right);
                 setVal('.cv-bottom', cell.values.bottom);
                 setVal('.cv-left', cell.values.left);
-                content.querySelector('.cv-name').textContent = cell.name;
-
                 var iconEl = content.querySelector('.cv-icon');
                 if (!cell.image_url) {
                     iconEl.textContent = cell.owner === 'player' ? '🛡️' : '👹';
