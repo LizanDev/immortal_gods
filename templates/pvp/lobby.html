@@ -60,7 +60,7 @@
 <div class="card" style="text-align: center;">
     <p style="color: #aaa; margin-bottom: 0.5rem;">
         Ataca a otros jugadores y gana puntos de rating.
-        <br>Te enfrentarás al <strong>equipo de defensa</strong> de un rival al azar.
+        <br>Elige entre los oponentes disponibles dentro de tu rango.
     </p>
     <div style="margin-bottom: 1rem; font-size: 0.9rem; color: #888;">
         Ataques restantes:
@@ -72,11 +72,16 @@
             (base {{ pvp.BASE_ATTACKS }}{% if pvp.attacks_max > pvp.BASE_ATTACKS %} +{{ pvp.attacks_max|add:"-5" }}{% endif %})
         </span>
     </div>
-    <button id="findMatchBtn" class="btn" style="font-size: 1.2rem; padding: 0.75rem 2rem;"
+    <button id="findOpponentsBtn" class="btn" style="font-size: 1.1rem; padding: 0.75rem 2rem;"
         {% if pvp.attacks_remaining <= 0 %}disabled{% endif %}>
-        ⚔️ Atacar
+        🔍 Buscar oponentes
     </button>
     <div id="attackStatus" style="margin-top: 0.5rem; color: #aaa; display: none;"></div>
+</div>
+
+<div id="opponentList" style="display: none; margin-top: 1rem;">
+    <h2>Oponentes disponibles</h2>
+    <div id="opponentCards" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
 </div>
 {% endif %}
 
@@ -144,55 +149,109 @@
 
 <script>
 (function() {
-    var findBtn = document.getElementById('findMatchBtn');
+    var findBtn = document.getElementById('findOpponentsBtn');
     var statusEl = document.getElementById('attackStatus');
+    var opponentList = document.getElementById('opponentList');
+    var opponentCards = document.getElementById('opponentCards');
+
+    function setLoading(loading) {
+        if (findBtn) {
+            findBtn.disabled = loading;
+            findBtn.textContent = loading ? 'Buscando...' : '🔍 Buscar oponentes';
+        }
+    }
+
+    function attackOpponent(opponentId, teamId, btn) {
+        if (btn) { btn.disabled = true; btn.textContent = 'Atacando...'; }
+        if (statusEl) {
+            statusEl.style.display = 'block';
+            statusEl.textContent = 'Resolviendo batalla...';
+        }
+        fetch('{% url "pvp:find_match" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'team_id=' + teamId + '&opponent_id=' + opponentId
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.status === 'match_found') {
+                window.location.href = '{% url "pvp:battle_result" battle_id=0 %}'.replace('0', data.battle_id);
+            } else if (data.status === 'no_attacks') {
+                alert('Sin ataques restantes.');
+                if (findBtn) { findBtn.disabled = true; }
+                opponentList.style.display = 'none';
+                if (statusEl) statusEl.style.display = 'none';
+            } else if (data.status === 'opponent_unavailable') {
+                alert('Este oponente ya no está disponible. Busca de nuevo.');
+                if (findBtn) { findBtn.disabled = false; findBtn.textContent = '🔍 Buscar oponentes'; }
+                opponentList.style.display = 'none';
+                if (statusEl) statusEl.style.display = 'none';
+            } else {
+                alert('Error al atacar.');
+                location.reload();
+            }
+        })
+        .catch(function() {
+            alert('Error de conexión.');
+            if (btn) { btn.disabled = false; btn.textContent = '⚔️ Atacar'; }
+            if (statusEl) statusEl.style.display = 'none';
+        });
+    }
 
     if (findBtn) {
         findBtn.addEventListener('click', function() {
-            this.disabled = true;
-            this.textContent = 'Atacando...';
+            setLoading(true);
             if (statusEl) {
                 statusEl.style.display = 'block';
-                statusEl.textContent = 'Buscando rival...';
+                statusEl.textContent = 'Buscando oponentes...';
             }
-            fetch('{% url "pvp:find_match" %}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'team_id={{ pvp.defense_team_id|default:"" }}'
-            })
+            opponentList.style.display = 'none';
+
+            fetch('{% url "pvp:opponents" %}')
             .then(function(r) { return r.json(); })
             .then(function(data) {
-                if (data.status === 'match_found') {
-                    window.location.href = '{% url "pvp:battle_result" battle_id=0 %}'.replace('0', data.battle_id);
-                } else if (data.status === 'no_team') {
-                    alert('Selecciona un equipo para atacar.');
-                    findBtn.disabled = false;
-                    findBtn.textContent = '⚔️ Atacar';
-                    if (statusEl) statusEl.style.display = 'none';
-                } else if (data.status === 'no_defense') {
-                    alert('Configura un equipo de defensa primero.');
-                    findBtn.disabled = false;
-                    findBtn.textContent = '⚔️ Atacar';
-                    if (statusEl) statusEl.style.display = 'none';
-                } else if (data.status === 'no_opponents') {
-                    alert('No hay oponentes disponibles en tu rango ahora. Intenta más tarde.');
-                    findBtn.disabled = false;
-                    findBtn.textContent = '⚔️ Atacar';
-                    if (statusEl) statusEl.style.display = 'none';
-                } else if (data.status === 'no_attacks') {
-                    alert('Sin ataques restantes. Vuelve mañana o completa misiones para obtener más.');
-                    findBtn.disabled = false;
-                    findBtn.textContent = '⚔️ Atacar';
-                    if (statusEl) statusEl.style.display = 'none';
+                setLoading(false);
+                if (statusEl) statusEl.style.display = 'none';
+
+                if (data.count === 0) {
+                    opponentCards.innerHTML =
+                        '<div class="card" style="text-align: center; color: #888; padding: 1.5rem;">'
+                        + 'No hay oponentes disponibles en tu rango ahora. Intenta más tarde.'
+                        + '</div>';
+                    opponentList.style.display = 'block';
+                    return;
                 }
+
+                var teamId = '{{ pvp.defense_team_id|default:"" }}';
+                var html = '';
+                data.opponents.forEach(function(opp) {
+                    var diff = opp.rating - {{ pvp.rating }};
+                    var diffStr = diff >= 0 ? '<span style="color:#ff6b6b;">+' + diff + '</span>' : '<span style="color:#4ade80;">' + diff + '</span>';
+                    html += '<div class="card" style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; flex-wrap: wrap; gap: 0.5rem;">'
+                        + '<div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">'
+                        + '<div><strong>' + opp.username + '</strong></div>'
+                        + '<div style="font-size: 0.85rem; color: #aaa;">' + opp.rank + ' <span style="color:#ffd700;">' + opp.rating + '</span></div>'
+                        + '<div style="font-size: 0.8rem; color: #888;">' + diffStr + '</div>'
+                        + '<div style="font-size: 0.8rem; color: #888;">⚔️ ' + opp.team_power + ' | 👥 ' + opp.god_count + ' dioses</div>'
+                        + '</div>'
+                        + '<button class="btn attack-btn" data-opponent-id="' + opp.id + '" data-team-id="' + teamId + '" style="font-size: 0.9rem; padding: 0.4rem 1rem;">⚔️ Atacar</button>'
+                        + '</div>';
+                });
+                opponentCards.innerHTML = html;
+                opponentList.style.display = 'block';
+
+                opponentCards.querySelectorAll('.attack-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        attackOpponent(this.dataset.opponentId, this.dataset.teamId, this);
+                    });
+                });
             })
             .catch(function() {
-                alert('Error al buscar oponente.');
-                findBtn.disabled = false;
-                findBtn.textContent = '⚔️ Atacar';
+                setLoading(false);
+                alert('Error al buscar oponentes.');
                 if (statusEl) statusEl.style.display = 'none';
             });
         });

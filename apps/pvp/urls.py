@@ -8,6 +8,7 @@ app_name = "pvp"
 
 urlpatterns = [
     path("", views.lobby, name="lobby"),
+    path("opponents/", views.opponents, name="opponents"),
     path("find-match/", views.find_match, name="find_match"),
     path("set-defense/", views.set_defense, name="set_defense"),
     path("battle/<int:battle_id>/", views.battle_result, name="battle_result"),

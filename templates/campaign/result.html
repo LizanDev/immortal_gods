@@ -84,19 +84,21 @@
     {% if battle.log_json %}
     <details style="margin-top: 1rem; text-align: left; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 0.75rem;">
         <summary style="cursor: pointer; color: #aaa; font-size: 0.85rem;"> Ver registro de batalla ({{ battle.turns }} turnos)</summary>
-        <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.75rem; font-family: monospace;">
+        <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.8rem;">
             {% for entry in battle.log_json %}
                 {% if entry.turn %}
-                <div style="background: rgba(255,255,255,0.03); padding: 0.3rem 0.5rem; border-radius: 4px; border-left: 3px solid {% if entry.first_strike %}#ff6b6b{% else %}#4a9eff{% endif %};">
-                    <span style="color: #888;">Turno {{ entry.turn }}:</span>
-                    ATK <strong style="color: #51cf66;">{{ entry.attacker_damage }}</strong>
-                    vs DEF <strong style="color: #ff6b6b;">{{ entry.defender_damage }}</strong>
-                    | HP: {{ entry.attacker_hp }} → {{ entry.defender_hp }}
-                    {% if entry.first_strike %}<span style="color: #ff6b6b; font-weight: bold;"> FIRST STRIKE!</span>{% endif %}
+                <div style="background: rgba(255,255,255,0.04); padding: 0.5rem; border-radius: 6px; border-left: 3px solid {% if entry.first_strike %}#ff6b6b{% elif entry.is_critical %}#ffd700{% else %}#4a9eff{% endif %}; line-height: 1.5;">
+                    <div style="color: #888; font-size: 0.7rem; margin-bottom: 0.2rem; font-family: monospace;">
+                        Turno {{ entry.turn }} — ⚔️ {{ entry.attacker_damage }} vs 🛡️ {{ entry.defender_damage }}
+                        | ❤️ {{ entry.attacker_hp_pct }}% → {{ entry.defender_hp_pct }}%
+                    </div>
+                    <div style="color: #ddd;">
+                        {{ entry.narrative }}
+                    </div>
                 </div>
                 {% endif %}
             {% endfor %}
-            <div style="margin-top: 0.25rem; font-weight: bold; color: {% if won %}#51cf66{% else %}#ff6b6b{% endif %};">
+            <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.08); font-weight: bold; font-size: 0.9rem; color: {% if won %}#51cf66{% else %}#ff6b6b{% endif %};">
                 {{ battle.turns }} turnos — {% if won %}VICTORIA{% else %}DERROTA{% endif %}
             </div>
         </div>

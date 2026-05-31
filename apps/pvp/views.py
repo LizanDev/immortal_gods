@@ -42,8 +42,49 @@ def lobby(request):
 
 
 @login_required
+def opponents(request):
+    """Return JSON list of available opponents within MMR range."""
+    profile = request.user.profile
+    pvp, _ = PvPProfile.objects.get_or_create(player=profile)
+
+    rating_min = max(0, pvp.rating - 200)
+    rating_max = pvp.rating + 200
+
+    qs = (
+        PvPProfile.objects.filter(
+            defense_team__isnull=False,
+            rating__gte=rating_min,
+            rating__lte=rating_max,
+        )
+        .exclude(player=profile)
+        .select_related("player__user", "defense_team")
+    )
+
+    data = []
+    for opp in qs:
+        team = opp.defense_team
+        data.append(
+            {
+                "id": opp.id,
+                "username": opp.player.user.username,
+                "rating": opp.rating,
+                "rank": opp.get_rank_display(),
+                "team_name": team.name if team else "",
+                "team_power": calculate_team_power(team) if team else 0,
+                "god_count": team.god_count() if team else 0,
+            }
+        )
+
+    return JsonResponse({"opponents": data, "count": len(data)})
+
+
+@login_required
 def find_match(request):
-    """Find a random opponent and battle their defense team."""
+    """Find an opponent and resolve a PvP battle.
+
+    POST with opponent_id to target a specific player.
+    POST without opponent_id picks a random opponent.
+    """
     if request.method != "POST":
         return redirect("pvp:lobby")
 
@@ -65,27 +106,41 @@ def find_match(request):
     if pvp.attacks_remaining <= 0:
         return JsonResponse({"status": "no_attacks"}, status=400)
 
-    if not pvp.use_attack():
-        return JsonResponse({"status": "no_attacks"}, status=400)
-
-    # Find a random opponent with a defense team within rating range
     rating_min = max(0, pvp.rating - 200)
     rating_max = pvp.rating + 200
 
-    opponents = list(
-        PvPProfile.objects.filter(
-            defense_team__isnull=False,
-            rating__gte=rating_min,
-            rating__lte=rating_max,
+    opponent_id = request.POST.get("opponent_id")
+    if opponent_id:
+        opponent = (
+            PvPProfile.objects.filter(
+                pk=opponent_id,
+                defense_team__isnull=False,
+                rating__gte=rating_min,
+                rating__lte=rating_max,
+            )
+            .exclude(player=profile)
+            .select_related("player", "defense_team")
+            .first()
         )
-        .exclude(player=profile)
-        .select_related("player", "defense_team")
-    )
+        if not opponent:
+            return JsonResponse({"status": "opponent_unavailable"}, status=410)
+    else:
+        opponents = list(
+            PvPProfile.objects.filter(
+                defense_team__isnull=False,
+                rating__gte=rating_min,
+                rating__lte=rating_max,
+            )
+            .exclude(player=profile)
+            .select_related("player", "defense_team")
+        )
+        if not opponents:
+            return JsonResponse({"status": "no_opponents"}, status=404)
+        opponent = random.choice(opponents)
 
-    if not opponents:
-        return JsonResponse({"status": "no_opponents"}, status=404)
+    if not pvp.use_attack():
+        return JsonResponse({"status": "no_attacks"}, status=400)
 
-    opponent = random.choice(opponents)
     defender_profile = opponent.player
     defender_team = opponent.defense_team
 
