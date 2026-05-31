@@ -344,7 +344,6 @@ def _resolve_flips(
             cell = board[r][c]
             if cell and cell["owner"] != owner:
                 if values[my_side] > cell["values"][their_side]:
-                    cell["owner"] = owner
                     flips.append({"row": r, "col": c, "card": cell})
     return flips
 
@@ -514,6 +513,8 @@ def card_place(request):
     board[row][col] = placed
 
     player_flips = _resolve_flips(board, row, col, "player", card["values"])
+    for flip in player_flips:
+        flip["card"]["owner"] = "player"
 
     session.moves += 1
     player_card_count = sum(1 for r in board for c in r if c and c["owner"] == "player")
@@ -573,6 +574,8 @@ def card_place(request):
         }
         board[ai_row][ai_col] = ai_placed
         ai_flips = _resolve_flips(board, ai_row, ai_col, "ai", ai_card["values"])
+        for flip in ai_flips:
+            flip["card"]["owner"] = "ai"
         session.moves += 1
 
     session.current_turn = "player"
