@@ -456,13 +456,20 @@ def card_game(request):
         player_hand = [_god_to_card(pg) for pg in picked]
         ai_hand = [_random_ai_card() for _ in range(CARD_HAND_SIZE)]
 
-        session = CardGameSession.objects.create(
-            player=profile,
-            played_date=today,
-            board_state=_make_empty_board(),
-            player_hand=player_hand,
-            ai_hand=ai_hand,
-        )
+        try:
+            session = CardGameSession.objects.create(
+                player=profile,
+                played_date=today,
+                board_state=_make_empty_board(),
+                player_hand=player_hand,
+                ai_hand=ai_hand,
+            )
+        except DatabaseError:
+            return render(
+                request,
+                "minigames/card.html",
+                {"error": "Error de base de datos. Intenta de nuevo."},
+            )
 
     return render(
         request,

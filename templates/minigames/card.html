@@ -84,9 +84,10 @@
 </div>
 {% endif %}
 
+{% if session %}
 <script>
 (function() {
-    var sessionId = {{ session.id|default:0 }};
+    var sessionId = {{ session.id }};
     var selectedCard = null;
     var board = document.getElementById('board');
     var gameStatus = document.getElementById('gameStatus');
@@ -360,4 +361,5 @@
     }
 })();
 </script>
+{% endif %}
 {% endblock %}
