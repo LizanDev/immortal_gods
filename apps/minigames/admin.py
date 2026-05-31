@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 
-from .models import DailyWheelSpin, MemoryGameSession
+from .models import CardGameSession, DailyWheelSpin, MemoryGameSession
 
 
 @admin.register(MemoryGameSession)
@@ -27,4 +27,16 @@ class DailyWheelSpinAdmin(admin.ModelAdmin):
 
     list_display = ["player", "reward_type", "reward_amount", "spun_date"]
     list_filter = ["reward_type", "spun_date"]
+    search_fields = ["player__user__username"]
+
+
+@admin.register(CardGameSession)
+class CardGameSessionAdmin(admin.ModelAdmin):
+    """Admin for card duel sessions."""
+
+    list_display = [
+        "player", "moves", "completed", "won",
+        "reward_claimed", "played_date",
+    ]
+    list_filter = ["completed", "won", "played_date"]
     search_fields = ["player__user__username"]

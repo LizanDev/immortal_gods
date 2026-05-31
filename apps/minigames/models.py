@@ -49,6 +49,47 @@ class MemoryGameSession(models.Model):
         return self.reward_gems
 
 
+class CardGameSession(models.Model):
+    """Tracks a card duel (Triple Triad-style) session."""
+
+    player = models.ForeignKey(
+        "core.PlayerProfile",
+        on_delete=models.CASCADE,
+        related_name="card_games",
+    )
+    played_date = models.DateField(default=date.today)
+    board_state = models.JSONField(default=list)
+    player_hand = models.JSONField(default=list)
+    ai_hand = models.JSONField(default=list)
+    current_turn = models.CharField(max_length=10, default="player")
+    moves = models.PositiveIntegerField(default=0)
+    completed = models.BooleanField(default=False)
+    won = models.BooleanField(null=True)
+    reward_claimed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Duelo de Cartas"
+        verbose_name_plural = "Duelos de Cartas"
+
+    def __str__(self) -> str:
+        return f"Cartas({self.player.user.username}) movs={self.moves}"
+
+    @property
+    def reward_gems(self) -> int:
+        if not self.completed:
+            return 0
+        return 10 if self.won else 3
+
+    def claim_reward(self) -> int:
+        if self.reward_claimed or not self.completed:
+            return 0
+        self.reward_claimed = True
+        self.save(update_fields=["reward_claimed"])
+        self.player.add_gems(self.reward_gems)
+        return self.reward_gems
+
+
 class DailyWheelSpin(models.Model):
     """Tracks the daily wheel of fortune spin."""
 

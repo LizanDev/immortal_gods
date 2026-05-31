@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Duelo de Cartas - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>🃏 Duelo de Cartas</h1>
+
+{% if error %}
+<div class="card" style="border-color: #ff6b6b; background: rgba(255,68,68,0.05);">
+    <p style="color: #ff6b6b;">{{ error }}</p>
+    <a href="{% url 'minigames:index' %}" class="btn btn-secondary">← Volver</a>
+</div>
+{% elif finished %}
+<div class="card" style="text-align: center; border-top: 3px solid {% if won %}#4ade80{% else %}#ff6b6b{% endif %};">
+    <div style="font-size: 3rem; margin-bottom: 0.5rem;">{% if won %}🏆{% else %}💀{% endif %}</div>
+    <h2 style="color: {% if won %}#4ade80{% else %}#ff6b6b{% endif %}; margin: 0;">
+        {% if won %}¡Victoria!{% else %}Derrota{% endif %}
+    </h2>
+    <p style="color: #aaa;">Recompensa: {{ session.reward_gems }} 💎</p>
+
+    {% if not session.reward_claimed %}
+    <button id="claimBtn" class="btn">Reclamar {{ session.reward_gems }} 💎</button>
+    <div id="claimStatus" style="margin-top: 0.5rem; color: #aaa; display: none;"></div>
+    {% else %}
+    <p style="color: #4ade80;">✓ Recompensa reclamada</p>
+    {% endif %}
+
+    <a href="{% url 'minigames:cards' %}" class="btn btn-secondary" style="margin-top: 0.5rem;">Jugar otra vez</a>
+    <a href="{% url 'minigames:index' %}" class="btn btn-secondary">← Volver</a>
+</div>
+{% else %}
+
+<p style="color: #aaa; text-align: center;">
+    Coloca tus cartas en el tablero para capturar las cartas enemigas.
+    <br>Gana quien tenga más cartas al final.
+</p>
+
+<div id="gameArea" style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
+    <!-- 3x3 Board -->
+    <div id="board" style="display: grid; grid-template-columns: repeat(3, 110px); gap: 4px; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 8px;">
+        {% for r in "012" %}
+            {% for c in "012" %}
+            <div class="cell" data-row="{{ r }}" data-col="{{ c }}" style="width: 110px; height: 140px; background: #1a1a3e; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; position: relative;">
+                <div class="cell-content" style="display: none; width: 100%; height: 100%; position: relative;">
+                    <div class="cv-top" style="position: absolute; top: 4px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 1rem;"></div>
+                    <div class="cv-right" style="position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 1rem;"></div>
+                    <div class="cv-bottom" style="position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 1rem;"></div>
+                    <div class="cv-left" style="position: absolute; left: 4px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 1rem;"></div>
+                    <div class="cv-name" style="position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; white-space: nowrap; color: #ddd;"></div>
+                    <div class="cv-icon" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem;"></div>
+                </div>
+                <div class="cell-empty" style="color: #444; font-size: 0.8rem;">—</div>
+            </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+    <!-- Status -->
+    <div id="gameStatus" style="color: #aaa; font-size: 0.9rem; text-align: center;">
+        Turno {{ session.moves|add:1 }}: Selecciona una carta de tu mano y luego una casilla.
+    </div>
+
+    <!-- Player Hand -->
+    <div style="width: 100%; max-width: 600px;">
+        <h3 style="margin-bottom: 0.5rem;">Tu mano</h3>
+        <div id="hand" style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;">
+            {% for card in player_hand %}
+            <div class="hand-card" data-index="{{ forloop.counter0 }}" style="width: 100px; height: 130px; background: #1a1a3e; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; position: relative; {% if card.used %}opacity: 0.3; pointer-events: none;{% endif %}">
+                <div style="width: 100%; height: 100%; position: relative;">
+                    <div style="position: absolute; top: 2px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 0.9rem; color: #4a9eff;">{{ card.values.top }}</div>
+                    <div style="position: absolute; right: 2px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 0.9rem; color: #4a9eff;">{{ card.values.right }}</div>
+                    <div style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 0.9rem; color: #4a9eff;">{{ card.values.bottom }}</div>
+                    <div style="position: absolute; left: 2px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 0.9rem; color: #4a9eff;">{{ card.values.left }}</div>
+                    <div style="position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); font-size: 0.55rem; white-space: nowrap; color: #aaa;">{{ card.name }}</div>
+                    {% if card.image_url %}
+                    <img src="{{ card.image_url }}" alt="" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; object-fit: contain; opacity: 0.5;">
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+(function() {
+    var sessionId = {{ session.id|default:0 }};
+    var selectedCard = null;
+    var board = document.getElementById('board');
+    var gameStatus = document.getElementById('gameStatus');
+    var hand = document.getElementById('hand');
+    var cells = document.querySelectorAll('.cell');
+    var handCards = document.querySelectorAll('.hand-card');
+    var isProcessing = false;
+
+    if (!board || !hand) return;
+
+    function setStatus(msg) { if (gameStatus) gameStatus.textContent = msg; }
+
+    function highlightEmptyCells(show) {
+        cells.forEach(function(cell) {
+            var empty = cell.querySelector('.cell-content');
+            if (!empty || empty.style.display !== 'none') return;
+            if (show) {
+                cell.style.borderColor = '#4ade80';
+                cell.style.background = 'rgba(74,222,128,0.1)';
+            } else {
+                cell.style.borderColor = 'transparent';
+                cell.style.background = '#1a1a3e';
+            }
+        });
+    }
+
+    handCards.forEach(function(card) {
+        if (card.style.pointerEvents === 'none') return;
+        card.addEventListener('click', function() {
+            if (isProcessing) return;
+            handCards.forEach(function(c) { c.style.borderColor = 'transparent'; });
+            this.style.borderColor = '#4a9eff';
+            selectedCard = this.dataset.index;
+            highlightEmptyCells(true);
+            setStatus('Casilla seleccionada. Ahora elige una casilla en el tablero.');
+        });
+    });
+
+    cells.forEach(function(cell) {
+        cell.addEventListener('click', function() {
+            if (isProcessing) return;
+            if (selectedCard === null) {
+                setStatus('Primero selecciona una carta de tu mano.');
+                return;
+            }
+
+            var row = this.dataset.row;
+            var col = this.dataset.col;
+            var content = this.querySelector('.cell-content');
+            var empty = this.querySelector('.cell-empty');
+
+            if (content.style.display !== 'none') {
+                setStatus('Esa casilla ya está ocupada.');
+                return;
+            }
+
+            isProcessing = true;
+            setStatus('Colocando carta...');
+
+            fetch('{% url "minigames:card_place" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    card_index: parseInt(selectedCard),
+                    row: parseInt(row),
+                    col: parseInt(col),
+                })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.status === 'game_over') {
+                    renderBoard(data.board);
+                    highlightEmptyCells(false);
+                    handCards.forEach(function(c) { c.style.borderColor = 'transparent'; });
+                    if (data.won) {
+                        setStatus('🎉 ¡Victoria! Tienes ' + data.player_card_count + ' cartas vs ' + data.ai_card_count + ' del enemigo.');
+                    } else {
+                        setStatus('💀 Derrota. Tienes ' + data.player_card_count + ' cartas vs ' + data.ai_card_count + ' del enemigo.');
+                    }
+                    showGameOver(data.won, data.reward_gems);
+                } else if (data.status === 'ok') {
+                    renderBoard(data.board);
+                    markCardUsed(parseInt(selectedCard));
+
+                    if (data.player_flips && data.player_flips.length > 0) {
+                        flashFlips(data.player_flips, '#4ade80');
+                    }
+
+                    setStatus('Turno del enemigo...');
+
+                    setTimeout(function() {
+                        renderBoard(data.board);
+
+                        if (data.ai_flips && data.ai_flips.length > 0) {
+                            flashFlips(data.ai_flips, '#ff6b6b');
+                        }
+
+                        var playerCount = 0;
+                        var aiCount = 0;
+                        data.board.forEach(function(row) {
+                            row.forEach(function(cell) {
+                                if (cell) {
+                                    if (cell.owner === 'player') playerCount++;
+                                    else aiCount++;
+                                }
+                            });
+                        });
+
+                        selectedCard = null;
+                        highlightEmptyCells(false);
+                        handCards.forEach(function(c) { c.style.borderColor = 'transparent'; });
+                        setStatus('Turno ' + (playerCount + aiCount + 1) + ': Selecciona una carta.');
+                        isProcessing = false;
+                    }, 800);
+                }
+            })
+            .catch(function() {
+                alert('Error al colocar la carta.');
+                isProcessing = false;
+                setStatus('Error de conexión.');
+            });
+        });
+    });
+
+    function renderBoard(boardData) {
+        var idx = 0;
+        boardData.forEach(function(row, r) {
+            row.forEach(function(cell, c) {
+                var cellEl = cells[idx];
+                var content = cellEl.querySelector('.cell-content');
+                var empty = cellEl.querySelector('.cell-empty');
+                idx++;
+
+                if (!cell) {
+                    content.style.display = 'none';
+                    if (empty) empty.style.display = 'block';
+                    cellEl.style.borderColor = 'transparent';
+                    cellEl.style.background = '#1a1a3e';
+                    return;
+                }
+
+                if (empty) empty.style.display = 'none';
+                content.style.display = 'block';
+                cellEl.style.borderColor = cell.owner === 'player' ? '#4a9eff' : '#ff6b6b';
+                cellEl.style.background = cell.owner === 'player' ? 'rgba(74,158,255,0.15)' : 'rgba(255,107,107,0.15)';
+
+                content.querySelector('.cv-top').textContent = cell.values.top;
+                content.querySelector('.cv-top').style.color = cell.owner === 'player' ? '#4a9eff' : '#ff6b6b';
+                content.querySelector('.cv-right').textContent = cell.values.right;
+                content.querySelector('.cv-right').style.color = cell.owner === 'player' ? '#4a9eff' : '#ff6b6b';
+                content.querySelector('.cv-bottom').textContent = cell.values.bottom;
+                content.querySelector('.cv-bottom').style.color = cell.owner === 'player' ? '#4a9eff' : '#ff6b6b';
+                content.querySelector('.cv-left').textContent = cell.values.left;
+                content.querySelector('.cv-left').style.color = cell.owner === 'player' ? '#4a9eff' : '#ff6b6b';
+                content.querySelector('.cv-name').textContent = cell.name;
+                content.querySelector('.cv-icon').textContent = cell.owner === 'player' ? '🛡️' : '👹';
+            });
+        });
+    }
+
+    function markCardUsed(index) {
+        var card = document.querySelector('.hand-card[data-index="' + index + '"]');
+        if (card) {
+            card.style.opacity = '0.3';
+            card.style.pointerEvents = 'none';
+        }
+    }
+
+    function flashFlips(flips, color) {
+        flips.forEach(function(flip) {
+            var idx = flip.row * 3 + flip.col;
+            var cellEl = cells[idx];
+            if (cellEl) {
+                cellEl.style.transition = 'background 0.3s';
+                cellEl.style.background = color;
+                cellEl.style.borderColor = color;
+                setTimeout(function() {
+                    cellEl.style.background = color === '#4ade80' ? 'rgba(74,158,255,0.15)' : 'rgba(255,107,107,0.15)';
+                    cellEl.style.borderColor = color === '#4ade80' ? '#4a9eff' : '#ff6b6b';
+                }, 500);
+            }
+        });
+    }
+
+    function showGameOver(won, gems) {
+        var gameArea = document.getElementById('gameArea');
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;';
+        overlay.innerHTML =
+            '<div class="card" style="text-align: center; max-width: 400px; padding: 2rem; border-top: 3px solid ' + (won ? '#4ade80' : '#ff6b6b') + ';">' +
+            '<div style="font-size: 4rem; margin-bottom: 0.5rem;">' + (won ? '🏆' : '💀') + '</div>' +
+            '<h2 style="color: ' + (won ? '#4ade80' : '#ff6b6b') + '; margin: 0;">' + (won ? '¡Victoria!' : 'Derrota') + '</h2>' +
+            '<p style="color: #aaa; margin: 1rem 0;">Recompensa: ' + gems + ' 💎</p>' +
+            '<button id="overlayClaimBtn" class="btn" style="margin-bottom: 0.5rem;">Reclamar ' + gems + ' 💎</button>' +
+            '<div id="overlayClaimStatus" style="color: #aaa; margin-bottom: 0.5rem; display: none;"></div>' +
+            '<a href="{% url "minigames:cards" %}" class="btn btn-secondary">Jugar otra vez</a>' +
+            '<a href="{% url "minigames:index" %}" class="btn btn-secondary" style="margin-top: 0.25rem;">← Volver</a>' +
+            '</div>';
+        document.body.appendChild(overlay);
+
+        var overlayClaimBtn = document.getElementById('overlayClaimBtn');
+        var overlayClaimStatus = document.getElementById('overlayClaimStatus');
+        if (overlayClaimBtn) {
+            overlayClaimBtn.addEventListener('click', function() {
+                overlayClaimBtn.disabled = true;
+                if (overlayClaimStatus) { overlayClaimStatus.style.display = 'block'; overlayClaimStatus.textContent = 'Reclamando...'; }
+                fetch('{% url "minigames:card_claim" %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.status === 'ok') {
+                        if (overlayClaimStatus) { overlayClaimStatus.textContent = '✓ Reclamaste ' + data.gems + ' 💎'; overlayClaimStatus.style.color = '#4ade80'; }
+                        overlayClaimBtn.textContent = '✓ Reclamado';
+                        overlayClaimBtn.style.opacity = '0.5';
+                    } else {
+                        if (overlayClaimStatus) { overlayClaimStatus.textContent = 'Ya reclamado.'; overlayClaimStatus.style.color = '#888'; }
+                        overlayClaimBtn.style.display = 'none';
+                    }
+                })
+                .catch(function() {
+                    if (overlayClaimStatus) { overlayClaimStatus.textContent = 'Error.'; }
+                    overlayClaimBtn.disabled = false;
+                });
+            });
+        }
+    }
+
+    // Initial render from server board state
+    {% if board %}
+    renderBoard({{ board|safe }});
+    {% endif %}
+
+    // Claim button on finished state (server-rendered)
+    var claimBtn = document.getElementById('claimBtn');
+    var claimStatus = document.getElementById('claimStatus');
+    if (claimBtn) {
+        claimBtn.addEventListener('click', function() {
+            claimBtn.disabled = true;
+            if (claimStatus) { claimStatus.style.display = 'block'; claimStatus.textContent = 'Reclamando...'; }
+            fetch('{% url "minigames:card_claim" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.status === 'ok') {
+                    if (claimStatus) { claimStatus.textContent = '✓ Reclamaste ' + data.gems + ' 💎'; claimStatus.style.color = '#4ade80'; }
+                    claimBtn.textContent = '✓ Reclamado';
+                    claimBtn.style.opacity = '0.5';
+                } else if (data.status === 'already_claimed') {
+                    if (claimStatus) { claimStatus.textContent = 'Ya reclamado'; claimStatus.style.color = '#888'; }
+                    claimBtn.style.display = 'none';
+                }
+            })
+            .catch(function() {
+                if (claimStatus) { claimStatus.textContent = 'Error al reclamar.'; }
+                claimBtn.disabled = false;
+            });
+        });
+    }
+})();
+</script>
+{% endblock %}
