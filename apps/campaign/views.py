@@ -279,15 +279,15 @@ def campaign_battle_result(request, level_id):
 
     battle = (
         CampaignBattle.objects.filter(player=profile, level=level)
-        .select_related("team")
+        .select_related("team", "level")
         .first()
     )
 
     if not battle:
         return redirect("campaign:detail", level_id=level_id)
 
-    if not level.enemy_team_data:
-        level.enemy_team_data = _build_enemy_team(level)
+    if not battle.level.enemy_team_data:
+        battle.level.enemy_team_data = _build_enemy_team(battle.level)
 
     dropped_item_id = request.session.pop("_battle_dropped_item_id", None)
     dropped_item = None
