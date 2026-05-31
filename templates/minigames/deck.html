@@ -16,15 +16,15 @@
 </div>
 
 <div id="deckGrid" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
-{% for pg in gods %}
-<div class="deck-card" data-pgid="{{ pg.id }}" style="width: 100px; height: 140px; background: #1a1a3e; border-radius: 8px; cursor: pointer; border: 3px solid transparent; transition: all 0.2s; position: relative; overflow: hidden;">
-    <img src="{{ pg.god.image_url }}" alt="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+{% for item in gods %}
+<div class="deck-card" data-pgid="{{ item.pg.id }}" style="width: 100px; height: 140px; background: #1a1a3e; border-radius: 8px; cursor: pointer; border: 3px solid transparent; transition: all 0.2s; position: relative; overflow: hidden;">
+    <img src="{{ item.pg.god.image_url }}" alt="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(0,0,0,0.3));"></div>
-    <div style="position: absolute; top: 2px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ pg.total_attack|default:0|floatformat:0 }}</div>
-    <div style="position: absolute; right: 2px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ pg.total_defense|default:0|floatformat:0 }}</div>
-    <div style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ pg.total_speed|default:0|floatformat:0 }}</div>
-    <div style="position: absolute; left: 2px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ pg.total_hp|default:0|floatformat:0 }}</div>
-    <div style="position: absolute; bottom: 0; left: 0; right: 0; text-align: center; font-size: 0.55rem; color: #ccc; z-index: 2; background: rgba(0,0,0,0.6); padding: 1px 0;">{{ pg.god.name }}</div>
+    <div style="position: absolute; top: 2px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ item.card_values.top }}</div>
+    <div style="position: absolute; right: 2px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ item.card_values.right }}</div>
+    <div style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ item.card_values.bottom }}</div>
+    <div style="position: absolute; left: 2px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ item.card_values.left }}</div>
+    <div style="position: absolute; bottom: 0; left: 0; right: 0; text-align: center; font-size: 0.55rem; color: #ccc; z-index: 2; background: rgba(0,0,0,0.6); padding: 1px 0;">{{ item.pg.god.name }}</div>
     <div class="deck-check" style="position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; border-radius: 50%; background: rgba(0,0,0,0.6); border: 2px solid #4ade80; display: none; align-items: center; justify-content: center; font-size: 0.6rem; color: #4ade80; z-index: 3;">✓</div>
 </div>
 {% endfor %}

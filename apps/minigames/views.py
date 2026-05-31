@@ -7,7 +7,7 @@ from typing import TypedDict
 from django.contrib.auth.decorators import login_required
 from django.db import DatabaseError
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.utils import timezone
 
 from apps.gods.models import God
@@ -401,7 +401,10 @@ def card_game(request):
     profile = request.user.profile
 
     deck_ids = profile.card_deck
-    if deck_ids and len(deck_ids) >= CARD_HAND_SIZE:
+    if not deck_ids:
+        return redirect("minigames:card_deck")
+
+    if len(deck_ids) >= CARD_HAND_SIZE:
         picked = list(
             profile.gods.select_related("god").filter(
                 id__in=deck_ids[:CARD_HAND_SIZE], god__isnull=False
@@ -688,13 +691,25 @@ def card_deck(request):
     owned_gods = list(
         profile.gods.select_related("god").order_by("-level")
     )
-    deck_ids = set(profile.card_deck)
+    deck_ids = list(profile.card_deck)
+
+    gods_with_values = []
+    for pg in owned_gods:
+        gods_with_values.append({
+            "pg": pg,
+            "card_values": {
+                "top": _stat_to_card_value(pg.total_attack, 50),
+                "right": _stat_to_card_value(pg.total_defense, 50),
+                "bottom": _stat_to_card_value(pg.total_speed, 20),
+                "left": _stat_to_card_value(pg.total_hp, 300),
+            },
+        })
 
     return render(
         request,
         "minigames/deck.html",
         {
-            "gods": owned_gods,
+            "gods": gods_with_values,
             "deck_ids": deck_ids,
             "max_cards": CARD_HAND_SIZE,
         },
