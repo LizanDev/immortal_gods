@@ -175,7 +175,16 @@
                     }
                     showGameOver(data.won, data.reward_gems);
                 } else if (data.status === 'ok') {
-                    renderBoard(data.board);
+                    // First render: hide AI's card so it doesn't appear instantly
+                    var initialBoard = data.board.map(function(row, r) {
+                        return row.map(function(cell, c) {
+                            if (data.ai_move && r === data.ai_move.row && c === data.ai_move.col) {
+                                return null;
+                            }
+                            return cell;
+                        });
+                    });
+                    renderBoard(initialBoard);
                     markCardUsed(parseInt(selectedCard));
 
                     if (data.player_flips && data.player_flips.length > 0) {
@@ -207,7 +216,7 @@
                         handCards.forEach(function(c) { c.style.borderColor = 'transparent'; });
                         setStatus('Turno ' + (playerCount + aiCount + 1) + ': Selecciona una carta.');
                         isProcessing = false;
-                    }, 2000);
+                    }, 2500);
                 }
             })
             .catch(function() {
