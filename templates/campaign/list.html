@@ -35,48 +35,63 @@
 <div class="campaign-grid">
     {% for level in levels %}
     {% if level.order <= max_visible %}
-    <div class="level-card rank-{{ level.get_difficulty_display }} {% if level.is_boss_level %}is-boss{% endif %}">
-        <a href="{% url 'campaign:detail' level.id %}" style="display: flex; align-items: center; gap: 1rem; flex: 1; text-decoration: none; color: inherit;">
-            <div class="level-order">{{ level.order }}</div>
-            <div class="level-info">
-                <div class="level-name-row">
-                    <span class="level-name">{{ level.name }}</span>
-                    {% if level.is_boss_level %}
-                    <span class="boss-icon">👹</span>
-                    {% endif %}
-                </div>
-                <div class="level-meta">
-                    <span class="difficulty-tag">{{ level.get_difficulty_display }}</span>
-                    <span class="level-power">
-                        <span style="color: #ffd700;">⚔️</span> {{ level.required_power }}
-                    </span>
-                </div>
-                {% if level.enemy_team_data %}
-                <div class="enemy-preview" style="display: flex; flex-wrap: wrap; gap: 4px 8px; margin-top: 6px;">
-                    {% for enemy in level.enemy_team_data|slice:":5" %}
-                    <span style="font-size: 0.7rem; color: #ff6b6b; background: rgba(255,107,107,0.1); padding: 1px 6px; border-radius: 3px;">
-                        {{ enemy.name }} <span style="color: #ff8;">{{ enemy.attack|add:enemy.defense }}</span>
-                    </span>
-                    {% endfor %}
-                </div>
+    {% if level.order <= profile.campaign_progress %}
+    <form method="post" action="{% url 'campaign:battle' level.id %}" style="display: contents;">
+    {% csrf_token %}
+    <button type="submit" class="level-card rank-{{ level.get_difficulty_display }} {% if level.is_boss_level %}is-boss{% endif %}" style="cursor: pointer; width: 100%; border: none; text-align: left; font: inherit; color: inherit; gap: 1rem;">
+        <div class="level-order">{{ level.order }}</div>
+        <div class="level-info">
+            <div class="level-name-row">
+                <span class="level-name">{{ level.name }}</span>
+                {% if level.is_boss_level %}
+                <span class="boss-icon">👹</span>
                 {% endif %}
             </div>
-            <div class="level-rewards">
-                <span class="reward-item">&#9734; {{ level.gold_reward }} oro</span>
-                <span class="reward-item">&#9830; {{ level.gems_reward }} 💎</span>
+            <div class="level-meta">
+                <span class="difficulty-tag">{{ level.get_difficulty_display }}</span>
+                <span class="level-power">
+                    <span style="color: #ffd700;">⚔️</span> {{ level.required_power }}
+                </span>
             </div>
-        </a>
-        <div class="level-action">
-            {% if level.order <= profile.campaign_progress %}
-            <form method="post" action="{% url 'campaign:battle' level.id %}">
-                {% csrf_token %}
-                <button type="submit" class="btn battle-btn">Batallar</button>
-            </form>
-            {% else %}
-            <span class="btn battle-btn btn-gold">Bloqueado</span>
+            {% if level.enemy_team_data %}
+            <div class="enemy-preview" style="display: flex; flex-wrap: wrap; gap: 4px 8px; margin-top: 6px;">
+                {% for enemy in level.enemy_team_data|slice:":5" %}
+                <span style="font-size: 0.7rem; color: #ff6b6b; background: rgba(255,107,107,0.1); padding: 1px 6px; border-radius: 3px;">
+                    {{ enemy.name }} <span style="color: #ff8;">{{ enemy.attack|add:enemy.defense }}</span>
+                </span>
+                {% endfor %}
+            </div>
             {% endif %}
         </div>
+        <div class="level-rewards">
+            <span class="reward-item">&#9734; {{ level.gold_reward }} oro</span>
+            <span class="reward-item">&#9830; {{ level.gems_reward }} 💎</span>
+        </div>
+    </button>
+    </form>
+    {% else %}
+    <div class="level-card rank-{{ level.get_difficulty_display }}" style="opacity: 0.5;">
+        <div class="level-order">{{ level.order }}</div>
+        <div class="level-info">
+            <div class="level-name-row">
+                <span class="level-name">{{ level.name }}</span>
+            </div>
+            <div class="level-meta">
+                <span class="difficulty-tag">{{ level.get_difficulty_display }}</span>
+                <span class="level-power">
+                    <span style="color: #ffd700;">⚔️</span> {{ level.required_power }}
+                </span>
+            </div>
+        </div>
+        <div class="level-rewards">
+            <span class="reward-item">&#9734; {{ level.gold_reward }} oro</span>
+            <span class="reward-item">&#9830; {{ level.gems_reward }} 💎</span>
+        </div>
+        <div class="level-action">
+            <span class="btn battle-btn btn-gold">Bloqueado</span>
+        </div>
     </div>
+    {% endif %}
     {% endif %}
     {% empty %}
     <p>No hay niveles de campaña disponibles.</p>
