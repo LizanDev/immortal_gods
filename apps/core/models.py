@@ -16,6 +16,7 @@ class PlayerProfile(models.Model):
     gold = models.PositiveIntegerField(default=5000)
     campaign_progress = models.PositiveIntegerField(default=1)
     rank_score = models.PositiveIntegerField(default=0)
+    card_deck = models.JSONField(default=list, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

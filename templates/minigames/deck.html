@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Editar Mazo - Duelo de Cartas{% endblock %}
+
+{% block content %}
+<h1>🛠️ Editar Mazo de Cartas</h1>
+<p style="color: #aaa; text-align: center;">
+    Selecciona hasta <strong>{{ max_cards }}</strong> dioses para tu mazo.
+    Los que no estén seleccionados se elegirán al azar.
+</p>
+
+<div style="text-align: center; margin-bottom: 1rem;">
+    <button id="saveDeck" class="btn">Guardar mazo (0/{{ max_cards }})</button>
+    <span id="saveStatus" style="color: #aaa; margin-left: 0.5rem; display: none;"></span>
+</div>
+
+<div id="deckGrid" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+{% for pg in gods %}
+<div class="deck-card" data-pgid="{{ pg.id }}" style="width: 100px; height: 140px; background: #1a1a3e; border-radius: 8px; cursor: pointer; border: 3px solid transparent; transition: all 0.2s; position: relative; overflow: hidden;">
+    <img src="{{ pg.god.image_url }}" alt="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(0,0,0,0.3));"></div>
+    <div style="position: absolute; top: 2px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ pg.total_attack|default:0|floatformat:0 }}</div>
+    <div style="position: absolute; right: 2px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ pg.total_defense|default:0|floatformat:0 }}</div>
+    <div style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ pg.total_speed|default:0|floatformat:0 }}</div>
+    <div style="position: absolute; left: 2px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ pg.total_hp|default:0|floatformat:0 }}</div>
+    <div style="position: absolute; bottom: 0; left: 0; right: 0; text-align: center; font-size: 0.55rem; color: #ccc; z-index: 2; background: rgba(0,0,0,0.6); padding: 1px 0;">{{ pg.god.name }}</div>
+    <div class="deck-check" style="position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; border-radius: 50%; background: rgba(0,0,0,0.6); border: 2px solid #4ade80; display: none; align-items: center; justify-content: center; font-size: 0.6rem; color: #4ade80; z-index: 3;">✓</div>
+</div>
+{% endfor %}
+</div>
+
+<p style="text-align: center; margin-top: 1rem;">
+    <a href="{% url 'minigames:cards' %}" class="btn btn-secondary">← Volver al juego</a>
+</p>
+
+<script>
+(function() {
+    var maxCards = {{ max_cards }};
+    var selected = new Set();
+    var initial = {{ deck_ids|safe }};
+    initial.forEach(function(id) { selected.add(id); });
+
+    var cards = document.querySelectorAll('.deck-card');
+    var saveBtn = document.getElementById('saveDeck');
+    var saveStatus = document.getElementById('saveStatus');
+
+    function updateUI() {
+        cards.forEach(function(card) {
+            var id = parseInt(card.dataset.pgid);
+            var check = card.querySelector('.deck-check');
+            if (selected.has(id)) {
+                card.style.borderColor = '#4ade80';
+                if (check) check.style.display = 'flex';
+            } else {
+                card.style.borderColor = 'transparent';
+                if (check) check.style.display = 'none';
+            }
+        });
+        saveBtn.textContent = 'Guardar mazo (' + selected.size + '/' + maxCards + ')';
+        if (selected.size > maxCards) {
+            saveBtn.style.borderColor = '#ff6b6b';
+        } else {
+            saveBtn.style.borderColor = '';
+        }
+    }
+
+    cards.forEach(function(card) {
+        card.addEventListener('click', function() {
+            var id = parseInt(this.dataset.pgid);
+            if (selected.has(id)) {
+                selected.delete(id);
+            } else if (selected.size < maxCards) {
+                selected.add(id);
+            } else {
+                saveStatus.textContent = 'Máximo ' + maxCards + ' dioses';
+                saveStatus.style.display = 'inline';
+                saveStatus.style.color = '#ff6b6b';
+                setTimeout(function() { saveStatus.style.display = 'none'; }, 2000);
+                return;
+            }
+            updateUI();
+        });
+    });
+
+    saveBtn.addEventListener('click', function() {
+        saveBtn.disabled = true;
+        saveStatus.textContent = 'Guardando...';
+        saveStatus.style.display = 'inline';
+        saveStatus.style.color = '#aaa';
+
+        fetch('{% url "minigames:card_deck" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ god_ids: Array.from(selected) }),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.status === 'ok') {
+                saveStatus.textContent = '✓ Mazo guardado';
+                saveStatus.style.color = '#4ade80';
+            } else {
+                saveStatus.textContent = 'Error: ' + (data.message || 'desconocido');
+                saveStatus.style.color = '#ff6b6b';
+                saveBtn.disabled = false;
+            }
+        })
+        .catch(function() {
+            saveStatus.textContent = 'Error de conexión';
+            saveStatus.style.color = '#ff6b6b';
+            saveBtn.disabled = false;
+        });
+    });
+
+    updateUI();
+})();
+</script>
+{% endblock %}

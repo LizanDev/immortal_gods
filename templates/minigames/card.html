@@ -35,6 +35,9 @@
     Coloca tus cartas en el tablero para capturar las cartas enemigas.
     <br>Gana quien tenga más cartas al final.
 </p>
+<p style="text-align: center; margin-top: 0.25rem;">
+    <a href="{% url 'minigames:card_deck' %}" class="btn btn-secondary" style="font-size: 0.8rem;">🛠️ Editar mazo</a>
+</p>
 
 <div id="gameArea" style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
     <!-- 3x3 Board -->
@@ -204,7 +207,7 @@
                         handCards.forEach(function(c) { c.style.borderColor = 'transparent'; });
                         setStatus('Turno ' + (playerCount + aiCount + 1) + ': Selecciona una carta.');
                         isProcessing = false;
-                    }, 800);
+                    }, 2000);
                 }
             })
             .catch(function() {

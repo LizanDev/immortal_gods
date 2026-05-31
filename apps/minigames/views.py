@@ -299,7 +299,7 @@ def wheel_spin(request):
 
 # ─── Card Duel (Triple Triad-style) ────────────────────────────────
 
-CARD_HAND_SIZE = 5
+CARD_HAND_SIZE = 6
 GRID_SIZE = 3
 
 
@@ -321,24 +321,17 @@ def _god_to_card(pg) -> dict:
     }
 
 
-def _random_ai_card() -> dict:
-    """Generate a random AI card with values 1-9."""
-    values = {
-        "top": random.randint(1, 9),
-        "right": random.randint(1, 9),
-        "bottom": random.randint(1, 9),
-        "left": random.randint(1, 9),
-    }
-    names = [
-        "Soldado Oscuro", "Bestia Salvaje", "Espíritu del Caos",
-        "Guardián Maldito", "Aprendiz de Brujo", "Gólem de Roca",
-        "Sombra Letal", "Demonio Menor", "Lobo de Guerra",
-        "Centinela del Abismo", "Arquero Espectral", "Caballero Oscuro",
-    ]
+def _god_to_ai_card(god: God) -> dict:
+    """Convert a God (base model) to an AI card using base stats."""
     return {
-        "name": random.choice(names),
-        "image_url": "",
-        "values": values,
+        "name": god.name,
+        "image_url": god.image_url,
+        "values": {
+            "top": _stat_to_card_value(god.base_attack, 50),
+            "right": _stat_to_card_value(god.base_defense, 50),
+            "bottom": _stat_to_card_value(god.base_speed, 20),
+            "left": _stat_to_card_value(god.base_hp, 300),
+        },
     }
 
 
@@ -407,11 +400,25 @@ def card_game(request):
     """Card duel game page — always starts a new game (unlimited plays)."""
     profile = request.user.profile
 
-    gods_qs = list(
-        profile.gods.select_related("god").filter(god__isnull=False)
-    )
-    random.shuffle(gods_qs)
-    picked = gods_qs[:CARD_HAND_SIZE]
+    deck_ids = profile.card_deck
+    if deck_ids and len(deck_ids) >= CARD_HAND_SIZE:
+        picked = list(
+            profile.gods.select_related("god").filter(
+                id__in=deck_ids[:CARD_HAND_SIZE], god__isnull=False
+            )
+        )
+        if len(picked) < CARD_HAND_SIZE:
+            picked = list(
+                profile.gods.select_related("god").filter(god__isnull=False)
+            )
+            random.shuffle(picked)
+            picked = picked[:CARD_HAND_SIZE]
+    else:
+        picked = list(
+            profile.gods.select_related("god").filter(god__isnull=False)
+        )
+        random.shuffle(picked)
+        picked = picked[:CARD_HAND_SIZE]
 
     if len(picked) < CARD_HAND_SIZE:
         return render(
@@ -426,7 +433,9 @@ def card_game(request):
         )
 
     player_hand = [_god_to_card(pg) for pg in picked]
-    ai_hand = [_random_ai_card() for _ in range(CARD_HAND_SIZE)]
+    all_gods = list(God.objects.all())
+    random.shuffle(all_gods)
+    ai_hand = [_god_to_ai_card(g) for g in all_gods[:CARD_HAND_SIZE]]
 
     try:
         session = CardGameSession.objects.create(
@@ -643,3 +652,50 @@ def card_claim(request):
         return JsonResponse({"status": "already_claimed"})
 
     return JsonResponse({"status": "ok", "gems": gems})
+
+
+@login_required
+def card_deck(request):
+    """Edit the player's card duel deck (select up to 6 gods)."""
+    profile = request.user.profile
+
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            god_ids = data.get("god_ids", [])
+        except (ValueError, TypeError, json.JSONDecodeError):
+            return JsonResponse(
+                {"status": "error", "message": "Invalid data"}, status=400
+            )
+
+        if len(god_ids) > CARD_HAND_SIZE:
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": f"Máximo {CARD_HAND_SIZE} dioses",
+                },
+                status=400,
+            )
+
+        owned = set(
+            profile.gods.filter(id__in=god_ids).values_list("id", flat=True)
+        )
+        valid_ids = [gid for gid in god_ids if gid in owned]
+        profile.card_deck = valid_ids
+        profile.save(update_fields=["card_deck"])
+        return JsonResponse({"status": "ok", "deck": valid_ids})
+
+    owned_gods = list(
+        profile.gods.select_related("god").order_by("-level")
+    )
+    deck_ids = set(profile.card_deck)
+
+    return render(
+        request,
+        "minigames/deck.html",
+        {
+            "gods": owned_gods,
+            "deck_ids": deck_ids,
+            "max_cards": CARD_HAND_SIZE,
+        },
+    )
