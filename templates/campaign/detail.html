@@ -143,14 +143,14 @@
 
     <!-- Buttons -->
     <div style="display: flex; gap: 0.75rem; justify-content: center;">
-        <form method="post" action="{% url 'campaign:battle' level.id %}">
+        <form method="post" action="{% url 'campaign:battle' level.id %}" style="margin: 0; flex: 1; max-width: 280px;">
             {% csrf_token %}
-            <button type="submit" class="btn btn-gold">Batallar</button>
+            <button type="submit" class="btn btn-gold" style="width: 100%;">Batallar</button>
         </form>
         {% if latest_battle.won and next_level %}
-        <a href="{% url 'campaign:detail' next_level.id %}" class="btn btn-success">Siguiente nivel ({{ next_level.name }})</a>
+        <a href="{% url 'campaign:detail' next_level.id %}" class="btn btn-gold" style="flex: 1; max-width: 280px; text-align: center;">Siguiente nivel ({{ next_level.name }})</a>
         {% endif %}
-        <a href="{% url 'campaign:list' %}" class="btn btn-secondary">Volver a campaña</a>
+        <a href="{% url 'campaign:list' %}" class="btn btn-gold" style="flex: 1; max-width: 280px; text-align: center;">Volver a campaña</a>
     </div>
 </div>
 {% endblock %}
