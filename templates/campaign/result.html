@@ -32,7 +32,7 @@
             </div>
             <div style="flex: 1; min-width: 0;">
                 <div style="font-weight: bold; font-size: 0.85rem;">{{ enemy.name }}</div>
-                <div style="font-size: 0.7rem; color: #aaa;">{{ enemy.role }}</div>
+                <div style="font-size: 0.7rem; color: #aaa;">{{ enemy.role }} · Nv.{{ enemy.level|default:"—" }} · {{ enemy.quality_roman|default:"—" }}</div>
             </div>
             <div style="text-align: right; font-size: 0.75rem;">
                 <div style="color: #ff6b6b;">ATK {{ enemy.attack }}</div>
@@ -40,7 +40,9 @@
             </div>
         </div>
         {% empty %}
-        <p style="color: #888; font-size: 0.85rem;">Sin datos de enemigos.</p>
+        <div style="text-align: center; padding: 1rem; color: #888; font-size: 0.85rem;">
+            <p>⚔️ Poder enemigo: <strong style="color: #ff6b6b;">{{ battle.level.required_power }}</strong></p>
+        </div>
         {% endfor %}
     </div>
 </div>

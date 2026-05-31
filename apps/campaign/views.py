@@ -1,10 +1,12 @@
 """Campaign views."""
 
 import random
+from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 
 from apps.battle.utils import calculate_team_power, resolve_battle
 from apps.campaign.models import (
@@ -86,9 +88,7 @@ def campaign_detail(request, level_id):
     if not team:
         team = profile.teams.first()
 
-    latest_battle = CampaignBattle.objects.filter(
-        player=profile, level=level
-    ).first()
+    latest_battle = CampaignBattle.objects.filter(player=profile, level=level).first()
 
     next_level = CampaignLevel.objects.filter(order=level.order + 1).first()
 
@@ -107,7 +107,10 @@ def campaign_detail(request, level_id):
 
 @login_required
 def campaign_battle(request, level_id):
-    """Execute a battle for a campaign level."""
+    """Execute a battle for a campaign level (POST only)."""
+    if request.method != "POST":
+        return redirect("campaign:detail", level_id=level_id)
+
     try:
         profile = request.user.profile
         level = get_object_or_404(CampaignLevel, pk=level_id)
@@ -118,6 +121,14 @@ def campaign_battle(request, level_id):
                 "campaign/locked.html",
                 {"level": level, "profile": profile},
             )
+
+        recent_battle = CampaignBattle.objects.filter(
+            player=profile,
+            level=level,
+            created_at__gte=timezone.now() - timedelta(seconds=3),
+        ).first()
+        if recent_battle:
+            return redirect("campaign:battle_result", level_id=level_id)
 
         team_id = request.session.get("campaign_team_id")
         team = profile.teams.filter(id=team_id).first()
@@ -164,7 +175,7 @@ def campaign_battle(request, level_id):
                     dropped_item = item
 
         actual_turns = len([e for e in battle_log if "turn" in e])
-        battle = CampaignBattle.objects.create(
+        CampaignBattle.objects.create(
             player=profile,
             level=level,
             team=team,
@@ -175,24 +186,51 @@ def campaign_battle(request, level_id):
             log_json=battle_log,
         )
 
-        next_level = None
-        if won:
-            next_level = CampaignLevel.objects.filter(order=level.order + 1).first()
-
-        return render(
-            request,
-            "campaign/result.html",
-            {
-                "battle": battle,
-                "won": won,
-                "profile": profile,
-                "dropped_item": dropped_item,
-                "next_level": next_level,
-            },
+        request.session["_battle_dropped_item_id"] = (
+            dropped_item.id if dropped_item else None
         )
+
+        return redirect("campaign:battle_result", level_id=level_id)
     except Exception as e:
         messages.error(request, f"Error en la batalla: {str(e)}")
         return redirect("campaign:list")
+
+
+@login_required
+def campaign_battle_result(request, level_id):
+    """Show the most recent battle result for a level (GET only)."""
+    profile = request.user.profile
+    level = get_object_or_404(CampaignLevel, pk=level_id)
+
+    battle = (
+        CampaignBattle.objects.filter(player=profile, level=level)
+        .select_related("team")
+        .first()
+    )
+
+    if not battle:
+        return redirect("campaign:detail", level_id=level_id)
+
+    dropped_item_id = request.session.pop("_battle_dropped_item_id", None)
+    dropped_item = None
+    if dropped_item_id:
+        dropped_item = Item.objects.filter(id=dropped_item_id).first()
+
+    next_level = None
+    if battle.won:
+        next_level = CampaignLevel.objects.filter(order=level.order + 1).first()
+
+    return render(
+        request,
+        "campaign/result.html",
+        {
+            "battle": battle,
+            "won": battle.won,
+            "profile": profile,
+            "dropped_item": dropped_item,
+            "next_level": next_level,
+        },
+    )
 
 
 @login_required

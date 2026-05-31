@@ -3908,7 +3908,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 100,
         "gems_reward": 5,
         "exp_reward": 30,
-        "required_power": 600,
+        "required_power": 500,
     },
     {
         "name": _("Forest of Shadows"),
@@ -3917,7 +3917,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 120,
         "gems_reward": 5,
         "exp_reward": 35,
-        "required_power": 800,
+        "required_power": 600,
     },
     {
         "name": _("River Crossing"),
@@ -3926,7 +3926,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 150,
         "gems_reward": 8,
         "exp_reward": 40,
-        "required_power": 1000,
+        "required_power": 700,
     },
     {
         "name": _("Abandoned Village"),
@@ -3935,7 +3935,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 170,
         "gems_reward": 8,
         "exp_reward": 45,
-        "required_power": 1200,
+        "required_power": 800,
     },
     {
         "name": _("Whispering Woods"),
@@ -3944,9 +3944,10 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 200,
         "gems_reward": 10,
         "exp_reward": 50,
-        "required_power": 1500,
+        "required_power": 1000,
+        "is_boss_level": True,
     },
-    # Normal (6-12) — rare gods lv10-20, team ~2500-4000
+    # Normal (6-12) — rare gods lv5-12, team ~1500-3500
     {
         "name": _("Mountain Pass"),
         "difficulty": "normal",
@@ -3954,7 +3955,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 250,
         "gems_reward": 10,
         "exp_reward": 60,
-        "required_power": 2000,
+        "required_power": 1200,
     },
     {
         "name": _("Ancient Ruins"),
@@ -3963,7 +3964,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 280,
         "gems_reward": 12,
         "exp_reward": 70,
-        "required_power": 2400,
+        "required_power": 1400,
     },
     {
         "name": _("Dark Cave"),
@@ -3972,7 +3973,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 320,
         "gems_reward": 12,
         "exp_reward": 80,
-        "required_power": 2800,
+        "required_power": 1600,
     },
     {
         "name": _("Swamp of Decay"),
@@ -3981,7 +3982,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 360,
         "gems_reward": 14,
         "exp_reward": 90,
-        "required_power": 3200,
+        "required_power": 1800,
     },
     {
         "name": _("Guardian's Gate"),
@@ -3990,7 +3991,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 400,
         "gems_reward": 18,
         "exp_reward": 100,
-        "required_power": 3800,
+        "required_power": 2100,
         "is_boss_level": True,
     },
     {
@@ -4000,7 +4001,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 450,
         "gems_reward": 18,
         "exp_reward": 110,
-        "required_power": 4200,
+        "required_power": 2400,
     },
     {
         "name": _("Enchanted Garden"),
@@ -4009,9 +4010,9 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 500,
         "gems_reward": 20,
         "exp_reward": 120,
-        "required_power": 4600,
+        "required_power": 2700,
     },
-    # Hard (13-22) — epic gods lv20-40, team ~5000-10000
+    # Hard (13-22) — epic gods lv12-25, team ~3500-8000
     {
         "name": _("Volcanic Wastes"),
         "difficulty": "hard",
@@ -4019,7 +4020,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 550,
         "gems_reward": 22,
         "exp_reward": 130,
-        "required_power": 5200,
+        "required_power": 3100,
     },
     {
         "name": _("Frozen Peaks"),
@@ -4028,7 +4029,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 600,
         "gems_reward": 24,
         "exp_reward": 140,
-        "required_power": 5800,
+        "required_power": 3500,
     },
     {
         "name": _("Storm Valley"),
@@ -4037,7 +4038,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 650,
         "gems_reward": 26,
         "exp_reward": 150,
-        "required_power": 6400,
+        "required_power": 3900,
     },
     {
         "name": _("Shadow Fortress"),
@@ -4046,7 +4047,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 700,
         "gems_reward": 28,
         "exp_reward": 160,
-        "required_power": 7000,
+        "required_power": 4300,
     },
     {
         "name": _("Cursed Battlefield"),
@@ -4055,7 +4056,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 750,
         "gems_reward": 30,
         "exp_reward": 170,
-        "required_power": 7600,
+        "required_power": 4800,
     },
     {
         "name": _("Dragon's Lair"),
@@ -4064,7 +4065,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 850,
         "gems_reward": 35,
         "exp_reward": 190,
-        "required_power": 8500,
+        "required_power": 5400,
         "is_boss_level": True,
     },
     {
@@ -4074,7 +4075,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 900,
         "gems_reward": 36,
         "exp_reward": 200,
-        "required_power": 9200,
+        "required_power": 6000,
     },
     {
         "name": _("Lava Temple"),
@@ -4083,7 +4084,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 950,
         "gems_reward": 38,
         "exp_reward": 210,
-        "required_power": 9800,
+        "required_power": 6600,
     },
     {
         "name": _("Astral Plane"),
@@ -4092,7 +4093,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 1000,
         "gems_reward": 40,
         "exp_reward": 220,
-        "required_power": 10400,
+        "required_power": 7200,
     },
     {
         "name": _("Titan's Graveyard"),
@@ -4101,10 +4102,10 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 1100,
         "gems_reward": 45,
         "exp_reward": 240,
-        "required_power": 11400,
+        "required_power": 8000,
         "is_boss_level": True,
     },
-    # Hell (23-30) — legendary/mythic gods lv40-70, team ~12000-25000
+    # Hell (23-30) — legendary/mythic gods lv25-50, team ~9000-18000
     {
         "name": _("Celestial Realm"),
         "difficulty": "hell",
@@ -4112,7 +4113,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 1200,
         "gems_reward": 45,
         "exp_reward": 260,
-        "required_power": 12000,
+        "required_power": 8800,
     },
     {
         "name": _("Abyss of Chaos"),
@@ -4121,7 +4122,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 1300,
         "gems_reward": 48,
         "exp_reward": 280,
-        "required_power": 13000,
+        "required_power": 9600,
     },
     {
         "name": _("Void Dimension"),
@@ -4130,7 +4131,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 1400,
         "gems_reward": 50,
         "exp_reward": 300,
-        "required_power": 14000,
+        "required_power": 10500,
     },
     {
         "name": _("Infernal Gates"),
@@ -4139,7 +4140,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 1500,
         "gems_reward": 55,
         "exp_reward": 320,
-        "required_power": 15000,
+        "required_power": 11500,
     },
     {
         "name": _("Netherworld"),
@@ -4148,7 +4149,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 1600,
         "gems_reward": 60,
         "exp_reward": 340,
-        "required_power": 16000,
+        "required_power": 12500,
     },
     {
         "name": _("Pandemonium"),
@@ -4157,7 +4158,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 1800,
         "gems_reward": 65,
         "exp_reward": 380,
-        "required_power": 18000,
+        "required_power": 13800,
         "is_boss_level": True,
     },
     {
@@ -4167,7 +4168,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 2000,
         "gems_reward": 70,
         "exp_reward": 420,
-        "required_power": 20000,
+        "required_power": 15000,
     },
     {
         "name": _("Throne of Gods"),
@@ -4176,7 +4177,7 @@ CAMPAIGN_LEVELS_DATA = [
         "gold_reward": 2500,
         "gems_reward": 80,
         "exp_reward": 500,
-        "required_power": 22000,
+        "required_power": 16500,
         "is_boss_level": True,
     },
 ]

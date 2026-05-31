@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
-from django.db.models import F, Avg, Min, Max
-from apps.gods.models import God, Rarity, Role
 
+from apps.gods.models import God
 
 PWR_RANGES = {
     "common": (100, 150),

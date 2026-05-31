@@ -68,7 +68,10 @@
         </a>
         <div class="level-action">
             {% if level.order <= profile.campaign_progress %}
-            <a href="{% url 'campaign:battle' level.id %}" class="btn battle-btn">Batallar</a>
+            <form method="post" action="{% url 'campaign:battle' level.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn battle-btn">Batallar</button>
+            </form>
             {% else %}
             <span class="btn battle-btn btn-gold">Bloqueado</span>
             {% endif %}
@@ -81,6 +84,67 @@
 </div>
 
 <style>
+@media (max-width: 768px) {
+    .level-card {
+        flex-wrap: wrap;
+        padding: 0.75rem;
+        gap: 0.5rem;
+    }
+    .level-card a {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    .level-info {
+        width: 100%;
+        order: 2;
+    }
+    .level-rewards {
+        width: 100%;
+        order: 3;
+        justify-content: flex-start;
+        gap: 0.75rem;
+        font-size: 0.75rem;
+    }
+    .level-action {
+        width: 100%;
+        text-align: center;
+        margin-top: 0.25rem;
+    }
+    .battle-btn {
+        width: 100%;
+        display: block;
+    }
+    .enemy-preview span {
+        font-size: 0.65rem !important;
+    }
+    .team-power-banner {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+    }
+    .power-value {
+        font-size: 1.8rem;
+    }
+    .power-team-name {
+        margin-left: 0;
+        width: 100%;
+    }
+    .team-selector {
+        padding: 0.75rem;
+    }
+    .team-tabs {
+        width: 100%;
+    }
+    .team-tab {
+        flex: 1;
+        min-width: 0;
+        justify-content: center;
+        padding: 0.4rem 0.5rem;
+        font-size: 0.8rem;
+    }
+}
+
 .team-selector {
     background: rgba(255,255,255,0.05);
     border-radius: 12px;
