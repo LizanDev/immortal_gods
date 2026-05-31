@@ -26,6 +26,74 @@ ITEM_DROP_CHANCE = {
     "hell": 0.25,
 }
 
+ENEMY_POOL = [
+    {"name": "Soldado Esqueleto", "role": "Tank", "base_atk": 95, "base_def": 145},
+    {"name": "Arquero Fantasma", "role": "Archer", "base_atk": 130, "base_def": 85},
+    {"name": "Mago Oscuro", "role": "Mage", "base_atk": 145, "base_def": 75},
+    {"name": "Lobo de Sombra", "role": "Assassin", "base_atk": 155, "base_def": 65},
+    {"name": "Gólem de Piedra", "role": "Tank", "base_atk": 85, "base_def": 170},
+    {"name": "Harpía", "role": "Archer", "base_atk": 120, "base_def": 80},
+    {"name": "Quimera", "role": "Mage", "base_atk": 140, "base_def": 95},
+    {"name": "Minotauro", "role": "Tank", "base_atk": 110, "base_def": 155},
+    {"name": "Súcubo", "role": "Assassin", "base_atk": 145, "base_def": 80},
+    {"name": "Centauro", "role": "Archer", "base_atk": 135, "base_def": 95},
+    {"name": "Gorgona", "role": "Support", "base_atk": 95, "base_def": 120},
+    {"name": "Hidra", "role": "Mage", "base_atk": 155, "base_def": 105},
+    {"name": "Cerbero", "role": "Tank", "base_atk": 120, "base_def": 165},
+    {"name": "Pegaso Oscuro", "role": "Support", "base_atk": 105, "base_def": 110},
+    {"name": "Dragón Menor", "role": "Mage", "base_atk": 165, "base_def": 100},
+    {"name": "Titán", "role": "Tank", "base_atk": 130, "base_def": 185},
+]
+
+BOSS_POOL = [
+    {"name": "Rey Momia", "role": "Tank", "base_atk": 160, "base_def": 220},
+    {"name": "Sacerdote de Seth", "role": "Mage", "base_atk": 200, "base_def": 130},
+    {"name": "Hefesto Enfurecido", "role": "Tank", "base_atk": 170, "base_def": 240},
+    {"name": "Hades Renacido", "role": "Assassin", "base_atk": 210, "base_def": 140},
+    {"name": "Thor de las Tormentas", "role": "Tank", "base_atk": 180, "base_def": 210},
+    {"name": "Emperador de Jade", "role": "Mage", "base_atk": 230, "base_def": 150},
+    {"name": "Dragón Celestial", "role": "Mage", "base_atk": 240, "base_def": 160},
+    {"name": "Eclipse Viviente", "role": "Assassin", "base_atk": 260, "base_def": 170},
+    {"name": "Vacío Absoluto", "role": "Mage", "base_atk": 280, "base_def": 190},
+]
+
+QUALITY_ROMAN = {"easy": "I", "normal": "II", "hard": "III", "hell": "IV"}
+QUALITY_MULT = {"easy": 1.00, "normal": 1.15, "hard": 1.30, "hell": 1.45}
+LEVEL_SCALING = {
+    "easy": {"num_enemies": 3, "diff_pct": 0.70},
+    "normal": {"num_enemies": 3, "diff_pct": 0.85},
+    "hard": {"num_enemies": 4, "diff_pct": 1.00},
+    "hell": {"num_enemies": 4, "diff_pct": 1.20},
+}
+
+
+def _build_enemy_team(level: CampaignLevel) -> list[dict]:
+    """Build enemy team data for a level (fallback if not pre-seeded)."""
+    config = LEVEL_SCALING.get(level.difficulty, LEVEL_SCALING["easy"])
+    num = 5 if level.is_boss_level else config["num_enemies"]
+    quality = QUALITY_MULT.get(level.difficulty, 1.0)
+    diff_pct = config["diff_pct"]
+    pool = BOSS_POOL if level.is_boss_level else ENEMY_POOL
+    display_level = level.order * 2
+    level_mult = 1.0 + (display_level * 0.1)
+
+    enemies = []
+    for i in range(num):
+        tpl = pool[i % len(pool)]
+        atk = int(tpl["base_atk"] * quality * level_mult * diff_pct)
+        def_ = int(tpl["base_def"] * quality * level_mult * diff_pct)
+        enemies.append(
+            {
+                "name": tpl["name"],
+                "role": tpl["role"],
+                "attack": atk,
+                "defense": def_,
+                "level": display_level,
+                "quality_roman": QUALITY_ROMAN.get(level.difficulty, "I"),
+            }
+        )
+    return enemies
+
 
 @login_required
 def campaign_list(request):
@@ -55,6 +123,10 @@ def campaign_list(request):
         selected_team = teams[0]
         team_power = selected_team.power
         request.session["campaign_team_id"] = selected_team.id
+
+    for level in levels:
+        if not level.enemy_team_data:
+            level.enemy_team_data = _build_enemy_team(level)
 
     return render(
         request,
@@ -91,6 +163,9 @@ def campaign_detail(request, level_id):
     latest_battle = CampaignBattle.objects.filter(player=profile, level=level).first()
 
     next_level = CampaignLevel.objects.filter(order=level.order + 1).first()
+
+    if not level.enemy_team_data:
+        level.enemy_team_data = _build_enemy_team(level)
 
     return render(
         request,
@@ -210,6 +285,9 @@ def campaign_battle_result(request, level_id):
 
     if not battle:
         return redirect("campaign:detail", level_id=level_id)
+
+    if not level.enemy_team_data:
+        level.enemy_team_data = _build_enemy_team(level)
 
     dropped_item_id = request.session.pop("_battle_dropped_item_id", None)
     dropped_item = None
