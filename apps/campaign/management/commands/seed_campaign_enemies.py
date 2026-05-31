@@ -1,5 +1,7 @@
 """Seed enemy team data for all campaign levels."""
 
+import urllib.parse
+
 from django.core.management.base import BaseCommand
 
 from apps.campaign.models import CampaignLevel
@@ -55,6 +57,34 @@ ROLE_EMOJI = {
     "Support": "✨",
 }
 
+ENEMY_PROMPTS = {
+    "Soldado Esqueleto": "Skeleton warrior, red eyes, rusty armor, dark fantasy battlefield",  # noqa: E501
+    "Arquero Fantasma": "Ghostly ethereal archer floating in mist, spectral bow, dark fantasy",  # noqa: E501
+    "Mago Oscuro": "Dark wizard with flowing black robes, glowing purple magic, ancient temple",  # noqa: E501
+    "Lobo de Sombra": "Giant shadow wolf with glowing blue eyes, ethereal black fur, fantasy art",  # noqa: E501
+    "Gólem de Piedra": "Massive stone golem covered in moss, glowing orange cracks, epic fantasy",  # noqa: E501
+    "Harpía": "Half-woman half-bird harpy, grey feather wings, perched on ancient ruins",  # noqa: E501
+    "Quimera": "Mythical chimera, lion head goat body serpent tail, breathing fire",  # noqa: E501
+    "Minotauro": "Bull-headed minotaur wielding massive battle axe, stone labyrinth",  # noqa: E501
+    "Súcubo": "Winged demoness with deep red skin, glowing eyes, gothic fantasy portrait",  # noqa: E501
+    "Centauro": "Powerful centaur archer, drawn bow, ancient forest clearing",  # noqa: E501
+    "Gorgona": "Medusa-like gorgon with living snake hair, green eyes, Greek ruins",  # noqa: E501
+    "Hidra": "Multi-headed hydra rising from swamp, sharp fangs, dark marshland",  # noqa: E501
+    "Cerbero": "Three-headed hellhound with black fur, chains, fiery underworld gates",  # noqa: E501
+    "Pegaso Oscuro": "Black winged horse with purple aura, starry mane, storm clouds",  # noqa: E501
+    "Dragón Menor": "Young dragon with dark scales, tattered wings, treasure hoard",  # noqa: E501
+    "Titán": "Colossal armored titan wielding stone club, mountainous landscape",  # noqa: E501
+    "Rey Momia": "Ancient mummy king in gold and lapis lazuli, glowing eyes, Egyptian tomb",  # noqa: E501
+    "Sacerdote de Seth": "Dark priest with jackal mask, crimson robes, sandstorm magic",  # noqa: E501
+    "Hefesto Enfurecido": "Furious fire god, metallic skin, lava beard, volcanic forge",  # noqa: E501
+    "Hades Renacido": "Hades lord of underworld, ethereal crown, blue flame, souls",  # noqa: E501
+    "Thor de las Tormentas": "Thor storm god with crackling lightning Mjolnir, thunder sky",  # noqa: E501
+    "Emperador de Jade": "Jade emperor in ornate Chinese robes, green aura, celestial dragon",  # noqa: E501
+    "Dragón Celestial": "Celestial dragon made of stars and nebula, floating through cosmos",  # noqa: E501
+    "Eclipse Viviente": "Living eclipse being of pure darkness with corona of light",  # noqa: E501
+    "Vacío Absoluto": "Void entity of nothingness, swirling dark matter, cosmic entity",  # noqa: E501
+}
+
 
 def build_enemy_team(level: CampaignLevel) -> list[dict]:
     """Build enemy team data for a campaign level."""
@@ -77,17 +107,28 @@ def build_enemy_team(level: CampaignLevel) -> list[dict]:
         base_hp = (template["base_atk"] + template["base_def"]) * 2
         hp = int(base_hp * quality * level_mult * diff_pct * config["hp_mult"] // 10)
         speed = int((60 + (i * 5)) * (1 + level.order * 0.03))
+        prompt = ENEMY_PROMPTS.get(
+            template["name"], f"epic fantasy {template['role']} monster"
+        )  # noqa: E501
+        seed = abs(hash(template["name"])) % 10000
+        image_url = (
+            f"https://image.pollinations.ai/prompt/{urllib.parse.quote(prompt)}"
+            f"?width=400&height=300&nologo=true&seed={seed}&model=flux"
+        )
 
-        enemies.append({
-            "name": template["name"],
-            "role": template["role"],
-            "attack": atk,
-            "defense": def_,
-            "hp": hp,
-            "speed": speed,
-            "level": display_level,
-            "quality_roman": quality_roman,
-        })
+        enemies.append(
+            {
+                "name": template["name"],
+                "role": template["role"],
+                "attack": atk,
+                "defense": def_,
+                "hp": hp,
+                "speed": speed,
+                "level": display_level,
+                "quality_roman": quality_roman,
+                "image_url": image_url,
+            }
+        )
 
     return enemies
 

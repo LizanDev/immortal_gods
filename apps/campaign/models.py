@@ -127,4 +127,7 @@ class FactionProgress(models.Model):
         ordering = ["-highest_floor"]
 
     def __str__(self) -> str:
-        return f"{self.player.user.username} - {self.ladder.name} (Floor {self.highest_floor})"
+        return (
+            f"{self.player.user.username} - {self.ladder.name}"
+            f" (Floor {self.highest_floor})"
+        )
