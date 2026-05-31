@@ -436,7 +436,7 @@ def card_game(request):
 
     if not session:
         gods_qs = list(
-            profile.playergod_set.select_related("god").filter(god__isnull=False)
+            profile.gods.select_related("god").filter(god__isnull=False)
         )
         random.shuffle(gods_qs)
         picked = gods_qs[:CARD_HAND_SIZE]
