@@ -35,8 +35,12 @@ class CardGameSessionAdmin(admin.ModelAdmin):
     """Admin for card duel sessions."""
 
     list_display = [
-        "player", "moves", "completed", "won",
-        "reward_claimed", "played_date",
+        "player",
+        "moves",
+        "completed",
+        "won",
+        "reward_claimed",
+        "played_date",
     ]
     list_filter = ["completed", "won", "played_date"]
     search_fields = ["player__user__username"]

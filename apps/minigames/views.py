@@ -345,9 +345,7 @@ def _resolve_flips(
     return flips
 
 
-def _ai_choose_move(
-    board: list, ai_hand: list
-) -> tuple[int, int, int] | None:
+def _ai_choose_move(board: list, ai_hand: list) -> tuple[int, int, int] | None:
     """AI picks the best card and position. Returns (card_index, row, col) or None."""
     best_score = -1
     best_move = None
@@ -390,15 +388,11 @@ def card_game(request):
             )
         )
         if len(picked) < CARD_HAND_SIZE:
-            picked = list(
-                profile.gods.select_related("god").filter(god__isnull=False)
-            )
+            picked = list(profile.gods.select_related("god").filter(god__isnull=False))
             random.shuffle(picked)
             picked = picked[:CARD_HAND_SIZE]
     else:
-        picked = list(
-            profile.gods.select_related("god").filter(god__isnull=False)
-        )
+        picked = list(profile.gods.select_related("god").filter(god__isnull=False))
         random.shuffle(picked)
         picked = picked[:CARD_HAND_SIZE]
 
@@ -414,11 +408,18 @@ def card_game(request):
             },
         )
 
-    ranges = _get_stat_ranges()
-    player_hand = [_god_to_card(pg, ranges) for pg in picked]
+    owned_god_ids = profile.gods.filter(god__isnull=False).values_list(
+        "god_id", flat=True
+    )
+    player_god_qs = God.objects.filter(id__in=list(owned_god_ids))
+    player_ranges = _get_stat_ranges(player_god_qs)
+    player_hand = [_god_to_card(pg, player_ranges) for pg in picked]
+
     all_gods = list(God.objects.all())
     random.shuffle(all_gods)
-    ai_hand = [_god_to_ai_card(g, ranges) for g in all_gods[:CARD_HAND_SIZE]]
+    ai_gods = all_gods[:CARD_HAND_SIZE]
+    ai_ranges = _get_stat_ranges(God.objects.filter(id__in=[g.id for g in ai_gods]))
+    ai_hand = [_god_to_ai_card(g, ai_ranges) for g in ai_gods]
 
     try:
         session = CardGameSession.objects.create(
@@ -457,9 +458,11 @@ def card_place(request):
     profile = request.user.profile
 
     try:
-        session = CardGameSession.objects.filter(
-            player=profile, completed=False
-        ).order_by("-created_at").first()
+        session = (
+            CardGameSession.objects.filter(player=profile, completed=False)
+            .order_by("-created_at")
+            .first()
+        )
     except DatabaseError:
         return JsonResponse(UNAVAILABLE, status=503)
 
@@ -509,38 +512,43 @@ def card_place(request):
     player_flips = _resolve_flips(board, row, col, "player", card["values"])
 
     session.moves += 1
-    player_card_count = sum(
-        1 for r in board for c in r if c and c["owner"] == "player"
-    )
+    player_card_count = sum(1 for r in board for c in r if c and c["owner"] == "player")
 
     if player_card_count >= CARD_HAND_SIZE:
         session.completed = True
-        ai_card_count = sum(
-            1 for r in board for c in r if c and c["owner"] == "ai"
-        )
+        ai_card_count = sum(1 for r in board for c in r if c and c["owner"] == "ai")
         session.won = player_card_count > ai_card_count
         session.current_turn = ""
         session.save(
             update_fields=[
-                "board_state", "player_hand", "moves",
-                "current_turn", "completed", "won",
+                "board_state",
+                "player_hand",
+                "moves",
+                "current_turn",
+                "completed",
+                "won",
             ]
         )
-        return JsonResponse({
-            "status": "game_over",
-            "board": board,
-            "player_flips": player_flips,
-            "player_card_count": player_card_count,
-            "ai_card_count": ai_card_count,
-            "won": session.won,
-            "reward_gems": session.reward_gems,
-        })
+        return JsonResponse(
+            {
+                "status": "game_over",
+                "board": board,
+                "player_flips": player_flips,
+                "player_card_count": player_card_count,
+                "ai_card_count": ai_card_count,
+                "won": session.won,
+                "reward_gems": session.reward_gems,
+            }
+        )
 
     # AI turn
     session.current_turn = "ai"
     session.save(
         update_fields=[
-            "board_state", "player_hand", "moves", "current_turn",
+            "board_state",
+            "player_hand",
+            "moves",
+            "current_turn",
         ]
     )
 
@@ -564,12 +572,8 @@ def card_place(request):
         session.moves += 1
 
     session.current_turn = "player"
-    player_card_count = sum(
-        1 for r in board for c in r if c and c["owner"] == "player"
-    )
-    ai_card_count = sum(
-        1 for r in board for c in r if c and c["owner"] == "ai"
-    )
+    player_card_count = sum(1 for r in board for c in r if c and c["owner"] == "player")
+    ai_card_count = sum(1 for r in board for c in r if c and c["owner"] == "ai")
     total_filled = sum(1 for r in board for c in r if c is not None)
 
     if total_filled >= GRID_SIZE * GRID_SIZE:
@@ -578,38 +582,51 @@ def card_place(request):
         session.current_turn = ""
         session.save(
             update_fields=[
-                "board_state", "player_hand", "ai_hand", "moves",
-                "current_turn", "completed", "won",
+                "board_state",
+                "player_hand",
+                "ai_hand",
+                "moves",
+                "current_turn",
+                "completed",
+                "won",
             ]
         )
-        return JsonResponse({
-            "status": "game_over",
+        return JsonResponse(
+            {
+                "status": "game_over",
+                "board": board,
+                "player_flips": player_flips,
+                "ai_flips": ai_flips,
+                "ai_move": {"card_index": ai_ci, "row": ai_row, "col": ai_col},
+                "player_card_count": player_card_count,
+                "ai_card_count": ai_card_count,
+                "won": session.won,
+                "reward_gems": session.reward_gems,
+            }
+        )
+
+    session.save(
+        update_fields=[
+            "board_state",
+            "player_hand",
+            "ai_hand",
+            "moves",
+            "current_turn",
+        ]
+    )
+
+    return JsonResponse(
+        {
+            "status": "ok",
             "board": board,
             "player_flips": player_flips,
             "ai_flips": ai_flips,
             "ai_move": {"card_index": ai_ci, "row": ai_row, "col": ai_col},
             "player_card_count": player_card_count,
             "ai_card_count": ai_card_count,
-            "won": session.won,
-            "reward_gems": session.reward_gems,
-        })
-
-    session.save(
-        update_fields=[
-            "board_state", "player_hand", "ai_hand", "moves", "current_turn",
-        ]
+            "current_turn": "player",
+        }
     )
-
-    return JsonResponse({
-        "status": "ok",
-        "board": board,
-        "player_flips": player_flips,
-        "ai_flips": ai_flips,
-        "ai_move": {"card_index": ai_ci, "row": ai_row, "col": ai_col},
-        "player_card_count": player_card_count,
-        "ai_card_count": ai_card_count,
-        "current_turn": "player",
-    })
 
 
 @login_required
@@ -621,9 +638,13 @@ def card_claim(request):
     profile = request.user.profile
 
     try:
-        session = CardGameSession.objects.filter(
-            player=profile, completed=True, reward_claimed=False
-        ).order_by("-created_at").first()
+        session = (
+            CardGameSession.objects.filter(
+                player=profile, completed=True, reward_claimed=False
+            )
+            .order_by("-created_at")
+            .first()
+        )
     except DatabaseError:
         return JsonResponse(UNAVAILABLE, status=503)
 
@@ -660,30 +681,35 @@ def card_deck(request):
                 status=400,
             )
 
-        owned = set(
-            profile.gods.filter(id__in=god_ids).values_list("id", flat=True)
-        )
+        owned = set(profile.gods.filter(id__in=god_ids).values_list("id", flat=True))
         valid_ids = [gid for gid in god_ids if gid in owned]
         profile.card_deck = valid_ids
         profile.save(update_fields=["card_deck"])
         return JsonResponse({"status": "ok", "deck": valid_ids})
 
-    owned_gods = list(
-        profile.gods.select_related("god").order_by("-level")
-    )
+    owned_gods = list(profile.gods.select_related("god").order_by("-level"))
     deck_ids = list(profile.card_deck)
 
-    ranges = _get_stat_ranges()
+    owned_god_ids = profile.gods.filter(god__isnull=False).values_list(
+        "god_id", flat=True
+    )
+    player_god_qs = God.objects.filter(id__in=list(owned_god_ids))
+    player_ranges = _get_stat_ranges(player_god_qs)
+
     gods_with_values = []
     for pg in owned_gods:
-        gods_with_values.append({
-            "pg": pg,
-            "card_values": compute_card_values(
-                pg.god.base_attack, pg.god.base_defense,
-                pg.god.base_speed, pg.god.base_hp,
-                ranges,
-            ),
-        })
+        gods_with_values.append(
+            {
+                "pg": pg,
+                "card_values": compute_card_values(
+                    pg.god.base_attack,
+                    pg.god.base_defense,
+                    pg.god.base_speed,
+                    pg.god.base_hp,
+                    player_ranges,
+                ),
+            }
+        )
 
     return render(
         request,

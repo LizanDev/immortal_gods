@@ -21,6 +21,7 @@ from apps.core.models import (
     ReferralCode,
     track_mission,
 )
+from apps.gods.models import God
 from apps.items.models import Item, ItemType, PlayerItem
 from apps.minigames.card_utils import _get_stat_ranges, compute_card_values
 
@@ -77,14 +78,15 @@ def home(request):
     )
 
 
-def _god_to_card_data(pg):
-    ranges = _get_stat_ranges()
+def _god_to_card_data(pg, ranges):
     return {
         "name": pg.god.name,
         "image_url": pg.god.image_url,
         "values": compute_card_values(
-            pg.god.base_attack, pg.god.base_defense,
-            pg.god.base_speed, pg.god.base_hp,
+            pg.god.base_attack,
+            pg.god.base_defense,
+            pg.god.base_speed,
+            pg.god.base_hp,
             ranges,
         ),
     }
@@ -94,9 +96,16 @@ def _god_to_card_data(pg):
 def inventory(request):
     """Show player's inventory of gods and items."""
     profile = request.user.profile
-    gods = profile.gods.select_related("god").prefetch_related("equipped_items__item").all()
+    gods = (
+        profile.gods.select_related("god")
+        .prefetch_related("equipped_items__item")
+        .all()
+    )
     items = profile.items.select_related("item").all()
-    cards = [_god_to_card_data(pg) for pg in gods]
+    owned_ids = profile.gods.filter(god__isnull=False).values_list("god_id", flat=True)
+    player_qs = God.objects.filter(id__in=list(owned_ids))
+    ranges = _get_stat_ranges(player_qs)
+    cards = [_god_to_card_data(pg, ranges) for pg in gods]
     return render(
         request,
         "core/inventory.html",
@@ -560,7 +569,7 @@ def mark_gift_seen(request):
     if request.user.is_authenticated:
         from .models import GiftNotification
 
-        GiftNotification.objects.filter(
-            player=request.user.profile, seen=False
-        ).update(seen=True)
+        GiftNotification.objects.filter(player=request.user.profile, seen=False).update(
+            seen=True
+        )
     return HttpResponse("ok")

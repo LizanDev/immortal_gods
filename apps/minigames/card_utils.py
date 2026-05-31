@@ -1,23 +1,22 @@
-"""Shared card game utilities — percentile-based stat ranking across all Gods."""
+"""Shared card game utilities — percentile-based stat ranking."""
 
-from functools import lru_cache
-
-from django.db.models import Max, Min
+from django.db.models import Max, Min, QuerySet
 
 from apps.gods.models import God
 
 
 def _percentile_value(raw: int, stat_min: int, stat_max: int) -> int:
-    """Map a raw stat to 1-9 based on its percentile position across all gods."""
+    """Map a raw stat to 1-9 based on its percentile position."""
     if stat_max == stat_min:
         return 5
     return max(1, min(9, 1 + round((raw - stat_min) / (stat_max - stat_min) * 8)))
 
 
-@lru_cache(maxsize=1)
-def _get_stat_ranges() -> dict:
-    """Compute global min/max for each base stat across all Gods (cached)."""
-    stats = God.objects.aggregate(
+def _get_stat_ranges(queryset: QuerySet | None = None) -> dict:
+    """Compute min/max for each base stat across the given queryset (default: all Gods)."""
+    if queryset is None:
+        queryset = God.objects.all()
+    stats = queryset.aggregate(
         atk_min=Min("base_attack"),
         atk_max=Max("base_attack"),
         def_min=Min("base_defense"),
@@ -31,13 +30,16 @@ def _get_stat_ranges() -> dict:
 
 
 def compute_card_values(
-    base_attack: int, base_defense: int,
-    base_speed: int, base_hp: int,
+    base_attack: int,
+    base_defense: int,
+    base_speed: int,
+    base_hp: int,
     ranges: dict | None = None,
+    queryset: QuerySet | None = None,
 ) -> dict:
     """Compute top/right/bottom/left card values using percentile ranking."""
     if ranges is None:
-        ranges = _get_stat_ranges()
+        ranges = _get_stat_ranges(queryset)
     return {
         "top": _percentile_value(base_attack, ranges["atk_min"], ranges["atk_max"]),
         "right": _percentile_value(base_defense, ranges["def_min"], ranges["def_max"]),
@@ -46,14 +48,20 @@ def compute_card_values(
     }
 
 
-def god_to_card(god, ranges: dict | None = None) -> dict:
-    """Convert a God (or object with .name, .image_url, .base_*) to a card dict."""
+def god_to_card(
+    god, ranges: dict | None = None, queryset: QuerySet | None = None
+) -> dict:
+    """Convert a God to a card dict using percentile ranking."""
     if ranges is None:
-        ranges = _get_stat_ranges()
+        ranges = _get_stat_ranges(queryset)
     return {
         "name": god.name,
         "image_url": god.image_url,
         "values": compute_card_values(
-            god.base_attack, god.base_defense, god.base_speed, god.base_hp, ranges
+            god.base_attack,
+            god.base_defense,
+            god.base_speed,
+            god.base_hp,
+            ranges,
         ),
     }
