@@ -501,3 +501,55 @@ def faction_battle(request, stage_id):
     except Exception as e:
         messages.error(request, f"Error en la batalla: {str(e)}")
         return redirect("campaign:faction_ladders")
+
+
+ROLE_DISPLAY = {
+    "Tank": "Tanque",
+    "Archer": "Arquero",
+    "Mage": "Mago",
+    "Assassin": "Asesino",
+    "Support": "Soporte",
+}
+
+
+@login_required
+def enemy_list(request):
+    """List all possible campaign enemies with their stats."""
+    enemies = []
+    for tpl in ENEMY_POOL:
+        prompt = ENEMY_PROMPTS.get(tpl["name"], f"epic fantasy {tpl['role']} monster")
+        seed = abs(hash(tpl["name"])) % 10000
+        image_url = (
+            f"https://image.pollinations.ai/prompt/{urllib.parse.quote(prompt)}"
+            f"?width=400&height=300&nologo=true&seed={seed}&model=flux"
+        )
+        enemies.append(
+            {
+                "name": tpl["name"],
+                "role": tpl["role"],
+                "role_display": ROLE_DISPLAY.get(tpl["role"], tpl["role"]),
+                "base_atk": tpl["base_atk"],
+                "base_def": tpl["base_def"],
+                "image_url": image_url,
+                "is_boss": False,
+            }
+        )
+    for tpl in BOSS_POOL:
+        prompt = ENEMY_PROMPTS.get(tpl["name"], f"epic fantasy {tpl['role']} monster")
+        seed = abs(hash(tpl["name"])) % 10000
+        image_url = (
+            f"https://image.pollinations.ai/prompt/{urllib.parse.quote(prompt)}"
+            f"?width=400&height=300&nologo=true&seed={seed}&model=flux"
+        )
+        enemies.append(
+            {
+                "name": tpl["name"],
+                "role": tpl["role"],
+                "role_display": ROLE_DISPLAY.get(tpl["role"], tpl["role"]),
+                "base_atk": tpl["base_atk"],
+                "base_def": tpl["base_def"],
+                "image_url": image_url,
+                "is_boss": True,
+            }
+        )
+    return render(request, "campaign/enemies.html", {"enemies": enemies})

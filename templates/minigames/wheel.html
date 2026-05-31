@@ -20,18 +20,11 @@
     </div>
     {% endif %}
     {% else %}
-    <p style="color: #aaa; margin-bottom: 1.5rem;">Selecciona una casilla para girar la rueda</p>
-
-    <div id="wheelGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; max-width: 500px; margin: 0 auto 1.5rem;">
-        {% for s in segments_parsed %}
-        <div class="wheel-slot" data-index="{{ forloop.counter0 }}" style="position: relative; padding: 1rem 0.5rem; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; cursor: pointer; transition: all 0.3s;">
-            <div class="wheel-led" style="width: 12px; height: 12px; border-radius: 50%; background: #444; margin: 0 auto 0.5rem; box-shadow: none; transition: all 0.3s;"></div>
-            <div style="font-size: 1.3rem; font-weight: bold; color: #ffd700;">{{ s.label }}</div>
-        </div>
-        {% endfor %}
+    <div id="wheelContainer" style="position: relative; width: 280px; height: 280px; margin: 1rem auto;">
+        <canvas id="wheelCanvas" width="280" height="280" style="border-radius: 50%; box-shadow: 0 0 20px rgba(255,215,0,0.3);"></canvas>
+        <div style="position: absolute; top: 50%; right: -10px; transform: translateY(-50%); font-size: 2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">▶</div>
     </div>
-
-    <button id="spinBtn" class="btn" style="font-size: 1.2rem; padding: 0.75rem 2rem;">🎡 ¡Girar!</button>
+    <button id="spinBtn" class="btn" style="font-size: 1.2rem; padding: 0.75rem 2rem;">🎡 Girar</button>
     <div id="spinResult" style="margin-top: 1rem; display: none;"></div>
     {% endif %}
 </div>
@@ -40,55 +33,70 @@
 (function() {
     {% if not today_spin %}
     var segments = {{ segments|safe }};
-    var spinBtn = document.getElementById('spinBtn');
-    var slots = document.querySelectorAll('.wheel-slot');
-    var resultEl = document.getElementById('spinResult');
+    var numSegments = segments.length;
+    var canvas = document.getElementById('wheelCanvas');
+    var ctx = canvas ? canvas.getContext('2d') : null;
+    var currentAngle = 0;
     var isSpinning = false;
+    var spinBtn = document.getElementById('spinBtn');
+    var resultEl = document.getElementById('spinResult');
 
-    function resetLights() {
-        slots.forEach(function(slot) {
-            var led = slot.querySelector('.wheel-led');
-            led.style.background = '#444';
-            led.style.boxShadow = 'none';
-            slot.style.borderColor = 'rgba(255,255,255,0.1)';
-        });
-    }
+    var colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff6b6b', '#ffd93d'];
 
-    function lightUp(index) {
-        var slot = slots[index];
-        if (!slot) return;
-        var led = slot.querySelector('.wheel-led');
-        led.style.background = '#ff3333';
-        led.style.boxShadow = '0 0 12px #ff3333';
-        slot.style.borderColor = '#ff3333';
-    }
+    function drawWheel(angle) {
+        if (!ctx) return;
+        var cx = 140, cy = 140, r = 130;
+        ctx.clearRect(0, 0, 280, 280);
+        var arc = (2 * Math.PI) / numSegments;
 
-    function animateLights(targetIndex, rounds) {
-        var i = 0;
-        var interval = 80;
-        rounds = rounds || 3;
+        for (var i = 0; i < numSegments; i++) {
+            var startAngle = angle + i * arc;
+            var endAngle = startAngle + arc;
 
-        function tick() {
-            if (i >= rounds * slots.length) {
-                lightUp(targetIndex);
-                return;
-            }
-            resetLights();
-            lightUp(i % slots.length);
-            i++;
-            setTimeout(tick, interval + (i * 5));
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, r, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = colors[i % colors.length];
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(startAngle + arc / 2);
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText(segments[i].label, r - 10, 4);
+            ctx.restore();
         }
-        tick();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 20, 0, 2 * Math.PI);
+        ctx.fillStyle = '#1a1a3e';
+        ctx.fill();
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 3;
+        ctx.stroke();
     }
+
+    function getSegmentAngle(targetIndex) {
+        var arc = (2 * Math.PI) / numSegments;
+        var idx = (numSegments - 1 - targetIndex + numSegments) % numSegments;
+        return idx * arc + arc * 0.35;
+    }
+
+    if (canvas) drawWheel(currentAngle);
 
     if (spinBtn) {
         spinBtn.addEventListener('click', function() {
             if (isSpinning) return;
             isSpinning = true;
             spinBtn.disabled = true;
-            spinBtn.textContent = 'Girando...';
+            spinBtn.textContent = 'Consultando...';
             resultEl.style.display = 'none';
-            resetLights();
 
             fetch('{% url "minigames:wheel_spin" %}', {
                 method: 'POST',
@@ -96,24 +104,52 @@
             })
             .then(function(r) { return r.json(); })
             .then(function(data) {
-                if (data.status === 'ok') {
-                    animateLights(data.reward_index, 4);
-                    setTimeout(function() {
-                        resultEl.style.display = 'block';
-                        if (data.reward_type === 'nothing') {
-                            resultEl.innerHTML = '<div style="font-size: 2rem;">🍀</div><p style="color: #888;">¡Suerte! No ganaste nada.</p>';
-                        } else {
-                            resultEl.innerHTML = '<div style="font-size: 2rem;">🎉</div><p style="color: #aaa;">¡Ganaste!</p><div style="font-size: 2rem; font-weight: bold; color: #ffd700;">+' + data.reward_amount + ' ' + (data.reward_type === 'gems' ? '💎' : '🪙') + '</div>';
-                        }
-                        spinBtn.textContent = 'Reclamado ✓';
-                    }, 1500);
-                } else {
+                if (data.status !== 'ok') {
                     resultEl.style.display = 'block';
                     resultEl.textContent = 'Ya giraste hoy.';
                     spinBtn.textContent = 'Ya girado';
+                    isSpinning = false;
+                    return;
                 }
+
+                spinBtn.textContent = 'Girando...';
+
+                var targetIndex = data.reward_index;
+                var fullSpins = (5 + Math.random() * 3) * 2 * Math.PI;
+                var segmentAngle = getSegmentAngle(targetIndex);
+                var norm = ((currentAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+                var alignDelta = ((segmentAngle - norm) + 2 * Math.PI) % (2 * Math.PI);
+                var targetAngle = currentAngle + fullSpins + alignDelta;
+
+                var startAngle = currentAngle;
+                var duration = 4000;
+                var startTime = performance.now();
+
+                function animate(time) {
+                    var elapsed = time - startTime;
+                    var progress = Math.min(elapsed / duration, 1);
+                    var eased = 1 - Math.pow(1 - progress, 3);
+                    var angle = startAngle + (targetAngle - startAngle) * eased;
+                    drawWheel(angle);
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        currentAngle = targetAngle;
+                        setTimeout(function() {
+                            resultEl.style.display = 'block';
+                            if (data.reward_type === 'nothing') {
+                                resultEl.innerHTML = '<div style="font-size: 2rem;">🍀</div><p style="color: #888;">¡Suerte! No ganaste nada.</p>';
+                            } else {
+                                resultEl.innerHTML = '<div style="font-size: 2rem;">🎉</div><p style="color: #aaa;">¡Ganaste!</p><div style="font-size: 2rem; font-weight: bold; color: #ffd700;">+' + data.reward_amount + ' ' + (data.reward_type === 'gems' ? '💎' : '🪙') + '</div>';
+                            }
+                            spinBtn.textContent = 'Reclamado ✓';
+                        }, 200);
+                    }
+                }
+                requestAnimationFrame(animate);
             })
-            .catch(function(err) {
+            .catch(function() {
                 resultEl.style.display = 'block';
                 resultEl.textContent = 'Error al girar.';
                 spinBtn.disabled = false;

@@ -27,4 +27,5 @@ urlpatterns = [
         views.faction_battle,
         name="faction_battle",
     ),
+    path("enemies/", views.enemy_list, name="enemies"),
 ]

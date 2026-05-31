@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Enemigos - Immortal Gods{% endblock %}
+
+{% block content %}
+<h1>Enemigos de Campaña</h1>
+<p style="color: #aaa; margin-bottom: 1.5rem;">Todos los posibles enemigos que pueden aparecer en los niveles de campaña.</p>
+
+<div class="grid">
+    {% for enemy in enemies %}
+    <div class="god-card" style="border-color: {% if enemy.is_boss %}#ff4444{% else %}#ff6b6b{% endif %};">
+        <div class="god-card-image" style="background: {% if enemy.is_boss %}linear-gradient(135deg, #3a0000, #6b0000){% else %}linear-gradient(135deg, #1a1a1a, #3a1a1a){% endif %};">
+            <img src="{{ enemy.image_url }}" alt="{{ enemy.name }}"
+                 onerror="this.style.display='none'">
+            {% if enemy.is_boss %}<span style="position: absolute; top: 8px; right: 8px; font-size: 1.2rem;">👑</span>{% endif %}
+        </div>
+        <div class="god-card-body">
+            <div class="god-card-name">{{ enemy.name }}</div>
+            <div class="god-card-info">{{ enemy.role_display }}{% if enemy.is_boss %} · BOSS{% endif %}</div>
+            <div style="margin-top: 0.75rem; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.08);">
+                <div style="font-size: 0.65rem; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem;">Stats base</div>
+                <div class="stat-bar"><span class="stat-label">ATK</span><span class="stat-value" style="color: #ff6b6b;">{{ enemy.base_atk }}</span></div>
+                <div class="stat-bar"><span class="stat-label">DEF</span><span class="stat-value" style="color: #4a9eff;">{{ enemy.base_def }}</span></div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>No enemies available.</p>
+    {% endfor %}
+</div>
+
+<div style="margin-top: 1.5rem; text-align: center;">
+    <a href="{% url 'campaign:list' %}" class="btn btn-secondary">← Volver a Campaña</a>
+</div>
+{% endblock %}
