@@ -76,12 +76,30 @@ def home(request):
     )
 
 
+def _card_value(raw: int, divisor: int, max_val: int = 9) -> int:
+    return max(1, min(max_val, raw // divisor))
+
+
+def _god_to_card_data(pg):
+    return {
+        "name": pg.god.name,
+        "image_url": pg.god.image_url,
+        "values": {
+            "top": _card_value(pg.total_attack, 50),
+            "right": _card_value(pg.total_defense, 50),
+            "bottom": _card_value(pg.total_speed, 20),
+            "left": _card_value(pg.total_hp, 300),
+        },
+    }
+
+
 @login_required
 def inventory(request):
     """Show player's inventory of gods and items."""
     profile = request.user.profile
     gods = profile.gods.select_related("god").prefetch_related("equipped_items__item").all()
     items = profile.items.select_related("item").all()
+    cards = [_god_to_card_data(pg) for pg in gods]
     return render(
         request,
         "core/inventory.html",
@@ -90,6 +108,7 @@ def inventory(request):
             "gods": gods,
             "items": items,
             "equip_gods": gods,
+            "cards": cards,
         },
     )
 

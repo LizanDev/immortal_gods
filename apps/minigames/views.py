@@ -62,9 +62,6 @@ def index(request):
         today_wheel = DailyWheelSpin.objects.filter(
             player=profile, spun_date=timezone.now().date()
         ).first()
-        today_cards = CardGameSession.objects.filter(
-            player=profile, played_date=timezone.now().date(), completed=True
-        ).first()
         best_score = (
             MemoryGameSession.objects.filter(player=profile, completed=True)
             .order_by("moves")
@@ -73,7 +70,6 @@ def index(request):
     except DatabaseError:
         today_memory = None
         today_wheel = None
-        today_cards = None
         best_score = None
 
     return render(
@@ -85,8 +81,6 @@ def index(request):
             "memory_available": not today_memory or not today_memory.reward_claimed,
             "today_wheel": today_wheel,
             "wheel_available": not today_wheel,
-            "today_cards": today_cards,
-            "cards_available": not today_cards or not today_cards.reward_claimed,
             "best_score": best_score.moves if best_score else None,
         },
     )
@@ -410,66 +404,44 @@ def _ai_choose_move(
 
 @login_required
 def card_game(request):
-    """Card duel game page - start or resume today's session."""
+    """Card duel game page — always starts a new game (unlimited plays)."""
     profile = request.user.profile
-    today = timezone.now().date()
 
-    try:
-        session = CardGameSession.objects.filter(
-            player=profile, played_date=today
-        ).first()
-    except DatabaseError:
-        session = None
+    gods_qs = list(
+        profile.gods.select_related("god").filter(god__isnull=False)
+    )
+    random.shuffle(gods_qs)
+    picked = gods_qs[:CARD_HAND_SIZE]
 
-    if session and session.completed:
+    if len(picked) < CARD_HAND_SIZE:
         return render(
             request,
             "minigames/card.html",
             {
-                "session": session,
-                "board": session.board_state,
-                "player_hand": session.player_hand,
-                "finished": True,
-                "won": session.won,
+                "error": (
+                    f"Necesitas al menos {CARD_HAND_SIZE} dioses"
+                    " para jugar al Duelo de Cartas."
+                ),
             },
         )
 
-    if not session:
-        gods_qs = list(
-            profile.gods.select_related("god").filter(god__isnull=False)
+    player_hand = [_god_to_card(pg) for pg in picked]
+    ai_hand = [_random_ai_card() for _ in range(CARD_HAND_SIZE)]
+
+    try:
+        session = CardGameSession.objects.create(
+            player=profile,
+            played_date=timezone.now().date(),
+            board_state=_make_empty_board(),
+            player_hand=player_hand,
+            ai_hand=ai_hand,
         )
-        random.shuffle(gods_qs)
-        picked = gods_qs[:CARD_HAND_SIZE]
-
-        if len(picked) < CARD_HAND_SIZE:
-            return render(
-                request,
-                "minigames/card.html",
-                {
-                    "error": (
-                        f"Necesitas al menos {CARD_HAND_SIZE} dioses"
-                        " para jugar al Duelo de Cartas."
-                    ),
-                },
-            )
-
-        player_hand = [_god_to_card(pg) for pg in picked]
-        ai_hand = [_random_ai_card() for _ in range(CARD_HAND_SIZE)]
-
-        try:
-            session = CardGameSession.objects.create(
-                player=profile,
-                played_date=today,
-                board_state=_make_empty_board(),
-                player_hand=player_hand,
-                ai_hand=ai_hand,
-            )
-        except DatabaseError:
-            return render(
-                request,
-                "minigames/card.html",
-                {"error": "Error de base de datos. Intenta de nuevo."},
-            )
+    except DatabaseError:
+        return render(
+            request,
+            "minigames/card.html",
+            {"error": "Error de base de datos. Intenta de nuevo."},
+        )
 
     return render(
         request,
@@ -491,12 +463,11 @@ def card_place(request):
         return JsonResponse({"status": "error", "message": "POST required"}, status=405)
 
     profile = request.user.profile
-    today = timezone.now().date()
 
     try:
         session = CardGameSession.objects.filter(
-            player=profile, played_date=today, completed=False
-        ).first()
+            player=profile, completed=False
+        ).order_by("-created_at").first()
     except DatabaseError:
         return JsonResponse(UNAVAILABLE, status=503)
 
@@ -659,8 +630,8 @@ def card_claim(request):
 
     try:
         session = CardGameSession.objects.filter(
-            player=profile, played_date=timezone.now().date(), completed=True
-        ).first()
+            player=profile, completed=True, reward_claimed=False
+        ).order_by("-created_at").first()
     except DatabaseError:
         return JsonResponse(UNAVAILABLE, status=503)
 

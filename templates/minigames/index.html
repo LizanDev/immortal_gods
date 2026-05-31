@@ -64,17 +64,7 @@
     <p style="color: #aaa; font-size: 0.9rem; flex: 1;">
         Combate en el tablero 3×3 con tus dioses. ¡Captura las cartas enemigas!
     </p>
-            {% if today_cards %}
-            <div style="color: {% if today_cards.won %}#4ade80{% else %}#ff6b6b{% endif %}; font-size: 0.85rem;">
-                {% if today_cards.won %}✓ Victoria{% else %}✗ Derrota{% endif %}
-                — {{ today_cards.reward_gems }} 💎
-                {% if not today_cards.reward_claimed %}
-                <br><span style="color: #ffd700;">Reclama recompensa</span>
-                {% endif %}
-            </div>
-            {% else %}
-            <div style="color: #4ade80; font-size: 0.85rem;">¡Disponible hoy!</div>
-            {% endif %}
+            <div style="color: #4ade80; font-size: 0.85rem;">🎮 Partidas ilimitadas</div>
         </div>
     </a>
 

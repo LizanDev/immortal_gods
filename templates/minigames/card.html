@@ -41,14 +41,16 @@
     <div id="board" style="display: grid; grid-template-columns: repeat(3, 110px); gap: 4px; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 8px;">
         {% for r in "012" %}
             {% for c in "012" %}
-            <div class="cell" data-row="{{ r }}" data-col="{{ c }}" style="width: 110px; height: 140px; background: #1a1a3e; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; position: relative;">
+            <div class="cell" data-row="{{ r }}" data-col="{{ c }}" style="width: 110px; height: 140px; background: #1a1a3e; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; position: relative; overflow: hidden;">
                 <div class="cell-content" style="display: none; width: 100%; height: 100%; position: relative;">
-                    <div class="cv-top" style="position: absolute; top: 4px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 1rem;"></div>
-                    <div class="cv-right" style="position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 1rem;"></div>
-                    <div class="cv-bottom" style="position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 1rem;"></div>
-                    <div class="cv-left" style="position: absolute; left: 4px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 1rem;"></div>
-                    <div class="cv-name" style="position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; white-space: nowrap; color: #ddd;"></div>
-                    <div class="cv-icon" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem;"></div>
+                    <div class="cv-bg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none;"></div>
+                    <div class="cv-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(0,0,0,0.3)); display: none;"></div>
+                    <div class="cv-top" style="position: absolute; top: 4px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 1rem; z-index: 2;"></div>
+                    <div class="cv-right" style="position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 1rem; z-index: 2;"></div>
+                    <div class="cv-bottom" style="position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 1rem; z-index: 2;"></div>
+                    <div class="cv-left" style="position: absolute; left: 4px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 1rem; z-index: 2;"></div>
+                    <div class="cv-name" style="position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; white-space: nowrap; color: #fff; text-shadow: 0 0 4px rgba(0,0,0,0.8); z-index: 2;"></div>
+                    <div class="cv-icon" style="position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); font-size: 0.8rem; z-index: 2;"></div>
                 </div>
                 <div class="cell-empty" style="color: #444; font-size: 0.8rem;">—</div>
             </div>
@@ -66,17 +68,16 @@
         <h3 style="margin-bottom: 0.5rem;">Tu mano</h3>
         <div id="hand" style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;">
             {% for card in player_hand %}
-            <div class="hand-card" data-index="{{ forloop.counter0 }}" style="width: 100px; height: 130px; background: #1a1a3e; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; position: relative; {% if card.used %}opacity: 0.3; pointer-events: none;{% endif %}">
-                <div style="width: 100%; height: 100%; position: relative;">
-                    <div style="position: absolute; top: 2px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 0.9rem; color: #4a9eff;">{{ card.values.top }}</div>
-                    <div style="position: absolute; right: 2px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 0.9rem; color: #4a9eff;">{{ card.values.right }}</div>
-                    <div style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 0.9rem; color: #4a9eff;">{{ card.values.bottom }}</div>
-                    <div style="position: absolute; left: 2px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 0.9rem; color: #4a9eff;">{{ card.values.left }}</div>
-                    <div style="position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); font-size: 0.55rem; white-space: nowrap; color: #aaa;">{{ card.name }}</div>
-                    {% if card.image_url %}
-                    <img src="{{ card.image_url }}" alt="" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55px; height: 55px; object-fit: contain; border-radius: 4px; opacity: 0.8;">
-                    {% endif %}
-                </div>
+            <div class="hand-card" data-index="{{ forloop.counter0 }}" style="width: 100px; height: 130px; background: #1a1a3e; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; position: relative; overflow: hidden; {% if card.used %}opacity: 0.3; pointer-events: none;{% endif %}">
+                {% if card.image_url %}
+                <img src="{{ card.image_url }}" alt="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(0,0,0,0.3));"></div>
+                {% endif %}
+                <div style="position: absolute; top: 2px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ card.values.top }}</div>
+                <div style="position: absolute; right: 2px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ card.values.right }}</div>
+                <div style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ card.values.bottom }}</div>
+                <div style="position: absolute; left: 2px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 0.9rem; color: #fff; text-shadow: 0 0 8px #4a9eff, 0 0 16px #4a9eff; z-index: 2;">{{ card.values.left }}</div>
+                <div style="position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); font-size: 0.5rem; white-space: nowrap; color: #fff; text-shadow: 0 0 4px rgba(0,0,0,0.8); z-index: 2;">{{ card.name }}</div>
             </div>
             {% endfor %}
         </div>
@@ -234,23 +235,40 @@
 
                 if (empty) empty.style.display = 'none';
                 content.style.display = 'block';
-                cellEl.style.borderColor = cell.owner === 'player' ? '#4a9eff' : '#ff6b6b';
-                cellEl.style.background = cell.owner === 'player' ? 'rgba(74,158,255,0.15)' : 'rgba(255,107,107,0.15)';
+                var ownerColor = cell.owner === 'player' ? '#4a9eff' : '#ff6b6b';
+                cellEl.style.borderColor = ownerColor;
+                cellEl.style.background = '#1a1a3e';
 
-                content.querySelector('.cv-top').textContent = cell.values.top;
-                content.querySelector('.cv-top').style.color = cell.owner === 'player' ? '#4a9eff' : '#ff6b6b';
-                content.querySelector('.cv-right').textContent = cell.values.right;
-                content.querySelector('.cv-right').style.color = cell.owner === 'player' ? '#4a9eff' : '#ff6b6b';
-                content.querySelector('.cv-bottom').textContent = cell.values.bottom;
-                content.querySelector('.cv-bottom').style.color = cell.owner === 'player' ? '#4a9eff' : '#ff6b6b';
-                content.querySelector('.cv-left').textContent = cell.values.left;
-                content.querySelector('.cv-left').style.color = cell.owner === 'player' ? '#4a9eff' : '#ff6b6b';
-                content.querySelector('.cv-name').textContent = cell.name;
-                var iconEl = content.querySelector('.cv-icon');
+                var bgEl = content.querySelector('.cv-bg');
+                var overlayEl = content.querySelector('.cv-overlay');
                 if (cell.image_url) {
-                    iconEl.innerHTML = '<img src="' + cell.image_url + '" alt="" style="width: 55px; height: 55px; object-fit: contain; border-radius: 4px;">';
+                    bgEl.style.display = 'block';
+                    bgEl.innerHTML = '<img src="' + cell.image_url + '" style="width:100%;height:100%;object-fit:cover;">';
+                    overlayEl.style.display = 'block';
                 } else {
+                    bgEl.style.display = 'none';
+                    bgEl.innerHTML = '';
+                    overlayEl.style.display = 'none';
+                }
+
+                var glow = '0 0 8px ' + ownerColor + ', 0 0 16px ' + ownerColor;
+                function setVal(cls, val) {
+                    var el = content.querySelector(cls);
+                    el.textContent = val;
+                    el.style.color = '#fff';
+                    el.style.textShadow = glow;
+                }
+                setVal('.cv-top', cell.values.top);
+                setVal('.cv-right', cell.values.right);
+                setVal('.cv-bottom', cell.values.bottom);
+                setVal('.cv-left', cell.values.left);
+                content.querySelector('.cv-name').textContent = cell.name;
+
+                var iconEl = content.querySelector('.cv-icon');
+                if (!cell.image_url) {
                     iconEl.textContent = cell.owner === 'player' ? '🛡️' : '👹';
+                } else {
+                    iconEl.textContent = cell.owner === 'player' ? '⭐' : '💀';
                 }
             });
         });
@@ -273,8 +291,7 @@
                 cellEl.style.background = color;
                 cellEl.style.borderColor = color;
                 setTimeout(function() {
-                    cellEl.style.background = color === '#4ade80' ? 'rgba(74,158,255,0.15)' : 'rgba(255,107,107,0.15)';
-                    cellEl.style.borderColor = color === '#4ade80' ? '#4a9eff' : '#ff6b6b';
+                    cellEl.style.background = '#1a1a3e';
                 }, 500);
             }
         });
