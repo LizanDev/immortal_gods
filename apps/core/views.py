@@ -22,6 +22,7 @@ from apps.core.models import (
     track_mission,
 )
 from apps.items.models import Item, ItemType, PlayerItem
+from apps.minigames.card_utils import _get_stat_ranges, compute_card_values
 
 
 @login_required
@@ -76,20 +77,16 @@ def home(request):
     )
 
 
-def _card_value(raw: int, divisor: int, max_val: int = 9) -> int:
-    return max(1, min(max_val, raw // divisor))
-
-
 def _god_to_card_data(pg):
+    ranges = _get_stat_ranges()
     return {
         "name": pg.god.name,
         "image_url": pg.god.image_url,
-        "values": {
-            "top": _card_value(pg.total_attack, 50),
-            "right": _card_value(pg.total_defense, 50),
-            "bottom": _card_value(pg.total_speed, 20),
-            "left": _card_value(pg.total_hp, 300),
-        },
+        "values": compute_card_values(
+            pg.god.base_attack, pg.god.base_defense,
+            pg.god.base_speed, pg.god.base_hp,
+            ranges,
+        ),
     }
 
 

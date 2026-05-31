@@ -12,6 +12,7 @@ from django.utils import timezone
 
 from apps.gods.models import God
 
+from .card_utils import _get_stat_ranges, compute_card_values, god_to_card
 from .models import CardGameSession, DailyWheelSpin, MemoryGameSession
 
 MEMORY_PAIR_COUNT = 8
@@ -303,36 +304,14 @@ CARD_HAND_SIZE = 6
 GRID_SIZE = 3
 
 
-def _stat_to_card_value(raw: int, divisor: int, max_val: int = 9) -> int:
-    return max(1, min(max_val, raw // divisor))
+def _god_to_card(pg, ranges: dict) -> dict:
+    """Convert a PlayerGod to a card dict using percentile ranking."""
+    return god_to_card(pg.god, ranges)
 
 
-def _god_to_card(pg) -> dict:
-    """Convert a PlayerGod to a card dict with 4 directional values."""
-    return {
-        "name": pg.god.name,
-        "image_url": pg.god.image_url,
-        "values": {
-            "top": _stat_to_card_value(pg.total_attack, 50),
-            "right": _stat_to_card_value(pg.total_defense, 50),
-            "bottom": _stat_to_card_value(pg.total_speed, 20),
-            "left": _stat_to_card_value(pg.total_hp, 300),
-        },
-    }
-
-
-def _god_to_ai_card(god: God) -> dict:
-    """Convert a God (base model) to an AI card using base stats."""
-    return {
-        "name": god.name,
-        "image_url": god.image_url,
-        "values": {
-            "top": _stat_to_card_value(god.base_attack, 50),
-            "right": _stat_to_card_value(god.base_defense, 50),
-            "bottom": _stat_to_card_value(god.base_speed, 20),
-            "left": _stat_to_card_value(god.base_hp, 300),
-        },
-    }
+def _god_to_ai_card(god: God, ranges: dict) -> dict:
+    """Convert a God to a card dict using percentile ranking."""
+    return god_to_card(god, ranges)
 
 
 def _make_empty_board() -> list:
@@ -435,10 +414,11 @@ def card_game(request):
             },
         )
 
-    player_hand = [_god_to_card(pg) for pg in picked]
+    ranges = _get_stat_ranges()
+    player_hand = [_god_to_card(pg, ranges) for pg in picked]
     all_gods = list(God.objects.all())
     random.shuffle(all_gods)
-    ai_hand = [_god_to_ai_card(g) for g in all_gods[:CARD_HAND_SIZE]]
+    ai_hand = [_god_to_ai_card(g, ranges) for g in all_gods[:CARD_HAND_SIZE]]
 
     try:
         session = CardGameSession.objects.create(
@@ -693,16 +673,16 @@ def card_deck(request):
     )
     deck_ids = list(profile.card_deck)
 
+    ranges = _get_stat_ranges()
     gods_with_values = []
     for pg in owned_gods:
         gods_with_values.append({
             "pg": pg,
-            "card_values": {
-                "top": _stat_to_card_value(pg.total_attack, 50),
-                "right": _stat_to_card_value(pg.total_defense, 50),
-                "bottom": _stat_to_card_value(pg.total_speed, 20),
-                "left": _stat_to_card_value(pg.total_hp, 300),
-            },
+            "card_values": compute_card_values(
+                pg.god.base_attack, pg.god.base_defense,
+                pg.god.base_speed, pg.god.base_hp,
+                ranges,
+            ),
         })
 
     return render(
