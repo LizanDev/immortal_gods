@@ -3,18 +3,18 @@
 import random
 
 RARITY_SUMS = {
-    "common": 18,
-    "rare": 22,
-    "epic": 26,
-    "legendary": 30,
-    "mythic": 34,
+    "common": 14,
+    "rare": 18,
+    "epic": 22,
+    "legendary": 26,
+    "mythic": 30,
 }
 
 DIRECTIONS = ("top", "right", "bottom", "left")
 
 
 def _generate_rarity_values(total_sum: int) -> list[int]:
-    """Generate 4 random values (1-9) summing to total_sum."""
+    """Generate 4 random values (1-9) summing to total_sum as 1 high, 2 med, 1 low."""
     for _ in range(200):
         cuts = sorted(random.sample(range(1, total_sum), 3))
         values = [
@@ -24,8 +24,13 @@ def _generate_rarity_values(total_sum: int) -> list[int]:
             total_sum - cuts[2],
         ]
         if all(1 <= v <= 9 for v in values):
-            random.shuffle(values)
-            return values
+            mn, mx = min(values), max(values)
+            if (
+                sum(1 for v in values if v == mn) == 1
+                and sum(1 for v in values if v == mx) == 1
+            ):
+                random.shuffle(values)
+                return values
     base = total_sum // 4
     rem = total_sum % 4
     values = [base, base, base, base]
