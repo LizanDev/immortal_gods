@@ -1383,7 +1383,9 @@ class God(models.Model):
         for ext in [".png", ".webp", ".jpg", ".jpeg"]:
             path = static_dir / f"{filename_base}{ext}"
             if path.exists():
-                self._image_url_cache = f"{settings.STATIC_URL}images/gods/{filename_base}{ext}"
+                self._image_url_cache = (
+                    f"{settings.STATIC_URL}images/gods/{filename_base}{ext}"
+                )
                 return self._image_url_cache
 
         prompt = self.GOD_PROMPTS.get(self.name, "epic fantasy god portrait")
@@ -1460,6 +1462,7 @@ class PlayerGod(models.Model):
     experience = models.PositiveIntegerField(default=0)
     essence = models.PositiveIntegerField(default=0)
     quality_tier = models.PositiveIntegerField(default=1)
+    card_bonus = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -1495,6 +1498,21 @@ class PlayerGod(models.Model):
         self.save(update_fields=["essence", "quality_tier"])
         return True
 
+    @property
+    def card_points_earned(self) -> int:
+        """Total card bonus points earned from levels (1 per 10 levels)."""
+        return self.level // 10
+
+    @property
+    def card_points_spent(self) -> int:
+        """Total card bonus points already allocated."""
+        return sum(self.card_bonus.values())
+
+    @property
+    def card_points_available(self) -> int:
+        """Card bonus points available to allocate."""
+        return self.card_points_earned - self.card_points_spent
+
     def add_essence(self, amount: int) -> None:
         """Add essence from duplicate pulls."""
         self.essence += amount
@@ -1508,7 +1526,9 @@ class PlayerGod(models.Model):
     def _equipment_list(self) -> list:
         """Get cached list of equipped items to avoid repeated DB queries."""
         if not hasattr(self, "_cached_equipment"):
-            self._cached_equipment = list(self.equipped_items.select_related("item").all())
+            self._cached_equipment = list(
+                self.equipped_items.select_related("item").all()
+            )
         return self._cached_equipment
 
     @property

@@ -88,6 +88,7 @@ def _god_to_card_data(pg, ranges):
             pg.god.base_speed,
             pg.god.base_hp,
             ranges,
+            pg.card_bonus,
         ),
     }
 

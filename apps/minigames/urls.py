@@ -17,4 +17,7 @@ urlpatterns = [
     path("cards/place/", views.card_place, name="card_place"),
     path("cards/claim/", views.card_claim, name="card_claim"),
     path("cards/deck/", views.card_deck, name="card_deck"),
+    path(
+        "cards/allocate-bonus/", views.card_allocate_bonus, name="card_allocate_bonus"
+    ),
 ]

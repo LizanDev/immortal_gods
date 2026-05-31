@@ -304,9 +304,13 @@ CARD_HAND_SIZE = 6
 GRID_SIZE = 3
 
 
-def _god_to_card(pg, ranges: dict) -> dict:
-    """Convert a PlayerGod to a card dict using percentile ranking."""
-    return god_to_card(pg.god, ranges)
+def _god_to_card(pg, ranges: dict, bonuses: dict | None = None) -> dict:
+    """Convert a PlayerGod to a card dict using percentile ranking + bonuses."""
+    card = god_to_card(pg.god, ranges)
+    if bonuses:
+        for d in ("top", "right", "bottom", "left"):
+            card["values"][d] = min(10, card["values"][d] + bonuses.get(d, 0))
+    return card
 
 
 def _god_to_ai_card(god: God, ranges: dict) -> dict:
@@ -413,7 +417,7 @@ def card_game(request):
     )
     player_god_qs = God.objects.filter(id__in=list(owned_god_ids))
     player_ranges = _get_stat_ranges(player_god_qs)
-    player_hand = [_god_to_card(pg, player_ranges) for pg in picked]
+    player_hand = [_god_to_card(pg, player_ranges, pg.card_bonus) for pg in picked]
 
     all_gods = list(God.objects.all())
     random.shuffle(all_gods)
@@ -707,6 +711,7 @@ def card_deck(request):
                     pg.god.base_speed,
                     pg.god.base_hp,
                     player_ranges,
+                    pg.card_bonus,
                 ),
             }
         )
@@ -719,4 +724,65 @@ def card_deck(request):
             "deck_ids": deck_ids,
             "max_cards": CARD_HAND_SIZE,
         },
+    )
+
+
+@login_required
+def card_allocate_bonus(request):
+    """Allocate a card bonus point for a specific god's direction."""
+    if request.method != "POST":
+        return JsonResponse({"status": "error", "message": "POST required"}, status=405)
+
+    profile = request.user.profile
+
+    try:
+        data = json.loads(request.body)
+        pg_id = data.get("pg_id")
+        direction = data.get("direction")
+    except (ValueError, TypeError, json.JSONDecodeError):
+        return JsonResponse({"status": "error", "message": "Invalid data"}, status=400)
+
+    if direction not in ("top", "right", "bottom", "left"):
+        return JsonResponse(
+            {"status": "error", "message": "Invalid direction"}, status=400
+        )
+
+    try:
+        pg = profile.gods.select_related("god").get(id=pg_id)
+    except DatabaseError:
+        return JsonResponse(UNAVAILABLE, status=503)
+    except profile.gods.model.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "God not found"}, status=404)
+
+    if pg.card_points_available <= 0:
+        return JsonResponse(
+            {"status": "error", "message": "No points available"}, status=400
+        )
+
+    bonus = dict(pg.card_bonus)
+    bonus[direction] = bonus.get(direction, 0) + 1
+    pg.card_bonus = bonus
+    pg.save(update_fields=["card_bonus"])
+
+    owned_god_ids = profile.gods.filter(god__isnull=False).values_list(
+        "god_id", flat=True
+    )
+    player_god_qs = God.objects.filter(id__in=list(owned_god_ids))
+    ranges = _get_stat_ranges(player_god_qs)
+    new_value = compute_card_values(
+        pg.god.base_attack,
+        pg.god.base_defense,
+        pg.god.base_speed,
+        pg.god.base_hp,
+        ranges,
+        bonus,
+    )[direction]
+
+    return JsonResponse(
+        {
+            "status": "ok",
+            "new_value": new_value,
+            "available": pg.card_points_available,
+            "total_bonus": bonus[direction],
+        }
     )

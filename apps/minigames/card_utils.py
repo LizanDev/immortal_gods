@@ -29,22 +29,49 @@ def _get_stat_ranges(queryset: QuerySet | None = None) -> dict:
     return stats
 
 
+DIRECTIONS = ("top", "right", "bottom", "left")
+
+
+def _apply_bonus(val: int, bonuses: dict | None, direction: str) -> int:
+    """Add bonus points to a card value, capped at 10."""
+    if not bonuses:
+        return val
+    return min(10, val + bonuses.get(direction, 0))
+
+
 def compute_card_values(
     base_attack: int,
     base_defense: int,
     base_speed: int,
     base_hp: int,
     ranges: dict | None = None,
+    bonuses: dict | None = None,
     queryset: QuerySet | None = None,
 ) -> dict:
-    """Compute top/right/bottom/left card values using percentile ranking."""
+    """Compute top/right/bottom/left card values using percentile ranking + bonus."""
     if ranges is None:
         ranges = _get_stat_ranges(queryset)
     return {
-        "top": _percentile_value(base_attack, ranges["atk_min"], ranges["atk_max"]),
-        "right": _percentile_value(base_defense, ranges["def_min"], ranges["def_max"]),
-        "bottom": _percentile_value(base_speed, ranges["spd_min"], ranges["spd_max"]),
-        "left": _percentile_value(base_hp, ranges["hp_min"], ranges["hp_max"]),
+        "top": _apply_bonus(
+            _percentile_value(base_attack, ranges["atk_min"], ranges["atk_max"]),
+            bonuses,
+            "top",
+        ),
+        "right": _apply_bonus(
+            _percentile_value(base_defense, ranges["def_min"], ranges["def_max"]),
+            bonuses,
+            "right",
+        ),
+        "bottom": _apply_bonus(
+            _percentile_value(base_speed, ranges["spd_min"], ranges["spd_max"]),
+            bonuses,
+            "bottom",
+        ),
+        "left": _apply_bonus(
+            _percentile_value(base_hp, ranges["hp_min"], ranges["hp_max"]),
+            bonuses,
+            "left",
+        ),
     }
 
 
