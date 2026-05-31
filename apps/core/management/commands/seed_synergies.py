@@ -4,7 +4,6 @@ from django.core.management.base import BaseCommand
 
 from apps.gods.models import God, GodSynergyTag, Rarity
 
-
 SYNERGY_TAGS_DATA: dict[str, list[str]] = {
     "Nuwa": ['creation', 'magic'],
     "Ymir": ['creation', 'strength', 'sea'],
@@ -87,84 +86,89 @@ SYNERGY_TAGS_DATA: dict[str, list[str]] = {
 }
 
 RARITY_REBALANCE: dict[str, str] = {
-    "Amun": Rarity.MYTHIC,
-    "Anubis": Rarity.EPIC,
-    "Apollo": Rarity.EPIC,
-    "Ares": Rarity.EPIC,
-    "Artemis": Rarity.RARE,
-    "Athena": Rarity.EPIC,
-    "Baldr": Rarity.RARE,
-    "Bastet": Rarity.COMMON,
-    "Bragi": Rarity.RARE,
-    "Caishen": Rarity.COMMON,
-    "Chang'e": Rarity.RARE,
-    "Coatlicue": Rarity.LEGENDARY,
-    "Coyolxauhqui": Rarity.RARE,
-    "Cronus": Rarity.LEGENDARY,
-    "Demeter": Rarity.COMMON,
-    "Dionysus": Rarity.EPIC,
-    "Dragon King": Rarity.LEGENDARY,
-    "Ehecatl": Rarity.EPIC,
-    "Erlang Shen": Rarity.EPIC,
-    "Eros": Rarity.RARE,
-    "Freya": Rarity.EPIC,
-    "Frigg": Rarity.RARE,
-    "Fuxi": Rarity.LEGENDARY,
-    "Gaia": Rarity.LEGENDARY,
-    "Guan Yu": Rarity.EPIC,
-    "Hades": Rarity.LEGENDARY,
-    "Hathor": Rarity.LEGENDARY,
-    "Hecate": Rarity.LEGENDARY,
-    "Heimdall": Rarity.EPIC,
-    "Hel": Rarity.LEGENDARY,
-    "Hephaestus": Rarity.RARE,
-    "Hermes": Rarity.RARE,
-    "Horus": Rarity.EPIC,
-    "Huangdi": Rarity.LEGENDARY,
-    "Huitzilopochtli": Rarity.MYTHIC,
-    "Isis": Rarity.EPIC,
-    "Jade Emperor": Rarity.MYTHIC,
-    "Khepri": Rarity.LEGENDARY,
-    "Lei Gong": Rarity.EPIC,
-    "Loki": Rarity.LEGENDARY,
-    "Ma'at": Rarity.EPIC,
-    "Mictlantecuhtli": Rarity.EPIC,
-    "Morpheus": Rarity.COMMON,
-    "Nezha": Rarity.EPIC,
-    "Nike": Rarity.RARE,
-    "Njord": Rarity.LEGENDARY,
-    "Nuwa": Rarity.LEGENDARY,
-    "Odin": Rarity.MYTHIC,
-    "Osiris": Rarity.LEGENDARY,
-    "Persephone": Rarity.EPIC,
-    "Poseidon": Rarity.LEGENDARY,
-    "Prometheus": Rarity.LEGENDARY,
-    "Ptah": Rarity.COMMON,
-    "Quetzalcoatl": Rarity.LEGENDARY,
-    "Ra": Rarity.LEGENDARY,
-    "Sekhmet": Rarity.RARE,
-    "Seshat": Rarity.RARE,
-    "Set": Rarity.RARE,
-    "Shennong": Rarity.LEGENDARY,
-    "Sif": Rarity.EPIC,
-    "Skadi": Rarity.RARE,
-    "Sobek": Rarity.EPIC,
-    "Sun Wukong": Rarity.LEGENDARY,
-    "Tezcatlipoca": Rarity.LEGENDARY,
-    "Thor": Rarity.LEGENDARY,
-    "Thoth": Rarity.RARE,
-    "Tlaloc": Rarity.EPIC,
-    "Tonatiuh": Rarity.RARE,
-    "Tyr": Rarity.EPIC,
-    "Ullr": Rarity.EPIC,
-    "Vidar": Rarity.COMMON,
-    "Xipe Totec": Rarity.EPIC,
-    "Xiuhtecuhtli": Rarity.EPIC,
-    "Xiwangmu": Rarity.LEGENDARY,
-    "Xochiquetzal": Rarity.RARE,
-    "Ymir": Rarity.LEGENDARY,
+    # Greek (19): 1M 1L 2E 4R 11C
     "Zeus": Rarity.MYTHIC,
+    "Hades": Rarity.LEGENDARY,
+    "Poseidon": Rarity.EPIC,
+    "Athena": Rarity.EPIC,
+    "Apollo": Rarity.RARE,
+    "Ares": Rarity.RARE,
+    "Artemis": Rarity.RARE,
+    "Hermes": Rarity.RARE,
+    "Hephaestus": Rarity.COMMON,
+    "Demeter": Rarity.COMMON,
+    "Dionysus": Rarity.COMMON,
+    "Persephone": Rarity.COMMON,
+    "Hecate": Rarity.COMMON,
+    "Eros": Rarity.COMMON,
+    "Nike": Rarity.COMMON,
+    "Cronus": Rarity.COMMON,
+    "Gaia": Rarity.COMMON,
+    "Prometheus": Rarity.COMMON,
+    "Morpheus": Rarity.COMMON,
+    # Aztec (12): 1M 1L 1E 5R 4C
+    "Huitzilopochtli": Rarity.MYTHIC,
+    "Quetzalcoatl": Rarity.LEGENDARY,
+    "Tezcatlipoca": Rarity.EPIC,
+    "Tlaloc": Rarity.RARE,
+    "Mictlantecuhtli": Rarity.RARE,
+    "Ehecatl": Rarity.RARE,
+    "Tonatiuh": Rarity.RARE,
+    "Xipe Totec": Rarity.RARE,
+    "Coatlicue": Rarity.COMMON,
+    "Xochiquetzal": Rarity.COMMON,
+    "Xiuhtecuhtli": Rarity.COMMON,
+    "Coyolxauhqui": Rarity.COMMON,
+    # Chinese (15): 1M 1L 2E 4R 7C
+    "Jade Emperor": Rarity.MYTHIC,
+    "Dragon King": Rarity.LEGENDARY,
+    "Sun Wukong": Rarity.EPIC,
+    "Erlang Shen": Rarity.EPIC,
+    "Nezha": Rarity.RARE,
+    "Lei Gong": Rarity.RARE,
+    "Guan Yu": Rarity.RARE,
     "Zhong Kui": Rarity.RARE,
+    "Caishen": Rarity.COMMON,
+    "Chang'e": Rarity.COMMON,
+    "Fuxi": Rarity.COMMON,
+    "Huangdi": Rarity.COMMON,
+    "Nuwa": Rarity.COMMON,
+    "Shennong": Rarity.COMMON,
+    "Xiwangmu": Rarity.COMMON,
+    # Egyptian (16): 1M 1L 2E 4R 8C
+    "Amun": Rarity.MYTHIC,
+    "Ra": Rarity.LEGENDARY,
+    "Anubis": Rarity.EPIC,
+    "Horus": Rarity.EPIC,
+    "Isis": Rarity.RARE,
+    "Sekhmet": Rarity.RARE,
+    "Set": Rarity.RARE,
+    "Thoth": Rarity.RARE,
+    "Bastet": Rarity.COMMON,
+    "Ptah": Rarity.COMMON,
+    "Hathor": Rarity.COMMON,
+    "Khepri": Rarity.COMMON,
+    "Ma'at": Rarity.COMMON,
+    "Osiris": Rarity.COMMON,
+    "Seshat": Rarity.COMMON,
+    "Sobek": Rarity.COMMON,
+    # Nordic (16): 1M 1L 2E 4R 8C
+    "Odin": Rarity.MYTHIC,
+    "Thor": Rarity.LEGENDARY,
+    "Loki": Rarity.EPIC,
+    "Freya": Rarity.EPIC,
+    "Baldr": Rarity.RARE,
+    "Heimdall": Rarity.RARE,
+    "Hel": Rarity.RARE,
+    "Tyr": Rarity.RARE,
+    "Frigg": Rarity.COMMON,
+    "Skadi": Rarity.COMMON,
+    "Bragi": Rarity.COMMON,
+    "Njord": Rarity.COMMON,
+    "Sif": Rarity.COMMON,
+    "Ullr": Rarity.COMMON,
+    "Vidar": Rarity.COMMON,
+    "Ymir": Rarity.COMMON,
 }
 
 GOD_LORE: dict[str, str] = {
@@ -562,14 +566,59 @@ class Command(BaseCommand):
 
     help = "Assigns synergy tags and rebalances rarities for all gods"
 
+    RARITY_STAT_RANGES: dict[str, dict[str, tuple[int, int]]] = {
+        Rarity.COMMON: {"atk": (90, 120), "def": (75, 105)},
+        Rarity.RARE: {"atk": (125, 155), "def": (110, 140)},
+        Rarity.EPIC: {"atk": (160, 195), "def": (140, 175)},
+        Rarity.LEGENDARY: {"atk": (205, 250), "def": (185, 225)},
+        Rarity.MYTHIC: {"atk": (260, 330), "def": (235, 300)},
+    }
+
+    def _recalculate_stat(
+        self, current: int, old_range: tuple[int, int], new_range: tuple[int, int]
+    ) -> int:
+        """Map a stat from its old rarity range to a new rarity range."""
+        old_span = max(old_range[1] - old_range[0], 1)
+        ratio = (current - old_range[0]) / old_span
+        raw = new_range[0] + ratio * (new_range[1] - new_range[0])
+        return max(new_range[0], min(int(raw), new_range[1]))
+
     def handle(self, *args, **options):
-        self.stdout.write("Rebalancing god rarities...")
+        self.stdout.write("Rebalancing god rarities and stats...")
         updated = 0
-        for name, rarity in RARITY_REBALANCE.items():
-            count = God.objects.filter(name=name).update(rarity=rarity)
-            if count:
+        for name, new_rarity in RARITY_REBALANCE.items():
+            try:
+                god = God.objects.get(name=name)
+            except God.DoesNotExist:
+                self.stdout.write(self.style.WARNING(f"  God '{name}' not found, skipping"))
+                continue
+
+            old_rarity = god.rarity
+            if old_rarity == new_rarity:
+                god.save(update_fields=["rarity"])
                 updated += 1
-        self.stdout.write(self.style.SUCCESS(f"Updated {updated} god rarities"))
+                continue
+
+            new_ranges = self.RARITY_STAT_RANGES[new_rarity]
+            old_ranges = self.RARITY_STAT_RANGES.get(old_rarity)
+            if old_ranges:
+                god.base_attack = self._recalculate_stat(
+                    god.base_attack, old_ranges["atk"], new_ranges["atk"]
+                )
+                god.base_defense = self._recalculate_stat(
+                    god.base_defense, old_ranges["def"], new_ranges["def"]
+                )
+            else:
+                mid_atk = sum(new_ranges["atk"]) // 2
+                mid_def = sum(new_ranges["def"]) // 2
+                god.base_attack = max(new_ranges["atk"][0], min(mid_atk, new_ranges["atk"][1]))
+                god.base_defense = max(new_ranges["def"][0], min(mid_def, new_ranges["def"][1]))
+
+            god.rarity = new_rarity
+            god.save(update_fields=["rarity", "base_attack", "base_defense"])
+            updated += 1
+
+        self.stdout.write(self.style.SUCCESS(f"Updated {updated} god rarities and stats"))
 
         self.stdout.write("Seeding lore descriptions...")
         lore_updated = 0
