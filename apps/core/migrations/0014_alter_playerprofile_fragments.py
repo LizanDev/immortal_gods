@@ -3,16 +3,30 @@
 from django.db import migrations, models
 
 
+def convert_fragments_to_int(apps, schema_editor):
+    """Convert JSON fragment dicts to a single integer total."""
+    PlayerProfile = apps.get_model("core", "PlayerProfile")
+    for profile in PlayerProfile.objects.all():
+        if isinstance(profile.fragments, dict):
+            total = sum(profile.fragments.values())
+            profile.fragments = total
+            profile.save(update_fields=["fragments"])
+        elif isinstance(profile.fragments, (int, float)):
+            profile.fragments = int(profile.fragments)
+            profile.save(update_fields=["fragments"])
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0013_remove_playerprofile_triad_coins_and_more'),
+        ("core", "0013_remove_playerprofile_triad_coins_and_more"),
     ]
 
     operations = [
+        migrations.RunPython(convert_fragments_to_int, migrations.RunPython.noop),
         migrations.AlterField(
-            model_name='playerprofile',
-            name='fragments',
+            model_name="playerprofile",
+            name="fragments",
             field=models.PositiveIntegerField(default=0),
         ),
     ]
