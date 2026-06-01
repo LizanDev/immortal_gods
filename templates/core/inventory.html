@@ -224,6 +224,9 @@
                 <div style="font-size: 0.75rem; margin-top: 0.2rem;">
                     ATK +{{ pi.item.attack_bonus }} DEF +{{ pi.item.defense_bonus }} HP +{{ pi.item.hp_bonus }} SPD +{{ pi.item.speed_bonus }}
                 </div>
+                {% if pi.item.belongs_to_god %}
+                <div style="font-size: 0.7rem; color: #ffd700; margin-top: 0.2rem;">Pertenece a: {{ pi.item.belongs_to_god }}</div>
+                {% endif %}
                 {% if pi.equipped_to %}
                 <div style="font-size: 0.7rem; color: #4a9eff; margin-top: 0.2rem;">Equipado en: {{ pi.equipped_to.god.name }}</div>
                 {% endif %}
