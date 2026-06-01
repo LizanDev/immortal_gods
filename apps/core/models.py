@@ -14,6 +14,7 @@ class PlayerProfile(models.Model):
     )
     gems = models.PositiveIntegerField(default=1350)
     gold = models.PositiveIntegerField(default=5000)
+    fragments = models.PositiveIntegerField(default=0)
     campaign_progress = models.PositiveIntegerField(default=1)
     rank_score = models.PositiveIntegerField(default=0)
     card_deck = models.JSONField(default=list, blank=True)
@@ -56,6 +57,23 @@ class PlayerProfile(models.Model):
             raise ValueError("Cannot add negative gold")
         self.gold += amount
         self.save(update_fields=["gold", "updated_at"])
+
+    def add_fragments(self, amount: int) -> None:
+        """Add fragments to the player's balance."""
+        if amount < 0:
+            raise ValueError("Cannot add negative fragments")
+        self.fragments += amount
+        self.save(update_fields=["fragments", "updated_at"])
+
+    def spend_fragments(self, amount: int) -> bool:
+        """Spend fragments if player has enough. Returns success status."""
+        if self.user.is_superuser:
+            return True
+        if self.fragments < amount:
+            return False
+        self.fragments -= amount
+        self.save(update_fields=["fragments", "updated_at"])
+        return True
 
     def recalculate_rank_score(self) -> None:
         """Recalculate rank score based on campaign and faction progress."""

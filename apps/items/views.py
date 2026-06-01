@@ -48,9 +48,7 @@ def equip_item(request, item_id):
         success = player_item.equip(player_god)
 
         if success:
-            return redirect(
-                request.META.get("HTTP_REFERER", "core:inventory") + f"#item-{item_id}"
-            )
+            return redirect("core:inventory")
 
     gods = PlayerGod.objects.filter(player=request.user.profile)
     return render(
@@ -65,7 +63,7 @@ def unequip_item(request, item_id):
     """Unequip an item from its current god."""
     player_item = get_object_or_404(PlayerItem, pk=item_id, player=request.user.profile)
     player_item.unequip()
-    return redirect(request.META.get("HTTP_REFERER", "core:inventory"))
+    return redirect("core:inventory")
 
 
 @login_required
@@ -78,6 +76,4 @@ def upgrade_item(request, item_id):
     if cost > 0 and (request.user.is_superuser or request.user.profile.gold >= cost):
         player_item.upgrade(cost)
 
-    return redirect(
-        request.META.get("HTTP_REFERER", "core:inventory") + f"#item-{item_id}"
-    )
+    return redirect("core:inventory")

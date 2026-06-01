@@ -18,6 +18,7 @@ urlpatterns = [
     path("missions/claim/<int:mission_id>/", views.claim_mission, name="claim_mission"),
     path("missions/claim-all/", views.claim_all_missions, name="claim_all_missions"),
     path("shop/", views.shop, name="shop"),
+    path("shop/craft/", views.craft_item, name="craft_item"),
     path("register/", views.register, name="register"),
     path(
         "login/",

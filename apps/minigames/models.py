@@ -81,13 +81,37 @@ class CardGameSession(models.Model):
             return 0
         return 10 if self.won else 3
 
-    def claim_reward(self) -> int:
-        if self.reward_claimed or not self.completed:
+    @property
+    def reward_fragments(self) -> int:
+        if not self.completed or not self.won:
             return 0
+        base = 3
+        try:
+            win_streak = self.player.card_games.filter(
+                completed=True, won=True
+            ).count()
+            if win_streak > 0 and win_streak % 5 == 0:
+                return base + 6
+        except Exception:
+            pass
+        return base
+
+    def claim_reward(self) -> dict:
+        if self.reward_claimed or not self.completed:
+            return {"gems": 0, "fragments": 0}
         self.reward_claimed = True
         self.save(update_fields=["reward_claimed"])
         self.player.add_gems(self.reward_gems)
-        return self.reward_gems
+
+        fragment_amount = 0
+        if self.won:
+            fragment_amount = self.reward_fragments
+            self.player.add_fragments(fragment_amount)
+
+        return {
+            "gems": self.reward_gems,
+            "fragments": fragment_amount,
+        }
 
 
 class DailyWheelSpin(models.Model):

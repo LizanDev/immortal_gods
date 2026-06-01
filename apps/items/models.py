@@ -3,6 +3,7 @@
 from typing import TYPE_CHECKING
 
 from django.db import models
+from django.utils.translation import get_language
 
 if TYPE_CHECKING:
     from apps.gods.models import PlayerGod
@@ -33,13 +34,16 @@ class Item(models.Model):
     """Represents an equipable item template."""
 
     name = models.CharField(max_length=100)
+    name_en = models.CharField(max_length=100, blank=True, default="")
     description = models.TextField(blank=True)
+    description_en = models.TextField(blank=True, default="")
     item_type = models.CharField(max_length=20, choices=ItemType.choices)
     attack_bonus = models.IntegerField(default=0)
     defense_bonus = models.IntegerField(default=0)
     hp_bonus = models.IntegerField(default=0)
     speed_bonus = models.IntegerField(default=0)
     max_level = models.PositiveIntegerField(default=10)
+    craft_cost = models.PositiveIntegerField(default=40)
     belongs_to_god = models.CharField(max_length=100, blank=True, default="")
     passive_name = models.CharField(max_length=100, blank=True, default="")
     passive_desc = models.TextField(blank=True, default="")
@@ -54,7 +58,23 @@ class Item(models.Model):
         ordering = ["name"]
 
     def __str__(self) -> str:
-        return f"{self.name} ({self.get_item_type_display()})"
+        return f"{self.display_name} ({self.get_item_type_display()})"
+
+    @property
+    def display_name(self) -> str:
+        """Return item name in the active language."""
+        lang = get_language()
+        if lang and lang.startswith("en") and self.name_en:
+            return self.name_en
+        return self.name
+
+    @property
+    def display_description(self) -> str:
+        """Return item description in the active language."""
+        lang = get_language()
+        if lang and lang.startswith("en") and self.description_en:
+            return self.description_en
+        return self.description
 
     def get_upgrade_cost(self, current_level: int) -> int:
         """Get gold cost to upgrade from current level."""

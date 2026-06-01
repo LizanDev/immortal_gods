@@ -7,11 +7,21 @@
     {% load static i18n %}
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="{% block meta_description %}Immortal Gods - RPG Gacha Game with 78 gods from 5 pantheons: Greek, Egyptian, Nordic, Chinese and Aztec. Collect, upgrade and battle!{% endblock %}">
-    <meta name="keywords" content="{% block meta_keywords %}rpg, gacha, gods, game, greek mythology, egyptian mythology, nordic mythology, free game{% endblock %}">
+    <meta name="description" content="{% block meta_description %}Immortal Gods - Juego RPG Gacha con 78 dioses de 5 panteones: Griego, Egipcio, Nórdico, Chino y Azteca. ¡Colecciona, mejora y batalla!{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}rpg, gacha, dioses, juego, mitología griega, mitología egipcia, mitología nórdica, juego gratis, mythology game{% endblock %}">
     <meta name="author" content="Immortal Gods">
     <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
     <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+
+    <!-- Hreflang Tags -->
+    {% if LANGUAGE_CODE == "es" %}
+    <link rel="alternate" hreflang="en" href="{{ request.scheme }}://{{ request.get_host }}/en{{ request.path }}">
+    <link rel="alternate" hreflang="es" href="{{ request.build_absolute_uri }}">
+    {% else %}
+    <link rel="alternate" hreflang="es" href="{{ request.scheme }}://{{ request.get_host }}/es{{ request.path }}">
+    <link rel="alternate" hreflang="en" href="{{ request.build_absolute_uri }}">
+    {% endif %}
+    <link rel="alternate" hreflang="x-default" href="{{ request.scheme }}://{{ request.get_host }}/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -70,19 +80,24 @@
     <nav>
         <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')" aria-label="Toggle navigation">☰</button>
         <div class="nav-links" role="navigation" aria-label="Main navigation">
-            <a href="{% url 'core:home' %}">{% trans "Home" %}</a>
-            <a href="{% url 'gods:list' %}">{% trans "Gods" %}</a>
-            <a href="{% url 'campaign:enemies' %}" style="color: #ff6b6b;">👹 {% trans "Enemies" %}</a>
-            <a href="{% url 'teams:list' %}">{% trans "Teams" %}</a>
-            <a href="{% url 'gacha:pull' %}">{% trans "Gacha" %}</a>
-            <a href="{% url 'campaign:list' %}">{% trans "Campaign" %}</a>
+            <a href="{% url 'core:home' %}">Inicio</a>
+            <a href="{% url 'gods:list' %}">Dioses</a>
+            <a href="{% url 'campaign:enemies' %}" style="color: #ff6b6b;">👹 Enemigos</a>
+            <a href="{% url 'teams:list' %}">Equipos</a>
+            <a href="{% url 'gacha:pull' %}">Gacha</a>
+            <a href="{% url 'campaign:list' %}">Campaña</a>
             <a href="{% url 'pvp:lobby' %}" style="color: #ff4444;">⚔️ PvP</a>
-            <a href="{% url 'core:inventory' %}">{% trans "Inventory" %}</a>
-            <a href="{% url 'core:shop' %}" style="color: #4a9eff;">🏪 {% trans "Shop" %}</a>
-            <a href="{% url 'core:missions' %}" style="color: #ffd700;">⚔️ {% trans "Missions" %}</a>
-            <a href="{% url 'minigames:index' %}" style="color: #a78bfa;">🎮 {% trans "Minigames" %}</a>
+            <a href="{% url 'core:inventory' %}">Inventario</a>
+            <a href="{% url 'core:shop' %}" style="color: #4a9eff;">🏪 Tienda</a>
+            <a href="{% url 'core:missions' %}" style="color: #ffd700;">⚔️ Misiones</a>
+            <a href="{% url 'minigames:index' %}" style="color: #a78bfa;">🎮 Minijuegos</a>
         </div>
         <div class="nav-right">
+            <div class="resources-bar">
+                <span class="resource-item" title="Oro">🥇 {{ user.profile.gold }}</span>
+                <span class="resource-item" title="Gemas">💎 {{ user.profile.gems }}</span>
+                <span class="resource-item" title="Fragmentos">🔧 {{ user.profile.fragments.total|default:0 }}</span>
+            </div>
             <span class="user">{{ user.username }}</span>
             <form method="post" action="{% url 'core:logout' %}" style="display:inline">
                 {% csrf_token %}

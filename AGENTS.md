@@ -542,13 +542,13 @@ This ensures the user learns and understands the codebase thoroughly.
 3. **ALWAYS use `uv` commands** - Never use `pip`, `poetry`, or `virtualenv` directly
 4. **ALWAYS run linting and type checking** - `uv run ruff check .` and `uv run mypy src/` before any commit
 5. **ALWAYS run security scans** - `uv run pip-audit` and `uv run bandit -r src/` periodically
-6. **NEVER commit without explicit user request** - Wait for user confirmation
-6. **NEVER commit without explicit user request** - Wait for user confirmation
-7. **ALWAYS follow Conventional Commits** - Format: `type(scope): description`
-8. **NEVER commit sensitive data** - No `.env`, credentials, keys, tokens, or PII
-9. **ALWAYS use absolute imports** - No relative imports in source code
-10. **ALWAYS add type hints** - Required on all function signatures
-11. **ALWAYS add docstrings** - Google style on all public functions/classes
+6. **NEVER commit or push without explicit user request** - Wait for user confirmation
+7. **ALWAYS test locally first** - All changes must be tested on the local dev server (`http://localhost:8000`) before commit. The user must verify the change works correctly. Only after the user says "commit" or "pushea" should you stage, commit, and push.
+8. **ALWAYS follow Conventional Commits** - Format: `type(scope): description`
+9. **NEVER commit sensitive data** - No `.env`, credentials, keys, tokens, or PII
+10. **ALWAYS use absolute imports** - No relative imports in source code
+11. **ALWAYS add type hints** - Required on all function signatures
+12. **ALWAYS add docstrings** - Google style on all public functions/classes
 
 ### CODE QUALITY CHECKLIST (Before any code change)
 

@@ -1,11 +1,12 @@
 """Core views."""
 
+import json
 import random
 
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -21,7 +22,7 @@ from apps.core.models import (
     ReferralCode,
     track_mission,
 )
-from apps.items.models import Item, ItemType, PlayerItem
+from apps.items.models import Item, PlayerItem
 from apps.minigames.card_utils import rarity_card_values
 
 
@@ -123,21 +124,32 @@ def register(request):
 
     if request.method == "POST":
         from django.contrib.auth.models import User
+        from django.contrib.auth.password_validation import (
+            ValidationError,
+            validate_password,
+        )
 
         username = request.POST.get("username", "").strip()
         password = request.POST.get("password", "")
         confirm = request.POST.get("confirm_password", "")
 
         if not username or not password:
-            messages.error(request, "Username and password are required")
+            messages.error(request, "Se requieren usuario y contraseña")
             return render(request, "core/register.html")
 
         if password != confirm:
-            messages.error(request, "Passwords do not match")
+            messages.error(request, "Las contraseñas no coinciden")
+            return render(request, "core/register.html")
+
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            for error in e.messages:
+                messages.error(request, error)
             return render(request, "core/register.html")
 
         if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already exists")
+            messages.error(request, "El usuario ya existe")
             return render(request, "core/register.html")
 
         user = User.objects.create_user(username=username, password=password)
@@ -366,94 +378,25 @@ SHOP_ITEMS = [
         "icon": "💎",
         "rarity": "legendary",
     },
-    {
-        "id": "weapon_pack",
-        "name": "Pack de Arma",
-        "desc": "Arma aleatoria",
-        "cost": 150,
-        "type": "item",
-        "item_type": ItemType.WEAPON,
-        "icon": "⚔️",
-        "rarity": "rare",
-    },
-    {
-        "id": "armor_pack",
-        "name": "Pack de Armadura",
-        "desc": "Armadura aleatoria",
-        "cost": 150,
-        "type": "item",
-        "item_type": ItemType.ARMOR,
-        "icon": "🛡️",
-        "rarity": "rare",
-    },
-    {
-        "id": "amulet_pack",
-        "name": "Pack de Amuleto",
-        "desc": "Amuleto aleatorio",
-        "cost": 150,
-        "type": "item",
-        "item_type": ItemType.AMULET,
-        "icon": "📿",
-        "rarity": "rare",
-    },
 ]
 
 
 @login_required
 def shop(request):
-    """Show shop with items purchasable with gems."""
+    """Show shop with items purchasable with gems or fragments."""
     profile = request.user.profile
 
     if request.method == "POST":
         shop_id = request.POST.get("shop_id")
         item = next((i for i in SHOP_ITEMS if i["id"] == shop_id), None)
 
-        if not item:
-            messages.error(request, "Producto no encontrado")
-            return redirect("core:shop")
+        if item:
+            return _process_gem_purchase(request, profile, item)
 
-        if profile.gems < item["cost"]:
-            messages.error(request, f"Gemas insuficientes. Necesitas {item['cost']}")
-            return redirect("core:shop")
-
-        profile.spend_gems(item["cost"])
-
-        if item["type"] == "essence":
-            god_id = request.POST.get("god_id")
-            if god_id:
-                target_god = profile.gods.filter(id=god_id).first()
-            else:
-                target_god = profile.gods.first()
-
-            if target_god:
-                target_god.add_essence(item["amount"])
-                messages.success(
-                    request,
-                    f"¡Compra exitosa! +{item['amount']} esencia para {target_god.god.name}",
-                )
-            else:
-                profile.gems += item["cost"]
-                profile.save(update_fields=["gems"])
-                messages.error(
-                    request, "Necesitas al menos un dios para comprar esencia"
-                )
-                return redirect("core:shop")
-
-        elif item["type"] == "item":
-            templates = Item.objects.filter(item_type=item["item_type"])
-            if templates.exists():
-                import random
-
-                template = random.choice(list(templates))
-                PlayerItem.objects.create(player=profile, item=template)
-                messages.success(request, f"¡Compra exitosa! Obtuviste {template.name}")
-            else:
-                profile.gems += item["cost"]
-                profile.save(update_fields=["gems"])
-                messages.error(request, "No hay items disponibles en este momento")
-                return redirect("core:shop")
-
+        messages.error(request, "Producto no encontrado")
         return redirect("core:shop")
+
+    craftable_items = Item.objects.all().order_by("item_type", "name")
 
     return render(
         request,
@@ -461,8 +404,79 @@ def shop(request):
         {
             "profile": profile,
             "shop_items": SHOP_ITEMS,
+            "craftable_items": craftable_items,
         },
     )
+
+
+def _process_gem_purchase(request, profile, item: dict):
+    """Process a gem purchase (essence only)."""
+    if profile.gems < item["cost"]:
+        messages.error(request, f"Gemas insuficientes. Necesitas {item['cost']}")
+        return redirect("core:shop")
+
+    profile.spend_gems(item["cost"])
+    return _purchase_essence(request, profile, item)
+
+
+def _purchase_essence(request, profile, item: dict):
+    """Purchase essence for a god."""
+    god_id = request.POST.get("god_id")
+    if god_id:
+        target_god = profile.gods.filter(id=god_id).first()
+    else:
+        target_god = profile.gods.first()
+
+    if target_god:
+        target_god.add_essence(item["amount"])
+        messages.success(
+            request,
+            f"¡Compra exitosa! +{item['amount']} esencia para {target_god.god.name}",
+        )
+    else:
+        profile.gems += item["cost"]
+        profile.save(update_fields=["gems"])
+        messages.error(request, "Necesitas al menos un dios para comprar esencia")
+        return redirect("core:shop")
+
+    return redirect("core:shop")
+
+
+@login_required
+@require_POST
+def craft_item(request):
+    """Craft a specific item using fragments."""
+    profile = request.user.profile
+
+    try:
+        data = json.loads(request.body)
+        item_id = data.get("item_id")
+    except (ValueError, TypeError, json.JSONDecodeError):
+        return JsonResponse({"status": "error", "message": "Invalid data"}, status=400)
+
+    try:
+        item = Item.objects.get(id=item_id)
+    except Item.DoesNotExist:
+        return JsonResponse(
+            {"status": "error", "message": "Item not found"}, status=404
+        )
+
+    cost = item.craft_cost
+
+    if profile.fragments < cost:
+        return JsonResponse({
+            "status": "error",
+            "message": f"Fragmentos insuficientes. Necesitas {cost}",
+        })
+
+    profile.spend_fragments(cost)
+    PlayerItem.objects.create(player=profile, item=item)
+
+    return JsonResponse({
+        "status": "ok",
+        "item_name": item.display_name,
+        "remaining_fragments": profile.fragments,
+    })
 
 
 def health_check(request):
@@ -543,8 +557,9 @@ def sitemap(request):
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     for url in urls:
+        loc = url["loc"].replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         xml += "  <url>\n"
-        xml += f"    <loc>{url['loc']}</loc>\n"
+        xml += f"    <loc>{loc}</loc>\n"
         xml += f"    <changefreq>{url['changefreq']}</changefreq>\n"
         xml += f"    <priority>{url['priority']}</priority>\n"
         xml += "  </url>\n"

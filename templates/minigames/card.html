@@ -17,10 +17,10 @@
     <h2 style="color: {% if won %}#4ade80{% else %}#ff6b6b{% endif %}; margin: 0;">
         {% if won %}¡Victoria!{% else %}Derrota{% endif %}
     </h2>
-    <p style="color: #aaa;">Recompensa: {{ session.reward_gems }} 💎</p>
+    <p style="color: #aaa;">Recompensa: {{ session.reward_gems }} 💎 + {{ session.reward_fragments }} fragmentos</p>
 
     {% if not session.reward_claimed %}
-    <button id="claimBtn" class="btn">Reclamar {{ session.reward_gems }} 💎</button>
+    <button id="claimBtn" class="btn">Reclamar {{ session.reward_gems }} 💎 + {{ session.reward_fragments }} fragmentos</button>
     <div id="claimStatus" style="margin-top: 0.5rem; color: #aaa; display: none;"></div>
     {% else %}
     <p style="color: #4ade80;">✓ Recompensa reclamada</p>
@@ -173,7 +173,7 @@
                     } else {
                         setStatus('💀 Derrota. Tienes ' + data.player_card_count + ' cartas vs ' + data.ai_card_count + ' del enemigo.');
                     }
-                    showGameOver(data.won, data.reward_gems);
+                    showGameOver(data.won, data.reward_gems, data.reward_fragments);
                 } else if (data.status === 'ok') {
                     // First render: hide AI's card so it doesn't appear instantly
                     var initialBoard = data.board.map(function(row, r) {
@@ -301,7 +301,7 @@
         });
     }
 
-    function showGameOver(won, gems) {
+    function showGameOver(won, gems, fragments) {
         var gameArea = document.getElementById('gameArea');
         var overlay = document.createElement('div');
         overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;';
@@ -309,8 +309,8 @@
             '<div class="card" style="text-align: center; max-width: 400px; padding: 2rem; border-top: 3px solid ' + (won ? '#4ade80' : '#ff6b6b') + ';">' +
             '<div style="font-size: 4rem; margin-bottom: 0.5rem;">' + (won ? '🏆' : '💀') + '</div>' +
             '<h2 style="color: ' + (won ? '#4ade80' : '#ff6b6b') + '; margin: 0;">' + (won ? '¡Victoria!' : 'Derrota') + '</h2>' +
-            '<p style="color: #aaa; margin: 1rem 0;">Recompensa: ' + gems + ' 💎</p>' +
-            '<button id="overlayClaimBtn" class="btn" style="margin-bottom: 0.5rem;">Reclamar ' + gems + ' 💎</button>' +
+            '<p style="color: #aaa; margin: 1rem 0;">Recompensa: ' + gems + ' 💎 + ' + fragments + ' fragmentos</p>' +
+            '<button id="overlayClaimBtn" class="btn" style="margin-bottom: 0.5rem;">Reclamar ' + gems + ' 💎 + ' + fragments + ' fragmentos</button>' +
             '<div id="overlayClaimStatus" style="color: #aaa; margin-bottom: 0.5rem; display: none;"></div>' +
             '<a href="{% url "minigames:cards" %}" class="btn btn-secondary">Jugar otra vez</a>' +
             '<a href="{% url "minigames:index" %}" class="btn btn-secondary" style="margin-top: 0.25rem;">← Volver</a>' +
@@ -333,7 +333,12 @@
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
                     if (data.status === 'ok') {
-                        if (overlayClaimStatus) { overlayClaimStatus.textContent = '✓ Reclamaste ' + data.gems + ' 💎'; overlayClaimStatus.style.color = '#4ade80'; }
+                        var msg = '✓ Reclamaste ' + data.gems + ' 💎';
+                        if (data.fragments > 0) {
+                            msg += ' + ' + data.fragments + ' fragmentos';
+                        }
+                        overlayClaimStatus.textContent = msg;
+                        overlayClaimStatus.style.color = '#4ade80';
                         overlayClaimBtn.textContent = '✓ Reclamado';
                         overlayClaimBtn.style.opacity = '0.5';
                     } else {
@@ -369,16 +374,21 @@
                 },
             })
             .then(function(r) { return r.json(); })
-            .then(function(data) {
-                if (data.status === 'ok') {
-                    if (claimStatus) { claimStatus.textContent = '✓ Reclamaste ' + data.gems + ' 💎'; claimStatus.style.color = '#4ade80'; }
-                    claimBtn.textContent = '✓ Reclamado';
-                    claimBtn.style.opacity = '0.5';
-                } else if (data.status === 'already_claimed') {
-                    if (claimStatus) { claimStatus.textContent = 'Ya reclamado'; claimStatus.style.color = '#888'; }
-                    claimBtn.style.display = 'none';
-                }
-            })
+                .then(function(data) {
+                    if (data.status === 'ok') {
+                        var msg = '✓ Reclamaste ' + data.gems + ' 💎';
+                        if (data.fragments > 0) {
+                            msg += ' + ' + data.fragments + ' fragmentos';
+                        }
+                        claimStatus.textContent = msg;
+                        claimStatus.style.color = '#4ade80';
+                        claimBtn.textContent = '✓ Reclamado';
+                        claimBtn.style.opacity = '0.5';
+                    } else if (data.status === 'already_claimed') {
+                        if (claimStatus) { claimStatus.textContent = 'Ya reclamado'; claimStatus.style.color = '#888'; }
+                        claimBtn.style.display = 'none';
+                    }
+                })
             .catch(function() {
                 if (claimStatus) { claimStatus.textContent = 'Error al reclamar.'; }
                 claimBtn.disabled = false;

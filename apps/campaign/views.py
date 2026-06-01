@@ -314,8 +314,11 @@ def campaign_battle(request, level_id):
         )
 
         return redirect("campaign:battle_result", level_id=level_id)
-    except Exception as e:
-        messages.error(request, f"Error en la batalla: {str(e)}")
+    except Exception:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.exception("battle_failed", extra={"level_id": level_id})
+        messages.error(request, "Error en la batalla. Intenta de nuevo.")
         return redirect("campaign:list")
 
 
@@ -498,8 +501,11 @@ def faction_battle(request, stage_id):
                 "next_stage": next_stage,
             },
         )
-    except Exception as e:
-        messages.error(request, f"Error en la batalla: {str(e)}")
+    except Exception:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.exception("faction_battle_failed", extra={"stage_id": stage_id})
+        messages.error(request, "Error en la batalla. Intenta de nuevo.")
         return redirect("campaign:faction_ladders")
 
 

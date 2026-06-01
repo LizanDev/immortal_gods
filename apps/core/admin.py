@@ -21,8 +21,8 @@ class PlayerProfileAdmin(admin.ModelAdmin):
     def send_gems(self, request, queryset):
         """Redirect to a custom form to send gems."""
         if "apply" in request.POST:
-            gems = int(request.POST.get("gems", 1000))
-            gold = int(request.POST.get("gold", 0))
+            gems = max(0, min(int(request.POST.get("gems", 1000)), 999999))
+            gold = max(0, min(int(request.POST.get("gold", 0)), 9999999))
             message_text = request.POST.get(
                 "message", "¡Has recibido un regalo del administrador!"
             )

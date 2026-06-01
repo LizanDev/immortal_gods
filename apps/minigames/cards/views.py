@@ -248,6 +248,7 @@ def _finish_game(session, board, player_flips, ai_flips):
         "ai_card_count": ai_count,
         "won": session.won,
         "reward_gems": session.reward_gems,
+        "reward_fragments": session.reward_fragments if session.won else 0,
     })
 
 
@@ -305,11 +306,15 @@ def card_claim(request):
     if not session:
         return JsonResponse({"status": "no_session"}, status=404)
 
-    gems = session.claim_reward()
-    if gems == 0:
+    reward = session.claim_reward()
+    if reward["gems"] == 0 and reward["fragments"] == 0:
         return JsonResponse({"status": "already_claimed"})
 
-    return JsonResponse({"status": "ok", "gems": gems})
+    return JsonResponse({
+        "status": "ok",
+        "gems": reward["gems"],
+        "fragments": reward["fragments"],
+    })
 
 
 @login_required

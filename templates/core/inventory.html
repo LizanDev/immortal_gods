@@ -215,26 +215,26 @@
 
 <div id="items-tab" class="tab-content">
     {% if items %}
-    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem;">
         {% for pi in items %}
-        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: rgba(255,255,255,0.04); border-radius: 8px; border-left: 4px solid {% if pi.item.item_type == 'weapon' %}#ff6b6b{% elif pi.item.item_type == 'armor' %}#4a9eff{% else %}#ffd700{% endif %};">
-            <div style="flex: 1;">
-                <div style="font-weight: bold; font-size: 0.9rem;">{{ pi.item.name }} <span style="color: #888; font-size: 0.75rem;">+{{ pi.level }}</span></div>
-                <div style="font-size: 0.75rem; color: #aaa;">{{ pi.item.get_item_type_display }}</div>
-                <div style="font-size: 0.75rem; margin-top: 0.2rem;">
-                    ATK +{{ pi.item.attack_bonus }} DEF +{{ pi.item.defense_bonus }} HP +{{ pi.item.hp_bonus }} SPD +{{ pi.item.speed_bonus }}
+        <div style="aspect-ratio: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 0.75rem; background: rgba(255,255,255,0.04); border-radius: 10px; border-top: 3px solid {% if pi.item.item_type == 'weapon' %}#ff6b6b{% elif pi.item.item_type == 'armor' %}#4a9eff{% else %}#ffd700{% endif %};">
+            <div>
+                <div style="font-weight: bold; font-size: 0.85rem;">{{ pi.item.display_name }}</div>
+                <div style="font-size: 0.7rem; color: #888;">+{{ pi.level }} · {{ pi.item.get_item_type_display }}</div>
+                <div style="font-size: 0.7rem; color: #aaa; margin-top: 0.3rem;">
+                    ATK+{{ pi.item.attack_bonus }} DEF+{{ pi.item.defense_bonus }} HP+{{ pi.item.hp_bonus }} SPD+{{ pi.item.speed_bonus }}
                 </div>
                 {% if pi.item.belongs_to_god %}
-                <div style="font-size: 0.7rem; color: #ffd700; margin-top: 0.2rem;">Pertenece a: {{ pi.item.belongs_to_god }}</div>
+                <div style="font-size: 0.65rem; color: #ffd700; margin-top: 0.2rem;">{{ pi.item.belongs_to_god }}</div>
                 {% endif %}
                 {% if pi.equipped_to %}
-                <div style="font-size: 0.7rem; color: #4a9eff; margin-top: 0.2rem;">Equipado en: {{ pi.equipped_to.god.name }}</div>
+                <div style="font-size: 0.65rem; color: #4a9eff; margin-top: 0.2rem;">En: {{ pi.equipped_to.god.name }}</div>
                 {% endif %}
             </div>
             {% if pi.equipped_to %}
-            <form method="post" action="{% url 'items:unequip' pi.id %}">
+            <form method="post" action="{% url 'items:unequip' pi.id %}" style="margin-top: auto;">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-secondary" style="font-size: 0.7rem; padding: 0.3rem 0.5rem;">Desequipar</button>
+                <button type="submit" class="btn btn-secondary" style="font-size: 0.7rem; padding: 0.3rem 0.5rem; width: 100%;">Desequipar</button>
             </form>
             {% endif %}
         </div>

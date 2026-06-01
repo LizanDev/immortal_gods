@@ -65,6 +65,52 @@
     .shop-card.rarity-epic { border-top: 3px solid #a855f7; }
     .shop-card.rarity-legendary { border-top: 3px solid #ffd700; }
 
+    .craft-card {
+        background: rgba(20, 20, 40, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1.25rem;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    .craft-card:hover {
+        border-color: rgba(233, 69, 96, 0.5);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    .craft-select {
+        width: 100%;
+        padding: 0.5rem;
+        margin-top: 0.5rem;
+        background: rgba(0, 0, 0, 0.4);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        font-size: 0.8rem;
+        cursor: pointer;
+    }
+    .craft-select:focus {
+        outline: none;
+        border-color: #e94560;
+    }
+    .craft-select option {
+        background: #1a1a3e;
+        color: #fff;
+    }
+    .craft-info {
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        color: #aaa;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+    .craft-info span {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+    }
+
     .shop-icon {
         font-size: 2.5rem;
         margin-bottom: 0.5rem;
@@ -125,9 +171,15 @@
 
 <div class="shop-header">
     <h1>🏪 Tienda</h1>
-    <div class="gems-display">
-        <span class="gems-icon">💎</span>
-        <span>{{ profile.gems }}</span>
+    <div style="display: flex; gap: 1.5rem; align-items: center;">
+        <div class="gems-display">
+            <span class="gems-icon">💎</span>
+            <span>{{ profile.gems }}</span>
+        </div>
+        <div class="gems-display" style="color: #ffd700;">
+            <span class="gems-icon">🔧</span>
+            <span>{{ profile.fragments }}</span>
+        </div>
     </div>
 </div>
 
@@ -139,7 +191,7 @@
         {% if item.type == "essence" %}
         <div class="shop-card rarity-{{ item.rarity }}">
             <div class="shop-icon">{{ item.icon }}</div>
-            <div class="shop-name">{{ item.name }}</div>
+            <div class="shop-name">{{ item.display_name }}</div>
             <div class="shop-desc">{{ item.desc }}</div>
             <div class="shop-price">💎 {{ item.cost }}</div>
             <form method="post">
@@ -160,29 +212,166 @@
     </div>
 </div>
 
-<!-- Equipamiento Section -->
+<!-- Crafteo Section -->
 <div class="shop-section">
-    <h2>⚔️ Equipamiento</h2>
-    <div class="shop-grid">
-        {% for item in shop_items %}
-        {% if item.type == "item" %}
-        <div class="shop-card rarity-{{ item.rarity }}">
-            <div class="shop-icon">{{ item.icon }}</div>
-            <div class="shop-name">{{ item.name }}</div>
-            <div class="shop-desc">{{ item.desc }}</div>
-            <div class="shop-price">💎 {{ item.cost }}</div>
-            <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="shop_id" value="{{ item.id }}">
-                <button type="submit" class="buy-btn" {% if profile.gems < item.cost %}disabled{% endif %}>
-                    Comprar
-                </button>
-            </form>
+    <h2>🔨 Crafteo de Equipamiento</h2>
+    <p style="color: #aaa; margin-bottom: 1rem; font-size: 0.9rem;">
+        Elegí un item del desplegable y craftealo con fragmentos. Ganá fragmentos jugando al Duelo de Cartas.
+    </p>
+
+    <div class="shop-grid" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
+        <!-- Weapon Crafting Card -->
+        <div class="craft-card" style="aspect-ratio: 1; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div class="shop-icon">⚔️</div>
+                <div class="shop-name">Arma</div>
+                <div class="shop-desc">Seleccioná un arma para craftear</div>
+                <select id="weaponSelect" class="craft-select">
+                    <option value="">— Elegí un arma —</option>
+                    {% for item in craftable_items %}
+                    {% if item.item_type == "weapon" %}
+                    <option value="{{ item.id }}" data-cost="{{ item.craft_cost }}" data-atk="{{ item.attack_bonus }}" data-def="{{ item.defense_bonus }}" data-hp="{{ item.hp_bonus }}" data-spd="{{ item.speed_bonus }}" data-god="{{ item.belongs_to_god }}" data-passive="{{ item.passive_name }}">
+                        {{ item.display_name }}{% if item.belongs_to_god %} ({{ item.belongs_to_god }}){% endif %} — {{ item.craft_cost }} frag.
+                    </option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                <div id="weaponInfo" class="craft-info" style="display: none;"></div>
+            </div>
+            <button id="weaponCraftBtn" class="buy-btn craft-btn" disabled>Craftear</button>
         </div>
-        {% endif %}
-        {% endfor %}
+
+        <!-- Armor Crafting Card -->
+        <div class="craft-card" style="aspect-ratio: 1; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div class="shop-icon">🛡️</div>
+                <div class="shop-name">Armadura</div>
+                <div class="shop-desc">Seleccioná una armadura para craftear</div>
+                <select id="armorSelect" class="craft-select">
+                    <option value="">— Elegí una armadura —</option>
+                    {% for item in craftable_items %}
+                    {% if item.item_type == "armor" %}
+                    <option value="{{ item.id }}" data-cost="{{ item.craft_cost }}" data-atk="{{ item.attack_bonus }}" data-def="{{ item.defense_bonus }}" data-hp="{{ item.hp_bonus }}" data-spd="{{ item.speed_bonus }}" data-god="{{ item.belongs_to_god }}" data-passive="{{ item.passive_name }}">
+                        {{ item.display_name }}{% if item.belongs_to_god %} ({{ item.belongs_to_god }}){% endif %} — {{ item.craft_cost }} frag.
+                    </option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                <div id="armorInfo" class="craft-info" style="display: none;"></div>
+            </div>
+            <button id="armorCraftBtn" class="buy-btn craft-btn" disabled>Craftear</button>
+        </div>
+
+        <!-- Amulet Crafting Card -->
+        <div class="craft-card" style="aspect-ratio: 1; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div class="shop-icon">📿</div>
+                <div class="shop-name">Amuleto</div>
+                <div class="shop-desc">Seleccioná un amuleto para craftear</div>
+                <select id="amuletSelect" class="craft-select">
+                    <option value="">— Elegí un amuleto —</option>
+                    {% for item in craftable_items %}
+                    {% if item.item_type == "amulet" %}
+                    <option value="{{ item.id }}" data-cost="{{ item.craft_cost }}" data-atk="{{ item.attack_bonus }}" data-def="{{ item.defense_bonus }}" data-hp="{{ item.hp_bonus }}" data-spd="{{ item.speed_bonus }}" data-god="{{ item.belongs_to_god }}" data-passive="{{ item.passive_name }}">
+                        {{ item.display_name }}{% if item.belongs_to_god %} ({{ item.belongs_to_god }}){% endif %} — {{ item.craft_cost }} frag.
+                    </option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                <div id="amuletInfo" class="craft-info" style="display: none;"></div>
+            </div>
+            <button id="amuletCraftBtn" class="buy-btn craft-btn" disabled>Craftear</button>
+        </div>
     </div>
 </div>
+
+<script>
+(function() {
+    var fragments = {{ profile.fragments|default:0 }};
+
+    ['weapon', 'armor', 'amulet'].forEach(function(type) {
+        var select = document.getElementById(type + 'Select');
+        var btn = document.getElementById(type + 'CraftBtn');
+        var info = document.getElementById(type + 'Info');
+
+        select.addEventListener('change', function() {
+            var opt = this.options[this.selectedIndex];
+            if (!opt.value) {
+                btn.disabled = true;
+                btn.textContent = 'Craftear';
+                info.style.display = 'none';
+                return;
+            }
+
+            var cost = parseInt(opt.dataset.cost);
+            var atk = parseInt(opt.dataset.atk);
+            var def = parseInt(opt.dataset.def);
+            var hp = parseInt(opt.dataset.hp);
+            var spd = parseInt(opt.dataset.spd);
+            var god = opt.dataset.god;
+            var passive = opt.dataset.passive;
+
+            var canCraft = fragments >= cost;
+            btn.disabled = !canCraft;
+            btn.textContent = canCraft ? 'Craftear' : 'Fragmentos insuficientes';
+
+            var parts = [];
+            if (atk) parts.push('ATK+' + atk);
+            if (def) parts.push('DEF+' + def);
+            if (hp) parts.push('HP+' + hp);
+            if (spd) parts.push('SPD+' + spd);
+            var html = '<span>' + parts.join(' ') + '</span>';
+            if (god) {
+                html += ' <span style="color: #ffd700;">' + god;
+                if (passive) html += ' (' + passive + ')';
+                html += '</span>';
+            }
+            html += ' <span>' + fragments + '/' + cost + ' frag.</span>';
+            info.innerHTML = html;
+            info.style.display = 'block';
+        });
+
+        btn.addEventListener('click', function() {
+            var itemId = select.value;
+            if (!itemId) return;
+
+            var opt = select.options[select.selectedIndex];
+            var itemName = opt.text.split(' — ')[0];
+            var cost = opt.dataset.cost;
+
+            if (!confirm('¿Craftear ' + itemName + ' por ' + cost + ' fragmentos?')) return;
+
+            btn.disabled = true;
+            btn.textContent = 'Crafteando...';
+
+            fetch('{% url "core:craft_item" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ item_id: parseInt(itemId) }),
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.status === 'ok') {
+                    alert('¡Crafteaste ' + data.item_name + '!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                    btn.disabled = false;
+                    btn.textContent = 'Craftear';
+                }
+            })
+            .catch(function() {
+                alert('Error de conexión.');
+                btn.disabled = false;
+                btn.textContent = 'Craftear';
+            });
+        });
+    });
+})();
+</script>
 
 <a href="{% url 'core:home' %}" class="back-link">← Volver al inicio</a>
 {% endblock %}
