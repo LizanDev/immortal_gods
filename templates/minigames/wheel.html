@@ -84,8 +84,8 @@
 
     function getSegmentAngle(targetIndex) {
         var arc = (2 * Math.PI) / numSegments;
-        var idx = (numSegments - 1 - targetIndex + numSegments) % numSegments;
-        return idx * arc + arc * 0.35;
+        var center = targetIndex * arc + arc / 2;
+        return ((2 * Math.PI) - center) % (2 * Math.PI);
     }
 
     if (canvas) drawWheel(currentAngle);
