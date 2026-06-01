@@ -166,10 +166,10 @@ def register(request):
                     ref.save(update_fields=["used_by", "used_at"])
                     user.profile.add_gems(ref.gems_reward)
                     messages.success(
-                        request, f"Referral code applied! +{ref.gems_reward} gems"
+                        request, f"¡Código aplicado! +{ref.gems_reward} gemas"
                     )
             except ReferralCode.DoesNotExist:
-                messages.error(request, "Invalid or already used referral code")
+                messages.error(request, "Código de referido inválido o ya usado")
         login(request, user)
         return redirect("core:home")
 
@@ -196,9 +196,9 @@ def redeem_referral(request):
                 ref.used_by = request.user
                 ref.save(update_fields=["used_by", "used_at"])
                 request.user.profile.add_gems(ref.gems_reward)
-                messages.success(request, f"Code redeemed! +{ref.gems_reward} gems")
+                messages.success(request, f"¡Código canjeado! +{ref.gems_reward} gemas")
         except ReferralCode.DoesNotExist:
-            messages.error(request, "Invalid or already used referral code")
+            messages.error(request, "Código de referido inválido o ya usado")
 
     return redirect("core:inventory")
 
@@ -452,7 +452,10 @@ def craft_item(request):
         data = json.loads(request.body)
         item_id = data.get("item_id")
     except (ValueError, TypeError, json.JSONDecodeError):
-        return JsonResponse({"status": "error", "message": "Invalid data"}, status=400)
+        return JsonResponse(
+            {"status": "error", "message": "Datos inválidos"},
+            status=400,
+        )
 
     try:
         item = Item.objects.get(id=item_id)

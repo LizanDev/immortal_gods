@@ -10,21 +10,21 @@ from django.utils.translation import gettext_lazy as _
 class Pantheon(models.TextChoices):
     """Available pantheons for gods."""
 
-    GREEK = "greek", "Greek"
-    AZTEC = "aztec", "Aztec"
-    CHINESE = "chinese", "Chinese"
-    EGYPTIAN = "egyptian", "Egyptian"
-    NORDIC = "nordic", "Nordic"
+    GREEK = "greek", "Griego"
+    AZTEC = "aztec", "Azteca"
+    CHINESE = "chinese", "Chino"
+    EGYPTIAN = "egyptian", "Egipcio"
+    NORDIC = "nordic", "Nórdico"
 
 
 class Role(models.TextChoices):
     """Available roles for gods."""
 
-    ASSASSIN = "assassin", "Assassin"
-    TANK = "tank", "Tank"
-    SUPPORT = "support", "Support"
-    MAGE = "mage", "Mage"
-    ARCHER = "archer", "Archer"
+    ASSASSIN = "assassin", "Asesino"
+    TANK = "tank", "Tanque"
+    SUPPORT = "support", "Soporte"
+    MAGE = "mage", "Mago"
+    ARCHER = "archer", "Arquero"
 
 
 CLASS_ADVANTAGES: dict[str, str] = {
@@ -1138,11 +1138,11 @@ DEFAULT_SKILLS: dict[str, dict[str, Any]] = {
 class Rarity(models.TextChoices):
     """Rarity tiers for gods."""
 
-    COMMON = "common", "Common"
-    RARE = "rare", "Rare"
-    EPIC = "epic", "Epic"
-    LEGENDARY = "legendary", "Legendary"
-    MYTHIC = "mythic", "Mythic"
+    COMMON = "common", "Común"
+    RARE = "rare", "Raro"
+    EPIC = "epic", "Épico"
+    LEGENDARY = "legendary", "Legendario"
+    MYTHIC = "mythic", "Mítico"
 
 
 RARITY_PULL_WEIGHTS = {

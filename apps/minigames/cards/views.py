@@ -102,7 +102,10 @@ def _render_card_error(request, required: int):
 def card_place(request):
     """Place a card on the board (player turn), then AI responds."""
     if request.method != "POST":
-        return JsonResponse({"status": "error", "message": "POST required"}, status=405)
+        return JsonResponse(
+            {"status": "error", "message": "Se requiere POST"},
+            status=405,
+        )
 
     profile = request.user.profile
 
@@ -158,24 +161,30 @@ def _validate_card_request(request, session):
         row = int(data.get("row", -1))
         col = int(data.get("col", -1))
     except (ValueError, TypeError, json.JSONDecodeError):
-        return JsonResponse({"status": "error", "message": "Invalid data"}, status=400)
+        return JsonResponse(
+            {"status": "error", "message": "Datos inválidos"},
+            status=400,
+        )
 
     board = session.board_state
     if not (0 <= row < GRID_SIZE and 0 <= col < GRID_SIZE):
         return JsonResponse(
-            {"status": "error", "message": "Invalid position"}, status=400
+            {"status": "error", "message": "Posición inválida"}, status=400
         )
 
     if board[row][col] is not None:
-        return JsonResponse({"status": "error", "message": "Cell occupied"}, status=400)
+        return JsonResponse({"status": "error", "message": "Celda ocupada"}, status=400)
 
     player_hand = session.player_hand
     if not (0 <= card_index < len(player_hand)):
-        return JsonResponse({"status": "error", "message": "Invalid card"}, status=400)
+        return JsonResponse(
+            {"status": "error", "message": "Carta inválida"},
+            status=400,
+        )
 
     if player_hand[card_index].get("used"):
         return JsonResponse(
-            {"status": "error", "message": "Card already used"}, status=400
+            {"status": "error", "message": "Carta ya usada"}, status=400
         )
 
     return board, card_index, row, col
@@ -288,7 +297,10 @@ def _build_turn_response(session, board, player_flips, ai_flips, ai_ci, ai_row, 
 def card_claim(request):
     """Claim the card duel reward."""
     if request.method != "POST":
-        return JsonResponse({"status": "error", "message": "POST required"}, status=405)
+        return JsonResponse(
+            {"status": "error", "message": "Se requiere POST"},
+            status=405,
+        )
 
     profile = request.user.profile
 
@@ -334,7 +346,10 @@ def _save_deck(request, profile):
         data = json.loads(request.body)
         god_ids = data.get("god_ids", [])
     except (ValueError, TypeError, json.JSONDecodeError):
-        return JsonResponse({"status": "error", "message": "Invalid data"}, status=400)
+        return JsonResponse(
+            {"status": "error", "message": "Datos inválidos"},
+            status=400,
+        )
 
     if len(god_ids) > CARD_HAND_SIZE:
         return JsonResponse(
@@ -372,7 +387,10 @@ def _render_deck(request, profile):
 def card_allocate_bonus(request):
     """Allocate a card bonus point for a specific god's direction."""
     if request.method != "POST":
-        return JsonResponse({"status": "error", "message": "POST required"}, status=405)
+        return JsonResponse(
+            {"status": "error", "message": "Se requiere POST"},
+            status=405,
+        )
 
     profile = request.user.profile
 
@@ -381,11 +399,14 @@ def card_allocate_bonus(request):
         pg_id = data.get("pg_id")
         direction = data.get("direction")
     except (ValueError, TypeError, json.JSONDecodeError):
-        return JsonResponse({"status": "error", "message": "Invalid data"}, status=400)
+        return JsonResponse(
+            {"status": "error", "message": "Datos inválidos"},
+            status=400,
+        )
 
     if direction not in ("top", "right", "bottom", "left"):
         return JsonResponse(
-            {"status": "error", "message": "Invalid direction"}, status=400
+            {"status": "error", "message": "Dirección inválida"}, status=400
         )
 
     try:

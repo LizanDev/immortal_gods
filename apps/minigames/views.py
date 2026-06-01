@@ -155,10 +155,16 @@ def memory_save(request):
         data = json.loads(request.body)
         moves = int(data.get("moves", 0))
     except (ValueError, TypeError, json.JSONDecodeError):
-        return JsonResponse({"status": "error", "message": "Invalid data"}, status=400)
+        return JsonResponse(
+            {"status": "error", "message": "Datos inválidos"},
+            status=400,
+        )
 
     if moves < 8:
-        return JsonResponse({"status": "error", "message": "Invalid moves"}, status=400)
+        return JsonResponse(
+            {"status": "error", "message": "Movimientos inválidos"},
+            status=400,
+        )
 
     try:
         session, _ = MemoryGameSession.objects.get_or_create(

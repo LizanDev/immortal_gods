@@ -131,12 +131,15 @@ def equip_item(request, god_id, item_id):
         return JsonResponse(
             {
                 "status": "error",
-                "message": "Slot already occupied. Unequip first.",
+                "message": "Espacio ya ocupado. Desequipa primero.",
             },
             status=400,
         )
 
-    return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
+    return JsonResponse(
+        {"status": "error", "message": "Solicitud inválida"},
+        status=400,
+    )
 
 
 @login_required
@@ -149,11 +152,14 @@ def unequip_item(request, item_id):
         return JsonResponse(
             {
                 "status": "ok",
-                "message": f"{pi.item.name} unequipped",
+                "message": f"{pi.item.name} desequipado",
             }
         )
 
-    return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
+    return JsonResponse(
+        {"status": "error", "message": "Solicitud inválida"},
+        status=400,
+    )
 
 
 @login_required
